@@ -1096,7 +1096,12 @@ window.UI = (function () {
       bounds.push([r.lat, r.lon]);
     });
 
-    if (bounds.length > 0) {
+    /* On mobile the container height is set by JS after initMap is called,
+       so fitBounds runs before Leaflet knows the real dimensions and picks
+       a wrong center (Idaho/Montana). Skip it — initMap already called
+       setView([37.5, -119.5], 6) which is the correct California view.
+       invalidateSize() fired by resizeMap() will correct the tile layout. */
+    if (bounds.length > 0 && window.innerWidth >= 768) {
       try { _map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 }); }
       catch (e) { /* ignore edge-case fitBounds errors */ }
     }

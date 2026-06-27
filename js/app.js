@@ -38,11 +38,29 @@
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  /* ── Mobile map layout (JS-driven, avoids CSS media-query chain) */
+  /* ── Mobile map layout (JS-driven, iOS Safari compatible) ─────── */
 
   var _mobileMapListenerAttached = false;
 
+  /* Use visualViewport.height when available — it tracks the actual visible
+     area in iOS Safari as the URL bar shows/hides. window.innerHeight does not. */
+  function _getVH() {
+    return (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  }
+
+  /* Safety net: keep footer hidden whenever map tab is active on mobile.
+     Called on resize/visualViewport-resize so iOS toolbar changes can't
+     re-expose the fixed footer. */
+  function _ensureFooterHidden() {
+    if (window.innerWidth >= 768) return;
+    var footer = document.querySelector(".site-footer");
+    if (!footer) return;
+    footer.style.display =
+      document.getElementById("view-map").classList.contains("active") ? "none" : "";
+  }
+
   function _onMobileResize() {
+    _ensureFooterHidden();
     if (document.getElementById("view-map").classList.contains("active")) {
       setTimeout(_applyMobileMapLayout, 150);
     }
@@ -56,19 +74,20 @@
     var leafletMap = document.getElementById("leaflet-map");
     var footer     = document.querySelector(".site-footer");
 
+    /* visualViewport.height reflects the true visible area in iOS Safari;
+       window.innerHeight can include space behind the dynamic URL bar. */
+    var vh = _getVH();
     var chromeHeight =
       (header   ? header.offsetHeight   : 0) +
       (statsBar ? statsBar.offsetHeight  : 0) +
       (tabNav   ? tabNav.offsetHeight    : 0);
 
-    var mapHeight = window.innerHeight - chromeHeight;
-
-    document.documentElement.style.height   = window.innerHeight + "px";
+    document.documentElement.style.height   = vh + "px";
     document.documentElement.style.overflow = "hidden";
-    document.body.style.height              = window.innerHeight + "px";
+    document.body.style.height              = vh + "px";
     document.body.style.overflow            = "hidden";
 
-    viewMap.style.height    = mapHeight + "px";
+    viewMap.style.height    = (vh - chromeHeight) + "px";
     leafletMap.style.width  = "100%";
     leafletMap.style.height = "100%";
 
@@ -80,6 +99,10 @@
       _mobileMapListenerAttached = true;
       window.addEventListener("resize", _onMobileResize);
       window.addEventListener("orientationchange", _onMobileResize);
+      /* visualViewport fires when the iOS toolbar appears/disappears */
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", _onMobileResize);
+      }
     }
   }
 
@@ -403,5 +426,15 @@
   }
 
   loadData();
+
+  /* Safety net: footer visibility check on every viewport change.
+     Runs on DOMContentLoaded, window resize, and visualViewport resize
+     so the iOS Safari toolbar appearing/disappearing can never re-expose
+     the fixed footer while the map tab is active. */
+  document.addEventListener("DOMContentLoaded", _ensureFooterHidden);
+  window.addEventListener("resize", _ensureFooterHidden);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", _ensureFooterHidden);
+  }
 
 })();
