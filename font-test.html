@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Test — Fish Stocking Alert</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=DM+Sans:wght@400;600;700&family=Outfit:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #ffffff;
+      color: #1e293b;
+      padding: 2rem;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    h1.page-title {
+      font-family: sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .font-section {
+      padding: 2.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .font-section:last-child { border-bottom: none; }
+
+    .font-label {
+      font-family: monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      background: #f1f5f9;
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Font-specific wrappers ── */
+    .f-inter         { font-family: 'Inter', sans-serif; }
+    .f-jakarta       { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .f-dmsans        { font-family: 'DM Sans', sans-serif; }
+    .f-outfit        { font-family: 'Outfit', sans-serif; }
+    .f-fraunces-head { font-family: 'Fraunces', serif; }
+    .f-inter-body    { font-family: 'Inter', sans-serif; }
+
+    /* ── Shared element styles ── */
+    .demo-heading {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0a1628;
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+
+    .demo-subheading {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #0a1628;
+      margin-bottom: 0.9rem;
+    }
+
+    .demo-body {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #1e293b;
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+      max-width: 640px;
+    }
+
+    .demo-button {
+      display: inline-block;
+      background: #0ea5e9;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin-right: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-badge {
+      display: inline-block;
+      background: rgba(14,165,233,0.12);
+      color: #0ea5e9;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">Font Comparison — Fish Stocking Alert</h1>
+
+  <!-- ── 1. Inter ── -->
+  <div class="font-section f-inter">
+    <div class="font-label">1 · Inter</div>
+    <div class="demo-heading">Never miss a fresh drop.</div>
+    <div class="demo-subheading">Fish smarter, not harder.</div>
+    <p class="demo-body">Fish Stocking Alert tracks stocking data across California, Pennsylvania, and New York so you never have to search state wildlife websites again. Get notified the moment your favorite water gets stocked.</p>
+    <button class="demo-button f-inter">Put Me on the List</button>
+    <span class="demo-badge">Fresh · 2 days ago</span>
+  </div>
+
+  <!-- ── 2. Plus Jakarta Sans ── -->
+  <div class="font-section f-jakarta">
+    <div class="font-label">2 · Plus Jakarta Sans</div>
+    <div class="demo-heading">Never miss a fresh drop.</div>
+    <div class="demo-subheading">Fish smarter, not harder.</div>
+    <p class="demo-body">Fish Stocking Alert tracks stocking data across California, Pennsylvania, and New York so you never have to search state wildlife websites again. Get notified the moment your favorite water gets stocked.</p>
+    <button class="demo-button f-jakarta">Put Me on the List</button>
+    <span class="demo-badge">Fresh · 2 days ago</span>
+  </div>
+
+  <!-- ── 3. DM Sans ── -->
+  <div class="font-section f-dmsans">
+    <div class="font-label">3 · DM Sans</div>
+    <div class="demo-heading">Never miss a fresh drop.</div>
+    <div class="demo-subheading">Fish smarter, not harder.</div>
+    <p class="demo-body">Fish Stocking Alert tracks stocking data across California, Pennsylvania, and New York so you never have to search state wildlife websites again. Get notified the moment your favorite water gets stocked.</p>
+    <button class="demo-button f-dmsans">Put Me on the List</button>
+    <span class="demo-badge">Fresh · 2 days ago</span>
+  </div>
+
+  <!-- ── 4. Outfit ── -->
+  <div class="font-section f-outfit">
+    <div class="font-label">4 · Outfit</div>
+    <div class="demo-heading">Never miss a fresh drop.</div>
+    <div class="demo-subheading">Fish smarter, not harder.</div>
+    <p class="demo-body">Fish Stocking Alert tracks stocking data across California, Pennsylvania, and New York so you never have to search state wildlife websites again. Get notified the moment your favorite water gets stocked.</p>
+    <button class="demo-button f-outfit">Put Me on the List</button>
+    <span class="demo-badge">Fresh · 2 days ago</span>
+  </div>
+
+  <!-- ── 5. Fraunces (heading) + Inter (body/button) ── -->
+  <div class="font-section">
+    <div class="font-label">5 · Fraunces (heading) + Inter (body &amp; button)</div>
+    <div class="demo-heading f-fraunces-head">Never miss a fresh drop.</div>
+    <div class="demo-subheading f-inter-body">Fish smarter, not harder.</div>
+    <p class="demo-body f-inter-body">Fish Stocking Alert tracks stocking data across California, Pennsylvania, and New York so you never have to search state wildlife websites again. Get notified the moment your favorite water gets stocked.</p>
+    <button class="demo-button f-inter-body">Put Me on the List</button>
+    <span class="demo-badge f-inter-body">Fresh · 2 days ago</span>
+  </div>
+
+</body>
+</html>
