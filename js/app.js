@@ -47,6 +47,7 @@
     document.querySelectorAll(".view-panel").forEach(function (panel) {
       panel.classList.toggle("active", panel.id === "view-" + name);
     });
+    document.body.classList.toggle("map-tab-active", name === "map");
 
     if (name === "map") {
       if (!mapReady) {

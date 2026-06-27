@@ -1916,8 +1916,19 @@ body {
   .tab-btn  { flex: 1; justify-content: center; padding: 0.75rem 0.5rem; font-size: 0.82rem; }
   .tab-icon { display: none; }
 
-  /* Map height on mobile */
-  #view-map.active { height: calc(100vh - 190px); }
+  /* Map height on mobile — footer is hidden in map tab so subtract only chrome */
+  #view-map.active { height: calc(100vh - 162px); }
+
+  /* Lock page scroll and hide footer when Map tab is active on mobile */
+  body.map-tab-active {
+    overflow: hidden;
+  }
+  body.map-tab-active .site-footer {
+    display: none;
+  }
+  body.map-tab-active #view-map.active {
+    overflow: hidden;
+  }
 
   /* Filters */
   .controls       { padding: 0.75rem 1rem; gap: 0.6rem; }
