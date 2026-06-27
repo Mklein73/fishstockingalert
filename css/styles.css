@@ -1916,40 +1916,6 @@ body {
   .tab-btn  { flex: 1; justify-content: center; padding: 0.75rem 0.5rem; font-size: 0.82rem; }
   .tab-icon { display: none; }
 
-  /* Map fallback height (JS unavailable) */
-  #view-map.active { height: calc(100vh - 162px); }
-
-  /* ── Mobile Map: full-viewport flex layout, no page scroll ─── */
-  /* Lock both html AND body — body-only does not stop scroll on iOS */
-  html.map-tab-active,
-  html.map-tab-active body {
-    height: 100%;
-    overflow: hidden;
-  }
-  /* Body becomes a flex column so chrome stacks and map fills remaining space */
-  html.map-tab-active body {
-    display: flex;
-    flex-direction: column;
-  }
-  html.map-tab-active .site-footer {
-    display: none;
-  }
-  /* Map panel grows to fill all space below the tab bar — no calc() guessing */
-  html.map-tab-active #view-map.active {
-    flex: 1;
-    height: 0;       /* allows flex to shrink/grow freely */
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Leaflet div fills its parent exactly */
-  html.map-tab-active #leaflet-map {
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-  }
-
   /* Filters */
   .controls       { padding: 0.75rem 1rem; gap: 0.6rem; }
   .filter-group   { min-width: 100%; flex: none; }

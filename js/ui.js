@@ -848,7 +848,7 @@ window.UI = (function () {
     regsContent +=
       '<hr class="field-divider" />'
       + '<div class="regs-link-row">'
-      +   '<a class="field-action-link" href="https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=195666"'
+      +   '<a class="field-action-link" href="https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=209090&inline="'
       +   ' target="_blank" rel="noopener">Full CA Regulations (PDF) →</a>'
       +   '<a class="field-action-link" href="https://wildlife.ca.gov/enforcement"'
       +   ' target="_blank" rel="noopener">Report a Violation →</a>'
@@ -1070,15 +1070,6 @@ window.UI = (function () {
         weight: 1.5, opacity: 1, fillOpacity: 0.88
       });
 
-      var popupHtml =
-        '<div class="map-popup">'
-        + '<div class="popup-name">'  + (r.waterName || "Unknown water") + "</div>"
-        + '<div class="popup-row"><span class="popup-label">County</span>'  + (r.county || "—") + "</div>"
-        + '<div class="popup-row"><span class="popup-label">Species</span>'
-        +   '<span class="badge ' + badgeClass(r.species) + '">' + (r.species || "—") + "</span></div>"
-        + '<div class="popup-row"><span class="popup-label">Date</span>' + formatDateSimple(r.dateStocked) + "</div>"
-        + "</div>";
-
       var tooltipHtml =
         '<div class="tip-name">' + (r.waterName || "Unknown water") + "</div>"
         + '<div class="tip-row"><span class="tip-label">County</span>'  + (r.county  || "—") + "</div>"
@@ -1101,7 +1092,6 @@ window.UI = (function () {
         this.closeTooltip();
       });
 
-      marker.bindPopup(popupHtml, { maxWidth: 280 });
       _markersLayer.addLayer(marker);
       bounds.push([r.lat, r.lon]);
     });

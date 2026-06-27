@@ -38,6 +38,68 @@
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
+  /* ── Mobile map layout (JS-driven, avoids CSS media-query chain) */
+
+  var _mobileMapListenerAttached = false;
+
+  function _onMobileResize() {
+    if (document.getElementById("view-map").classList.contains("active")) {
+      setTimeout(_applyMobileMapLayout, 150);
+    }
+  }
+
+  function _applyMobileMapLayout() {
+    var header     = document.querySelector(".site-header");
+    var statsBar   = document.getElementById("stats-bar");
+    var tabNav     = document.getElementById("tab-nav");
+    var viewMap    = document.getElementById("view-map");
+    var leafletMap = document.getElementById("leaflet-map");
+    var footer     = document.querySelector(".site-footer");
+
+    var chromeHeight =
+      (header   ? header.offsetHeight   : 0) +
+      (statsBar ? statsBar.offsetHeight  : 0) +
+      (tabNav   ? tabNav.offsetHeight    : 0);
+
+    var mapHeight = window.innerHeight - chromeHeight;
+
+    document.documentElement.style.height   = window.innerHeight + "px";
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.height              = window.innerHeight + "px";
+    document.body.style.overflow            = "hidden";
+
+    viewMap.style.height    = mapHeight + "px";
+    leafletMap.style.width  = "100%";
+    leafletMap.style.height = "100%";
+
+    if (footer) { footer.style.display = "none"; }
+
+    setTimeout(function () { UI.resizeMap(); }, 50);
+
+    if (!_mobileMapListenerAttached) {
+      _mobileMapListenerAttached = true;
+      window.addEventListener("resize", _onMobileResize);
+      window.addEventListener("orientationchange", _onMobileResize);
+    }
+  }
+
+  function _restoreMobileLayout() {
+    document.documentElement.style.height   = "";
+    document.documentElement.style.overflow = "";
+    document.body.style.height              = "";
+    document.body.style.overflow            = "";
+
+    var viewMap    = document.getElementById("view-map");
+    var leafletMap = document.getElementById("leaflet-map");
+    var footer     = document.querySelector(".site-footer");
+
+    viewMap.style.height    = "";
+    leafletMap.style.width  = "";
+    leafletMap.style.height = "";
+
+    if (footer) { footer.style.display = ""; }
+  }
+
   /* ── Tab switching ──────────────────────────────────────────── */
 
   function switchTab(name) {
@@ -47,17 +109,17 @@
     document.querySelectorAll(".view-panel").forEach(function (panel) {
       panel.classList.toggle("active", panel.id === "view-" + name);
     });
-    var isMap = name === "map";
-    document.documentElement.classList.toggle("map-tab-active", isMap);
-    document.body.classList.toggle("map-tab-active", isMap);
 
     if (name === "map") {
+      if (window.innerWidth < 768) { _applyMobileMapLayout(); }
       if (!mapReady) {
         mapReady = true;
         UI.initMap(allRecords);
       } else {
         UI.resizeMap();
       }
+    } else {
+      if (window.innerWidth < 768) { _restoreMobileLayout(); }
     }
 
     if (name === "calendar") {
