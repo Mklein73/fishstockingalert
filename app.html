@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Fish Stocking Alert | Data View</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+</head>
+<body>
+
+  <!-- ── Site header ──────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <div class="header-actions">
+        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Stats bar ────────────────────────────────────────────── -->
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    <div class="stat-state-id">
+      <span class="stat-state-name" id="stat-state-name">—</span>
+      <span class="stat-state-sub">Stocking Data</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-number" id="stat-waters">—</span>
+      <span class="stat-label">Waters Stocked</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-number" id="stat-stockings">—</span>
+      <span class="stat-label">Stocking Events</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-number" id="stat-species">—</span>
+      <span class="stat-label">Species</span>
+    </div>
+  </div>
+
+  <!-- ── Tab navigation ───────────────────────────────────────── -->
+  <nav class="tab-nav" id="tab-nav" style="display:none">
+    <button class="tab-btn active" data-tab="list">
+      <span class="tab-icon">🏠</span> Home
+    </button>
+    <button class="tab-btn" data-tab="map">
+      <span class="tab-icon">🗺</span> Map
+    </button>
+    <button class="tab-btn" data-tab="calendar">
+      <span class="tab-icon">📅</span> Calendar
+    </button>
+  </nav>
+
+  <!-- ── Loading spinner ──────────────────────────────────────── -->
+  <div class="spinner-wrap" id="spinner">
+    <div class="spinner"></div>
+    <span id="spinner-msg">Loading stocking data…</span>
+  </div>
+
+  <!-- ── Error message ────────────────────────────────────────── -->
+  <div class="error-msg" id="error-msg"></div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  HOME VIEW (was List)                                      -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="view-panel" id="view-list">
+
+    <div class="controls">
+      <div class="filter-group">
+        <label for="filter-county">County</label>
+        <select id="filter-county">
+          <option value="">All Counties</option>
+        </select>
+      </div>
+      <div class="filter-group" id="filter-species-group">
+        <label>Species</label>
+        <div class="species-ms" id="filter-species-wrap">
+          <button class="species-ms-btn" id="filter-species-btn" type="button">
+            <span class="species-ms-label" id="filter-species-label">All Species</span>
+            <svg class="species-ms-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="species-ms-panel" id="filter-species-panel"></div>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn-pill" id="btn-7days">Last 7 days</button>
+        <button class="btn-reset" id="reset-btn">Reset</button>
+      </div>
+    </div>
+
+    <div class="list-cols">
+
+      <div class="list-col-waters" id="list-col-waters">
+        <div class="list-search-wrap">
+          <input type="text" id="list-search" placeholder="Search waters…" autocomplete="off" />
+        </div>
+
+        <div id="geo-banner" class="geo-banner">
+          <span class="geo-banner-text">📍 Show waters near you?</span>
+          <div class="geo-banner-btns">
+            <button id="geo-allow-btn" class="geo-btn geo-btn-allow">Allow</button>
+            <button id="geo-skip-btn"  class="geo-btn geo-btn-skip">Skip</button>
+          </div>
+        </div>
+
+        <div id="geo-active-bar" class="geo-active-bar" style="display:none">
+          <span id="geo-active-text">📍 Waters near you</span>
+          <a href="#" id="geo-clear-btn" class="geo-clear-link">Clear</a>
+        </div>
+
+        <div id="geo-no-results-banner" class="geo-no-results-banner" style="display:none">
+          ⚠️ No waters found within 100 miles. Showing the nearest location.
+        </div>
+
+        <div class="list-count" id="list-count"></div>
+        <div id="water-list"></div>
+      </div>
+
+      <div class="list-col-preview" id="list-col-preview">
+        <div class="preview-moon-row">
+          <div id="moon-widget" class="moon-widget"></div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-map-wrap">
+            <div id="preview-map"></div>
+            <button class="preview-open-btn" id="preview-open-btn" style="display:none">
+              Open in full map →
+            </button>
+          </div>
+        </div>
+        <div id="metric-strip"></div>
+      </div>
+
+      <div class="list-col-detail" id="list-col-detail">
+        <div id="detail-placeholder" class="detail-placeholder">
+          <div class="detail-placeholder-icon">🎣</div>
+          <div class="detail-placeholder-text">Select a water from the list</div>
+        </div>
+        <div id="detail-panel" style="display:none"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  MAP VIEW                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="view-panel" id="view-map">
+
+    <!-- Map filter bar: county + species + search + reset -->
+    <div class="controls map-controls" id="map-controls">
+      <div class="filter-group">
+        <label for="map-filter-county">County</label>
+        <select id="map-filter-county">
+          <option value="">All Counties</option>
+        </select>
+      </div>
+      <div class="filter-group" id="map-filter-species-group">
+        <label>Species</label>
+        <div class="species-ms" id="map-filter-species-wrap">
+          <button class="species-ms-btn" id="map-filter-species-btn" type="button">
+            <span class="species-ms-label" id="map-filter-species-label">All Species</span>
+            <svg class="species-ms-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="species-ms-panel" id="map-filter-species-panel"></div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label for="map-search">Search</label>
+        <input type="text" id="map-search" placeholder="Search waters…" autocomplete="off" />
+      </div>
+      <div class="filter-actions">
+        <button class="btn-reset" id="map-reset-btn">Reset</button>
+      </div>
+    </div>
+
+    <div id="leaflet-map"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  CALENDAR VIEW                                             -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="view-panel" id="view-calendar">
+    <div class="calendar-outer">
+      <div class="calendar-nav-bar">
+        <button class="cal-nav-btn" id="cal-prev">&#8249;</button>
+        <span class="cal-title" id="cal-title"></span>
+        <button class="cal-nav-btn" id="cal-next">&#8250;</button>
+      </div>
+      <div class="calendar-body">
+        <div class="cal-grid-wrap">
+          <div class="cal-dow-row">
+            <span class="cal-dow">Sun</span>
+            <span class="cal-dow">Mon</span>
+            <span class="cal-dow">Tue</span>
+            <span class="cal-dow">Wed</span>
+            <span class="cal-dow">Thu</span>
+            <span class="cal-dow">Fri</span>
+            <span class="cal-dow">Sat</span>
+          </div>
+          <div class="cal-days" id="calendar-grid"></div>
+        </div>
+        <div class="cal-detail" id="calendar-detail">
+          <p class="cal-detail-hint">Click a highlighted date to see what was stocked.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    Data source: <a id="source-link"
+      href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897"
+      target="_blank" rel="noopener">CDFW Open Data Portal</a>
+    &mdash; All fish plants are subject to change depending on road, water, weather, and operational conditions.
+  </footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="states/california.js"></script>
+  <script src="states/pennsylvania.js"></script>
+  <script src="states/new-york.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</body>
+</html>

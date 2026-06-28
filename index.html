@@ -2,247 +2,355 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Fish Stocking Alert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fish Stocking Alert — Real-Time Stocking Alerts for Anglers</title>
+  <meta name="description" content="Get notified the moment fish are stocked at your favorite waters. Real-time stocking alerts for California, Pennsylvania, New York, and more." />
 
-  <!-- Nunito font from Google Fonts (free, no API key) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Leaflet map library (free, no API key) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/styles.css" />
-  <!-- Apply saved dark mode preference before first paint to avoid a flash of wrong colour -->
+  <link rel="stylesheet" href="css/home.css" />
   <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
 </head>
-<body>
+<body class="home-body">
 
-  <!-- ── Site header ──────────────────────────────────────────── -->
+  <!-- ── Site header (same as app) ───────────────────────────── -->
   <header class="site-header">
     <div class="header-inner">
       <div class="header-logo">
         <span class="logo-icon">🐟</span>
-        <a href="index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+        <span class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></span>
       </div>
       <div class="header-actions">
         <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
-        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">🌙</button>
       </div>
     </div>
   </header>
 
-  <!-- ── Stats bar ────────────────────────────────────────────── -->
-  <div class="stats-bar" id="stats-bar" style="display:none">
-    <div class="stat-state-id">
-      <span class="stat-state-name" id="stat-state-name">—</span>
-      <span class="stat-state-sub">Stocking Data</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-number" id="stat-waters">—</span>
-      <span class="stat-label">Waters Stocked</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-number" id="stat-stockings">—</span>
-      <span class="stat-label">Stocking Events</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-number" id="stat-species">—</span>
-      <span class="stat-label">Species</span>
-    </div>
-  </div>
-
-  <!-- ── Tab navigation ───────────────────────────────────────── -->
-  <nav class="tab-nav" id="tab-nav" style="display:none">
-    <button class="tab-btn active" data-tab="list">
-      <span class="tab-icon">☰</span> List
-    </button>
-    <button class="tab-btn" data-tab="map">
-      <span class="tab-icon">🗺</span> Map
-    </button>
-    <button class="tab-btn" data-tab="calendar">
-      <span class="tab-icon">📅</span> Calendar
-    </button>
-  </nav>
-
-  <!-- ── Loading spinner (visible while fetching) ─────────────── -->
-  <div class="spinner-wrap" id="spinner">
-    <div class="spinner"></div>
-    <span id="spinner-msg">Loading stocking data…</span>
-  </div>
-
-  <!-- ── Error message ────────────────────────────────────────── -->
-  <div class="error-msg" id="error-msg"></div>
-
   <!-- ══════════════════════════════════════════════════════════ -->
-  <!--  LIST VIEW                                                 -->
+  <!--  HERO                                                      -->
   <!-- ══════════════════════════════════════════════════════════ -->
-  <div class="view-panel" id="view-list">
-
-    <!-- Filter bar (county, species, 7-day — applies to both panels) -->
-    <div class="controls">
-      <div class="filter-group">
-        <label for="filter-county">County</label>
-        <select id="filter-county">
-          <option value="">All Counties</option>
-        </select>
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">🎣 Free · No account required</div>
+      <h1 class="hero-headline">
+        Know the Moment<br class="hero-br"> Fish Are Planted.
+      </h1>
+      <p class="hero-sub">
+        Real-time stocking alerts for your favorite waters. Stop checking state websites —
+        we notify you the instant fish hit the water so you can be first to the bank.
+      </p>
+      <div class="hero-cta-row">
+        <a href="app.html" class="btn-hero-primary">Explore California Data →</a>
+        <a href="#how-it-works" class="btn-hero-secondary">How It Works</a>
       </div>
-      <div class="filter-group" id="filter-species-group">
-        <label>Species</label>
-        <div class="species-ms" id="filter-species-wrap">
-          <button class="species-ms-btn" id="filter-species-btn" type="button">
-            <span class="species-ms-label" id="filter-species-label">All Species</span>
-            <svg class="species-ms-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </button>
-          <div class="species-ms-panel" id="filter-species-panel"></div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <strong>800+</strong>
+          <span>Waters Tracked</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>Real-Time</strong>
+          <span>Data Updates</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>Free</strong>
+          <span>Email Alerts</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>5+</strong>
+          <span>Species Tracked</span>
         </div>
       </div>
-      <div class="filter-actions">
-        <button class="btn-pill" id="btn-7days">Last 7 days</button>
-        <button class="btn-reset" id="reset-btn">Reset</button>
-      </div>
     </div>
+  </section>
 
-    <!-- Three-column layout -->
-    <div class="list-cols">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  STATE CARDS                                               -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="states-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Coverage</div>
+      <h2 class="section-title">Select Your State</h2>
+      <p class="section-sub">Live stocking data from state fish &amp; wildlife agencies, updated as plants are reported.</p>
 
-      <!-- Column 1: scrollable water list (300px fixed) -->
-      <div class="list-col-waters" id="list-col-waters">
+      <div class="states-grid">
 
-        <!-- Sticky search bar -->
-        <div class="list-search-wrap">
-          <input type="text" id="list-search" placeholder="Search waters…" autocomplete="off" />
+        <a href="app.html" class="state-card state-card--active">
+          <div class="state-card-top">
+            <div class="state-card-icon">🐠</div>
+            <div class="state-card-live-badge">● Live</div>
+          </div>
+          <div class="state-card-name">California</div>
+          <div class="state-card-desc">Full stocking data from CDFW. Trout, bass, catfish, salmon, and more. Updated weekly.</div>
+          <div class="state-card-cta">View California Data →</div>
+        </a>
+
+        <div class="state-card state-card--soon">
+          <div class="state-card-top">
+            <div class="state-card-icon">🦌</div>
+            <div class="state-card-soon-badge">Coming Soon</div>
+          </div>
+          <div class="state-card-name">Pennsylvania</div>
+          <div class="state-card-desc">PFBC stocking data integration in development. Trout season coverage planned.</div>
+          <div class="state-card-notify">Get notified when PA launches →</div>
         </div>
 
-        <!-- Geo invite (hidden after Allow/Skip) -->
-        <div id="geo-banner" class="geo-banner">
-          <span class="geo-banner-text">📍 Show waters near you?</span>
-          <div class="geo-banner-btns">
-            <button id="geo-allow-btn" class="geo-btn geo-btn-allow">Allow</button>
-            <button id="geo-skip-btn"  class="geo-btn geo-btn-skip">Skip</button>
+        <div class="state-card state-card--soon">
+          <div class="state-card-top">
+            <div class="state-card-icon">🎣</div>
+            <div class="state-card-soon-badge">Coming Soon</div>
+          </div>
+          <div class="state-card-name">New York</div>
+          <div class="state-card-desc">DEC stocking data integration in development. Full trout and salmon coverage planned.</div>
+          <div class="state-card-notify">Get notified when NY launches →</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  FEATURES                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="features-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Features</div>
+      <h2 class="section-title">Everything You Need Before You Go</h2>
+      <p class="section-sub">Built for serious anglers who want every edge at the water.</p>
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap feature-icon--teal">
+            <span class="feature-icon">🔔</span>
+          </div>
+          <h3 class="feature-title">Instant Alerts</h3>
+          <p class="feature-desc">Get an email the moment your saved waters are stocked. Beat the crowds every time.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap feature-icon--blue">
+            <span class="feature-icon">🗺️</span>
+          </div>
+          <h3 class="feature-title">Interactive Map</h3>
+          <p class="feature-desc">View all stocked waters on a filterable map. Satellite and street views with species color-coding.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap feature-icon--green">
+            <span class="feature-icon">🎣</span>
+          </div>
+          <h3 class="feature-title">Species Filtering</h3>
+          <p class="feature-desc">Filter by trout, bass, catfish, salmon, or any combination of species in the data.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap feature-icon--indigo">
+            <span class="feature-icon">🌙</span>
+          </div>
+          <h3 class="feature-title">Moon Phase Data</h3>
+          <p class="feature-desc">See the moon phase on any stocking date so you can time your trip for peak feeding conditions.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap feature-icon--orange">
+            <span class="feature-icon">📅</span>
+          </div>
+          <h3 class="feature-title">Stocking Calendar</h3>
+          <p class="feature-desc">A full calendar view of every stocking event. Plan ahead and see historical patterns at a glance.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap feature-icon--amber">
+            <span class="feature-icon">💡</span>
+          </div>
+          <h3 class="feature-title">Fishing Tips</h3>
+          <p class="feature-desc">Species-specific fishing tips with each water detail — from PowerBait rigs to nightcrawler presentations.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  HOW IT WORKS                                              -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="how-section" id="how-it-works">
+    <div class="section-inner">
+      <div class="section-eyebrow">Simple Setup</div>
+      <h2 class="section-title">Three Steps. Zero Missed Stockings.</h2>
+      <p class="section-sub">Set it up once and let us watch the waters for you.</p>
+
+      <div class="steps-row">
+
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-icon">📍</div>
+          <h3 class="step-title">Pick Your Waters</h3>
+          <p class="step-desc">Browse the map or search by name. Save any lake, river, or stream you fish regularly.</p>
+        </div>
+
+        <div class="step-connector">
+          <div class="step-connector-line"></div>
+          <div class="step-connector-arrow">→</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-icon">🎯</div>
+          <h3 class="step-title">Set Your Species</h3>
+          <p class="step-desc">Choose trout, bass, catfish, salmon — or all of them. We'll only notify you about what you fish.</p>
+        </div>
+
+        <div class="step-connector">
+          <div class="step-connector-line"></div>
+          <div class="step-connector-arrow">→</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-icon">🔔</div>
+          <h3 class="step-title">Get Notified</h3>
+          <p class="step-desc">The moment your waters are stocked, you get an email. First cast, best catch.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  DATA PREVIEW STRIP                                        -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="preview-strip-section">
+    <div class="section-inner">
+      <div class="preview-strip-card">
+        <div class="psc-left">
+          <div class="psc-eyebrow">Live Right Now</div>
+          <h2 class="psc-headline">California stocking data is live — no signup required.</h2>
+          <p class="psc-desc">Browse hundreds of stocked waters across California. Filter by county, species, or date. See the full stocking history for each water.</p>
+          <a href="app.html" class="btn-psc">Open the Data View →</a>
+        </div>
+        <div class="psc-right">
+          <div class="psc-mockup">
+            <div class="psc-mockup-row psc-mockup-row--header">
+              <span class="psc-mock-label">Water</span>
+              <span class="psc-mock-label">County</span>
+              <span class="psc-mock-label">Species</span>
+              <span class="psc-mock-label">Date</span>
+            </div>
+            <div class="psc-mockup-row">
+              <span class="psc-mock-name">Lake Crowley</span>
+              <span class="psc-mock-val">Mono</span>
+              <span class="psc-mock-badge psc-mock-badge--trout">Rainbow Trout</span>
+              <span class="psc-mock-val psc-mock-fresh">2 days ago</span>
+            </div>
+            <div class="psc-mockup-row">
+              <span class="psc-mock-name">San Vicente Reservoir</span>
+              <span class="psc-mock-val">San Diego</span>
+              <span class="psc-mock-badge psc-mock-badge--bass">Largemouth Bass</span>
+              <span class="psc-mock-val">5 days ago</span>
+            </div>
+            <div class="psc-mockup-row">
+              <span class="psc-mock-name">Shasta Lake</span>
+              <span class="psc-mock-val">Shasta</span>
+              <span class="psc-mock-badge psc-mock-badge--salmon">Chinook Salmon</span>
+              <span class="psc-mock-val">1 week ago</span>
+            </div>
+            <div class="psc-mockup-row">
+              <span class="psc-mock-name">Castaic Lake</span>
+              <span class="psc-mock-val">Los Angeles</span>
+              <span class="psc-mock-badge psc-mock-badge--trout">Rainbow Trout</span>
+              <span class="psc-mock-val psc-mock-fresh">Today</span>
+            </div>
+            <div class="psc-mockup-row psc-mockup-row--fade">
+              <span class="psc-mock-name">Silverwood Lake</span>
+              <span class="psc-mock-val">San Bernardino</span>
+              <span class="psc-mock-badge psc-mock-badge--catfish">Catfish</span>
+              <span class="psc-mock-val">3 days ago</span>
+            </div>
           </div>
         </div>
-
-        <!-- Active geo header (shown after permission granted) -->
-        <div id="geo-active-bar" class="geo-active-bar" style="display:none">
-          <span id="geo-active-text">📍 Waters near you</span>
-          <a href="#" id="geo-clear-btn" class="geo-clear-link">Clear</a>
-        </div>
-
-        <!-- Amber warning: geo active but nothing within 100 mi -->
-        <div id="geo-no-results-banner" class="geo-no-results-banner" style="display:none">
-          ⚠️ No waters found within 100 miles. Showing the nearest location.
-        </div>
-
-        <div class="list-count" id="list-count"></div>
-        <div id="water-list"></div>
-
-      </div><!-- /list-col-waters -->
-
-      <!-- Column 2: moon widget + preview map + metric cards -->
-      <div class="list-col-preview" id="list-col-preview">
-
-        <!-- Moon phase: top-right corner, always shows today's phase -->
-        <div class="preview-moon-row">
-          <div id="moon-widget" class="moon-widget"></div>
-        </div>
-
-        <!-- Satellite map -->
-        <div class="preview-card">
-          <div class="preview-map-wrap">
-            <div id="preview-map"></div>
-            <button class="preview-open-btn" id="preview-open-btn" style="display:none">
-              Open in full map →
-            </button>
-          </div>
-        </div>
-
-        <!-- 4 individual metric cards — populated by JS -->
-        <div id="metric-strip"></div>
-
-      </div><!-- /list-col-preview -->
-
-      <!-- Column 3: detail info (fills remaining width, scrolls internally) -->
-      <div class="list-col-detail" id="list-col-detail">
-        <div id="detail-placeholder" class="detail-placeholder">
-          <div class="detail-placeholder-icon">🎣</div>
-          <div class="detail-placeholder-text">Select a water from the list</div>
-        </div>
-        <div id="detail-panel" style="display:none"></div>
-      </div><!-- /list-col-detail -->
-
-    </div><!-- /list-cols -->
-
-  </div><!-- /view-list -->
-
-  <!-- ══════════════════════════════════════════════════════════ -->
-  <!--  MAP VIEW                                                  -->
-  <!-- ══════════════════════════════════════════════════════════ -->
-  <div class="view-panel" id="view-map">
-    <div id="leaflet-map"></div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════════ -->
-  <!--  CALENDAR VIEW                                             -->
-  <!-- ══════════════════════════════════════════════════════════ -->
-  <div class="view-panel" id="view-calendar">
-    <div class="calendar-outer">
-
-      <div class="calendar-nav-bar">
-        <button class="cal-nav-btn" id="cal-prev">&#8249;</button>
-        <span class="cal-title" id="cal-title"></span>
-        <button class="cal-nav-btn" id="cal-next">&#8250;</button>
       </div>
-
-      <div class="calendar-body">
-        <div class="cal-grid-wrap">
-          <div class="cal-dow-row">
-            <span class="cal-dow">Sun</span>
-            <span class="cal-dow">Mon</span>
-            <span class="cal-dow">Tue</span>
-            <span class="cal-dow">Wed</span>
-            <span class="cal-dow">Thu</span>
-            <span class="cal-dow">Fri</span>
-            <span class="cal-dow">Sat</span>
-          </div>
-          <div class="cal-days" id="calendar-grid"></div>
-        </div>
-        <div class="cal-detail" id="calendar-detail">
-          <p class="cal-detail-hint">Click a highlighted date to see what was stocked.</p>
-        </div>
-      </div>
-
     </div>
-  </div><!-- /view-calendar -->
+  </section>
 
-  <!-- ── Footer ───────────────────────────────────────────────── -->
-  <footer class="site-footer">
-    Data source: <a id="source-link"
-      href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897"
-      target="_blank" rel="noopener">CDFW Open Data Portal</a>
-    &mdash; All fish plants are subject to change depending on road, water, weather, and operational conditions.
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  FINAL CTA                                                 -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="cta-glow"></div>
+    <div class="section-inner cta-inner">
+      <div class="cta-badge">🔔 Coming Soon</div>
+      <h2 class="cta-headline">Be First. Every Single Time.</h2>
+      <p class="cta-sub">
+        Join anglers who will never miss a stocking again. Free email alerts, no spam, unsubscribe anytime.
+      </p>
+      <div class="cta-actions">
+        <button class="btn-cta-big" id="cta-get-alerts">Get Free Alerts When Ready</button>
+        <a href="app.html" class="btn-cta-outline">Explore Data Now →</a>
+      </div>
+      <p class="cta-fine">Alert signup launching soon. Data browsing is available right now — no account needed.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!--  FOOTER                                                    -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <footer class="home-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo-icon">🐟</span>
+        <span class="footer-logo-text">Fish Stocking <strong>Alert</strong></span>
+      </div>
+      <div class="footer-links">
+        <a href="app.html">Data View</a>
+        <a href="mailto:mklein1973@gmail.com">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2025 Fish Stocking Alert &mdash;
+        Data sourced from state fish &amp; wildlife agencies. All stocking schedules subject to change.
+      </div>
+    </div>
   </footer>
 
-  <!--
-    Scripts load in this order on purpose:
-      1. State files  — define data sources
-      2. ui.js        — defines all drawing functions
-      3. app.js       — wires everything together and starts the app
-      4. Leaflet JS   — loaded last so it's available to ui.js/app.js at runtime
-                        (Leaflet attaches to window.L, which app.js uses only after
-                        the map tab is clicked — so load order is fine here)
-  -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="states/california.js"></script>
-  <script src="states/pennsylvania.js"></script>
-  <script src="states/new-york.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/app.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Dark mode toggle
+    var darkBtn = document.getElementById('btn-dark-mode');
+    function updateIcon() {
+      darkBtn.textContent = document.documentElement.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+    updateIcon();
+    darkBtn.addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark-mode');
+      localStorage.setItem('fsa-theme', isDark ? 'dark' : 'light');
+      updateIcon();
+    });
+
+    // Alert buttons
+    function alertSoon() {
+      alert('Email alerts are coming soon! The data view is live right now — click "Explore California Data" to browse stocking records.');
+    }
+    document.getElementById('btn-get-alerts').addEventListener('click', alertSoon);
+    document.getElementById('cta-get-alerts').addEventListener('click', alertSoon);
+
+    // Smooth scroll for How It Works
+    document.querySelectorAll('a[href="#how-it-works"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
 
 </body>
 </html>

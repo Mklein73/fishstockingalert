@@ -2,17 +2,18 @@
  * ui.js — everything that draws on screen
  *
  * Receives normalized records { waterName, county, species, dateStocked, lat, lon }
- * and renders the two-panel list view, map tab, and calendar tab.
+ * and renders the list view, map tab, and calendar tab.
  */
 window.UI = (function () {
 
   /* ── Private state ──────────────────────────────────────────── */
-  var _map          = null;   // main Leaflet map (Map tab)
-  var _markersLayer = null;   // LayerGroup for main map pins
-  var _previewMap   = null;   // non-interactive satellite preview (column 2)
+  var _map          = null;
+  var _markersLayer = null;
+  var _previewMap   = null;
 
-  var _selectedSpecies           = null;   // null = all; Set = specific species
-  var _speciesClickListenerAdded = false;
+  var _selectedSpecies      = null;   // null = all; Set = specific species
+  var _speciesUIs           = [];     // [{panel, btn, labelEl, allCb}] for sync
+  var _speciesListenerAdded = false;
 
   /* ── Fishing tips ───────────────────────────────────────────── */
 
@@ -130,7 +131,7 @@ window.UI = (function () {
     return "#94a3b8";
   }
 
-  /* ── Announce period (derived from date) ────────────────────── */
+  /* ── Announce period ────────────────────────────────────────── */
 
   function announcePeriod(dateStr) {
     var d = parseDateStr(dateStr);
@@ -139,17 +140,6 @@ window.UI = (function () {
     if (n < 0)   return "Upcoming";
     if (n <= 14) return "Current";
     return "Past";
-  }
-
-  /* ── Freshness badge for left-panel cards ───────────────────── */
-
-  function freshnessLabel(dateStr) {
-    var d = parseDateStr(dateStr);
-    if (!d) return { text: "—", cls: "fresh-badge-ago" };
-    var n = daysAgo(d);
-    if (n < 0)  return { text: "Upcoming", cls: "fresh-badge-upcoming" };
-    if (n <= 3) return { text: "Fresh",    cls: "fresh-badge-fresh" };
-    return { text: n + " days ago", cls: "fresh-badge-ago" };
   }
 
   /* ── Spinner / error ────────────────────────────────────────── */
@@ -191,12 +181,127 @@ window.UI = (function () {
     document.getElementById("stats-bar").style.display = "flex";
   }
 
+  /* ══════════════════════════════════════════════════════════════
+     SPECIES MULTI-SELECT
+     Shared state: _selectedSpecies is the single source of truth.
+     Multiple UI instances (home tab + map tab) stay in sync.
+     ══════════════════════════════════════════════════════════════ */
+
+  function _ensureSpeciesDocListener() {
+    if (_speciesListenerAdded) return;
+    _speciesListenerAdded = true;
+    document.addEventListener("click", function (e) {
+      _speciesUIs.forEach(function (ui) {
+        if (!ui.panel || !ui.btn) return;
+        if (!ui.panel.contains(e.target) && !ui.btn.contains(e.target)) {
+          ui.panel.classList.remove("is-open");
+          ui.btn.classList.remove("is-open");
+        }
+      });
+    });
+  }
+
+  /* Sync all species UIs to reflect current _selectedSpecies */
+  function _syncAllSpeciesUIs() {
+    _speciesUIs.forEach(function (ui) {
+      /* Update label */
+      if (_selectedSpecies === null) {
+        ui.labelEl.textContent = "All Species";
+      } else if (_selectedSpecies.size === 0) {
+        ui.labelEl.textContent = "None selected";
+      } else {
+        ui.labelEl.textContent = Array.from(_selectedSpecies).join(", ");
+      }
+      /* Sync individual species checkboxes */
+      ui.panel.querySelectorAll(".ms-species-cb").forEach(function (cb) {
+        cb.checked = (_selectedSpecies === null || _selectedSpecies.has(cb.value));
+      });
+      /* Sync "All Species" master checkbox */
+      if (ui.allCb) {
+        ui.allCb.checked = (_selectedSpecies === null);
+      }
+    });
+  }
+
+  /**
+   * Build a species multi-select panel.
+   * ids: { panel, btn, label, allCb } — element IDs for this instance.
+   */
+  function _buildSpeciesMultiSelect(speciesList, onChange, ids) {
+    ids = ids || {};
+    var panelId = ids.panel || "filter-species-panel";
+    var btnId   = ids.btn   || "filter-species-btn";
+    var labelId = ids.label || "filter-species-label";
+    var allCbId = ids.allCb || "ms-all-species";
+
+    var panel   = document.getElementById(panelId);
+    var btn     = document.getElementById(btnId);
+    var labelEl = document.getElementById(labelId);
+    if (!panel || !btn || !labelEl) return;
+
+    var html = '<label class="ms-item">'
+      + '<input type="checkbox" id="' + allCbId + '" checked>'
+      + '<span>All Species</span></label>';
+    speciesList.forEach(function (s) {
+      html += '<label class="ms-item">'
+        + '<input type="checkbox" class="ms-species-cb" value="' + s + '" checked>'
+        + '<span>' + s + '</span></label>';
+    });
+    panel.innerHTML = html;
+
+    var allCb = document.getElementById(allCbId);
+
+    /* Register this UI for sync */
+    _speciesUIs.push({ panel: panel, btn: btn, labelEl: labelEl, allCb: allCb });
+
+    btn.onclick = function (e) {
+      e.stopPropagation();
+      var open = panel.classList.toggle("is-open");
+      btn.classList.toggle("is-open", open);
+    };
+
+    _ensureSpeciesDocListener();
+
+    allCb.addEventListener("change", function () {
+      panel.querySelectorAll(".ms-species-cb").forEach(function (cb) {
+        cb.checked = allCb.checked;
+      });
+      _selectedSpecies = allCb.checked ? null : new Set();
+      _syncAllSpeciesUIs();
+      if (onChange) onChange();
+    });
+
+    panel.addEventListener("change", function (e) {
+      if (!e.target.classList.contains("ms-species-cb")) return;
+      var allCbs  = panel.querySelectorAll(".ms-species-cb");
+      var checked = Array.from(allCbs).filter(function (c) { return c.checked; });
+      var allChkd = checked.length === allCbs.length;
+      _selectedSpecies = allChkd
+        ? null
+        : new Set(checked.map(function (c) { return c.value; }));
+      _syncAllSpeciesUIs();
+      if (onChange) onChange();
+    });
+  }
+
+  function getSelectedSpecies() { return _selectedSpecies; }
+
+  function resetSpeciesFilter() {
+    _selectedSpecies = null;
+    _syncAllSpeciesUIs();
+    _speciesUIs.forEach(function (ui) {
+      if (ui.panel) ui.panel.classList.remove("is-open");
+      if (ui.btn)   ui.btn.classList.remove("is-open");
+    });
+  }
+
   /* ── Filter dropdowns ───────────────────────────────────────── */
 
   function populateFilters(records, onChange) {
     var counties = Array.from(new Set(records.map(function (r) { return r.county;  }).filter(Boolean))).sort();
     var species  = Array.from(new Set(records.map(function (r) { return r.species; }).filter(Boolean))).sort();
 
+    /* Home tab county */
     var countyEl = document.getElementById("filter-county");
     countyEl.innerHTML = '<option value="">All Counties</option>';
     counties.forEach(function (c) {
@@ -205,97 +310,41 @@ window.UI = (function () {
       countyEl.appendChild(opt);
     });
 
-    _selectedSpecies = null;
-    _buildSpeciesMultiSelect(species, onChange);
-  }
-
-  function _buildSpeciesMultiSelect(speciesList, onChange) {
-    var panel   = document.getElementById("filter-species-panel");
-    var btn     = document.getElementById("filter-species-btn");
-    var labelEl = document.getElementById("filter-species-label");
-    if (!panel || !btn || !labelEl) return;
-
-    var html = '<label class="ms-item">'
-      + '<input type="checkbox" id="ms-all-species" checked><span>All Species</span></label>';
-    speciesList.forEach(function (s) {
-      html += '<label class="ms-item">'
-        + '<input type="checkbox" class="ms-species-cb" value="' + s + '" checked><span>' + s + '</span></label>';
-    });
-    panel.innerHTML = html;
-
-    btn.onclick = function (e) {
-      e.stopPropagation();
-      var open = panel.classList.toggle("is-open");
-      btn.classList.toggle("is-open", open);
-    };
-
-    if (!_speciesClickListenerAdded) {
-      _speciesClickListenerAdded = true;
-      document.addEventListener("click", function (e) {
-        var p = document.getElementById("filter-species-panel");
-        var b = document.getElementById("filter-species-btn");
-        if (p && !p.contains(e.target) && b && !b.contains(e.target)) {
-          p.classList.remove("is-open");
-          if (b) b.classList.remove("is-open");
-        }
+    /* Map tab county (mirror) */
+    var mapCountyEl = document.getElementById("map-filter-county");
+    if (mapCountyEl) {
+      mapCountyEl.innerHTML = '<option value="">All Counties</option>';
+      counties.forEach(function (c) {
+        var opt = document.createElement("option");
+        opt.value = c; opt.textContent = c;
+        mapCountyEl.appendChild(opt);
       });
     }
 
-    var allCb = document.getElementById("ms-all-species");
-    allCb.addEventListener("change", function () {
-      panel.querySelectorAll(".ms-species-cb").forEach(function (cb) {
-        cb.checked = allCb.checked;
-      });
-      _selectedSpecies = allCb.checked ? null : new Set();
-      _updateSpeciesLabel(labelEl);
-      if (onChange) onChange();
-    });
-
-    panel.addEventListener("change", function (e) {
-      if (!e.target.classList.contains("ms-species-cb")) return;
-      var allCbs   = panel.querySelectorAll(".ms-species-cb");
-      var checked  = Array.from(allCbs).filter(function (c) { return c.checked; });
-      var allChkd  = checked.length === allCbs.length;
-      allCb.checked = allChkd;
-      _selectedSpecies = allChkd
-        ? null
-        : new Set(checked.map(function (c) { return c.value; }));
-      _updateSpeciesLabel(labelEl);
-      if (onChange) onChange();
-    });
-  }
-
-  function _updateSpeciesLabel(labelEl) {
-    if (!labelEl) return;
-    if (_selectedSpecies === null) { labelEl.textContent = "All Species"; return; }
-    if (_selectedSpecies.size === 0) { labelEl.textContent = "None selected"; return; }
-    labelEl.textContent = Array.from(_selectedSpecies).join(", ");
-  }
-
-  function getSelectedSpecies() { return _selectedSpecies; }
-
-  function resetSpeciesFilter() {
     _selectedSpecies = null;
-    var panel = document.getElementById("filter-species-panel");
-    var btn   = document.getElementById("filter-species-btn");
-    var lbl   = document.getElementById("filter-species-label");
-    if (panel) {
-      panel.querySelectorAll('input[type="checkbox"]').forEach(function (cb) { cb.checked = true; });
-      panel.classList.remove("is-open");
-    }
-    if (btn) btn.classList.remove("is-open");
-    if (lbl) lbl.textContent = "All Species";
+    _speciesUIs      = [];   /* reset so re-population doesn't duplicate */
+
+    /* Home tab species */
+    _buildSpeciesMultiSelect(species, onChange, {
+      panel: "filter-species-panel",
+      btn:   "filter-species-btn",
+      label: "filter-species-label",
+      allCb: "ms-all-species"
+    });
+
+    /* Map tab species */
+    _buildSpeciesMultiSelect(species, onChange, {
+      panel: "map-filter-species-panel",
+      btn:   "map-filter-species-btn",
+      label: "map-filter-species-label",
+      allCb: "map-ms-all-species"
+    });
   }
 
   /* ══════════════════════════════════════════════════════════════
-     LIST VIEW — two-panel layout
+     LIST VIEW
      ══════════════════════════════════════════════════════════════ */
 
-  /**
-   * Deduplicate raw records by waterName.
-   * Returns array sorted newest-first:
-   *   { waterName, county, lat, lon, distanceMiles, latestRecord, allEvents }
-   */
   function buildWaterList(records) {
     var groups = {};
     records.forEach(function (r) {
@@ -325,7 +374,6 @@ window.UI = (function () {
     });
   }
 
-  /** Render the left-panel water card list. */
   function renderWaterList(waters, selectedName) {
     var container = document.getElementById("water-list");
     var countEl   = document.getElementById("list-count");
@@ -346,7 +394,6 @@ window.UI = (function () {
       var div = document.createElement("div");
       div.dataset.water = w.waterName;
 
-      /* Status: drives plain-text indicator; border color comes from species */
       var d0  = parseDateStr(w.latestRecord.dateStocked);
       var n0  = d0 ? daysAgo(d0) : null;
       var statusTxt = n0 === null ? ""
@@ -412,23 +459,13 @@ window.UI = (function () {
       { maxZoom: 19 }
     ).addTo(_previewMap);
 
-    /* Glow halo behind the solid marker */
     L.circleMarker([lat, lon], {
-      radius:      14,
-      fillColor:   "#0ea5e9",
-      color:       "none",
-      weight:      0,
-      opacity:     0,
-      fillOpacity: 0.20
+      radius: 14, fillColor: "#0ea5e9", color: "none",
+      weight: 0, opacity: 0, fillOpacity: 0.20
     }).addTo(_previewMap);
-    /* Solid foreground marker */
     L.circleMarker([lat, lon], {
-      radius:      10,
-      fillColor:   "#0ea5e9",
-      color:       "#ffffff",
-      weight:      2,
-      opacity:     1,
-      fillOpacity: 1
+      radius: 10, fillColor: "#0ea5e9", color: "#ffffff",
+      weight: 2, opacity: 1, fillOpacity: 1
     }).addTo(_previewMap);
 
     setTimeout(function () {
@@ -436,7 +473,7 @@ window.UI = (function () {
     }, 100);
   }
 
-  /* ── Moon phase (pure JS Julian Day Number) ─────────────────── */
+  /* ── Moon phase ─────────────────────────────────────────────── */
 
   function getMoonPhase(dateStr) {
     var date = parseDateStr(dateStr);
@@ -464,7 +501,7 @@ window.UI = (function () {
     return { name: names[idx], emoji: emojis[idx], index: idx };
   }
 
-  /* ── Metric card builders ────────────────────────────────────── */
+  /* ── Metric cards ───────────────────────────────────────────── */
 
   function _hexToRgba(hex, alpha) {
     var r = parseInt(hex.slice(1, 3), 16);
@@ -523,7 +560,6 @@ window.UI = (function () {
     var r   = waterObj.latestRecord;
     var all = waterObj.allEvents;
 
-    // FRESHNESS — full bar when fresh, empties as time passes
     var d0           = parseDateStr(r.dateStocked);
     var days         = d0 ? daysAgo(d0) : null;
     var freshnessVal = days === null ? "No data"
@@ -534,7 +570,6 @@ window.UI = (function () {
                      : days < 0       ? 1
                      :                  Math.max(0, 1 - days / 30);
 
-    // FREQUENCY — frequent = full bar, rare = empty
     var freqVal = all.length <= 1 ? "First stocking" : "No data";
     var freqPct = 0;
     if (all.length >= 2) {
@@ -551,13 +586,11 @@ window.UI = (function () {
       }
     }
 
-    // PLANT SIZE — count relative to max event for this water
     var maxCount = 0;
     all.forEach(function (e) { if (e.fishCount) maxCount = Math.max(maxCount, Number(e.fishCount)); });
     var sizeVal = r.fishCount ? Number(r.fishCount).toLocaleString() + " fish" : "Not reported by agency";
     var sizePct = (r.fishCount && maxCount > 0) ? Number(r.fishCount) / maxCount : null;
 
-    // FISH DENSITY — relative to 5 fish/acre benchmark
     var densVal = "Data pending";
     var densPct = null;
     if (r.fishCount && r.acreage && Number(r.acreage) > 0) {
@@ -566,8 +599,7 @@ window.UI = (function () {
       densPct = Math.min(1, fpa / 5);
     }
 
-    // TEMP SUITABILITY — trout/salmon are cold-water sensitive; warm-water species inverse
-    var month     = new Date().getMonth() + 1; // 1=Jan, 12=Dec
+    var month     = new Date().getMonth() + 1;
     var sp        = (r.species || "").toLowerCase();
     var isCold    = sp.includes("trout") || sp.includes("salmon");
     var isWarm    = sp.includes("catfish") || sp.includes("bass");
@@ -584,7 +616,6 @@ window.UI = (function () {
       tempColor = "#94a3b8"; tempVal = "Varies by species"; tempPct = 0.5;
     }
 
-    // ANGLER PRESSURE — recency × 0.7 + event count factor × 0.3
     var recencyFactor = (days !== null && days >= 0) ? Math.max(0, 1 - days / 14) : 0.5;
     var eventFactor   = Math.min(1, all.length / 5);
     var pressureScore = recencyFactor * 0.7 + eventFactor * 0.3;
@@ -602,7 +633,7 @@ window.UI = (function () {
              "Based on recency and frequency");
   }
 
-  /* ── Moon widget (column 2, above map) ──────────────────────── */
+  /* ── Moon widget ────────────────────────────────────────────── */
 
   function _buildMoonWidget(waterObj) {
     var today     = new Date();
@@ -623,11 +654,11 @@ window.UI = (function () {
     if (waterObj) {
       var stockMoon = getMoonPhase(waterObj.latestRecord.dateStocked);
       if (stockMoon.name !== todayMoon.name) {
-        var stockDate      = parseDateStr(waterObj.latestRecord.dateStocked);
-        var stockShortLbl  = stockDate
+        var stockDate     = parseDateStr(waterObj.latestRecord.dateStocked);
+        var stockShortLbl = stockDate
           ? stockDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
           : "";
-        var stockFullLbl   = stockDate
+        var stockFullLbl  = stockDate
           ? stockDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" })
           : "";
         rightSide = '<div class="moon-widget-side moon-widget-side--right">'
@@ -642,7 +673,7 @@ window.UI = (function () {
     return leftSide + rightSide;
   }
 
-  /* ── Update column 2 (moon widget + preview map + metric cards) ─ */
+  /* ── Update column 2 ────────────────────────────────────────── */
 
   function _updatePreviewColumn(waterObj, onOpenFullMap) {
     _destroyPreviewMap();
@@ -712,7 +743,6 @@ window.UI = (function () {
       if (sec && sec.classList.contains("collapsible--notoggle")) return;
       btn.addEventListener("click", function () {
         var body = sec.querySelector(".collapsible-body");
-
         if (sec.classList.contains("is-collapsed")) {
           sec.classList.remove("is-collapsed");
           body.style.maxHeight = body.scrollHeight + "px";
@@ -736,7 +766,6 @@ window.UI = (function () {
   /* ── Render column 3 detail panel ──────────────────────────── */
 
   function renderWaterDetail(waterObj, onOpenFullMap) {
-    /* Always refresh column 2 (preview map + metric strip) */
     _updatePreviewColumn(waterObj, onOpenFullMap);
 
     var placeholder = document.getElementById("detail-placeholder");
@@ -761,7 +790,6 @@ window.UI = (function () {
 
     var html = "";
 
-    /* ── Column 3 header: name, county, status dot, water-type pill, distance, alert button ── */
     var countyLine   = (waterObj.county || "—") + ", California";
     var typePillHtml = waterObj.waterType
       ? '<div class="detail-col-pills"><span class="water-type-pill">' + waterObj.waterType + "</span></div>"
@@ -780,16 +808,14 @@ window.UI = (function () {
          +  distHtml
          +  '<button class="detail-alert-btn" id="detail-alert-btn"><i data-lucide="bell"></i> Get Alert</button>';
 
-    /* ── Latest Stocking collapsible ── */
     var stockingContent = "";
-
     var d0     = parseDateStr(r.dateStocked);
     var dLabel = d0 ? d0.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—";
     var n0     = d0 ? daysAgo(d0) : null;
-    var agoTxt = n0 === null  ? ""
-               : n0 === 0    ? "today"
-               : n0 === 1    ? "1 day ago"
-               : n0  <  0    ? "upcoming"
+    var agoTxt = n0 === null ? ""
+               : n0 === 0   ? "today"
+               : n0 === 1   ? "1 day ago"
+               : n0  <  0   ? "upcoming"
                :               n0 + " days ago";
 
     stockingContent += _fieldRow("Date",
@@ -814,9 +840,9 @@ window.UI = (function () {
       if (!hasCountSize) stockingContent += '<hr class="field-divider" />';
       stockingContent += _fieldRow("Acreage", Number(r.acreage).toLocaleString() + " acres");
       if (r.fishCount) {
-        var fpa = (Number(r.fishCount) / Number(r.acreage)).toFixed(2);
+        var fpaD = (Number(r.fishCount) / Number(r.acreage)).toFixed(2);
         stockingContent += _fieldRow("Fish / Acre",
-          fpa + ' <span class="field-calc">(' + Number(r.fishCount).toLocaleString() + " ÷ " + Number(r.acreage).toLocaleString() + ")</span>"
+          fpaD + ' <span class="field-calc">(' + Number(r.fishCount).toLocaleString() + " ÷ " + Number(r.acreage).toLocaleString() + ")</span>"
         );
       }
     }
@@ -829,7 +855,6 @@ window.UI = (function () {
 
     html += _buildCollapsible("det-stocking", "droplets", "Latest Stocking", stockingContent);
 
-    /* ── Regulations — always shown; static CA defaults when no per-water data ── */
     var regsContent = "";
     regsContent += _fieldRow("LICENSE",
       'Required, age 16+'
@@ -856,7 +881,6 @@ window.UI = (function () {
       + '<p class="regs-disclaimer">Default statewide rules shown. Always verify at wildlife.ca.gov before fishing.</p>';
     html += _buildCollapsible("det-regs", "shield", "Regulations", regsContent);
 
-    /* ── Water Details — always shown, collapsed by default; "—" when no data ── */
     var waterDetailsContent = "";
     var _wdField = function(label, val) {
       if (val) return _fieldRow(label, val);
@@ -876,7 +900,6 @@ window.UI = (function () {
     html += _buildCollapsible("det-water", "map-pin", "Water Details", waterDetailsContent,
       { startCollapsed: true });
 
-    /* ── Fishing Tips — always expanded, no toggle ── */
     var tip      = _getTip(r.species);
     var tipTitle = "Fishing Tips" + (r.species ? " · " + r.species : "");
     html += _buildCollapsible("det-tips", "lightbulb", tipTitle,
@@ -884,19 +907,18 @@ window.UI = (function () {
       { noToggle: true }
     );
 
-    /* ── Stocking History (only if >1 event; collapsed when <3 events) ── */
     if (all.length > 1) {
       var histContent  = '<div class="timeline-wrap">';
       var latestSpecies = r.species || "";
 
       all.forEach(function (evt, idx) {
-        var evtDate      = parseDateStr(evt.dateStocked);
-        var evtLabel     = evtDate
+        var evtDate  = parseDateStr(evt.dateStocked);
+        var evtLabel = evtDate
           ? evtDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
           : "—";
-        var evtColor     = speciesColor(evt.species);
-        var isLast       = (idx === all.length - 1);
-        var showSpecies  = (evt.species || "") !== latestSpecies;
+        var evtColor    = speciesColor(evt.species);
+        var isLast      = (idx === all.length - 1);
+        var showSpecies = (evt.species || "") !== latestSpecies;
 
         histContent +=
           '<div class="timeline-item">'
@@ -926,7 +948,6 @@ window.UI = (function () {
       );
     }
 
-    /* ── Data source footer ── */
     html +=
       '<div class="detail-source-footer">'
       +   'Data sourced from <a href="https://data.cnra.ca.gov" target="_blank" rel="noopener">CDFW Open Data Portal</a>. '
@@ -934,11 +955,8 @@ window.UI = (function () {
       + "</div>";
 
     panel.innerHTML = html;
-
-    /* Wire collapsible headers */
     _wireCollapsibles(panel);
 
-    /* Wire alert button */
     var alertBtnEl = panel.querySelector("#detail-alert-btn");
     if (alertBtnEl) {
       alertBtnEl.innerHTML = '<i data-lucide="bell"></i> Get Alert for ' + (waterObj.waterName || "this Water");
@@ -947,11 +965,10 @@ window.UI = (function () {
       };
     }
 
-    /* Render Lucide icons */
     if (window.lucide) lucide.createIcons();
   }
 
-  /* ── Fly main map to coordinates ────────────────────────────── */
+  /* ── Fly main map ───────────────────────────────────────────── */
 
   function flyTo(lat, lon, zoom) {
     if (_map) _map.flyTo([lat, lon], zoom || 13);
@@ -987,7 +1004,6 @@ window.UI = (function () {
 
     _streetsLayer.addTo(_map);
 
-    /* Tile selector panel (bottom-right) */
     var tileControl = L.control({ position: "bottomright" });
     tileControl.onAdd = function () {
       var panel = L.DomUtil.create("div", "map-tile-panel");
@@ -1048,7 +1064,8 @@ window.UI = (function () {
     };
     legend.addTo(_map);
 
-    _addPins(records);
+    /* Initial plot — fit bounds only on first load */
+    _addPins(records, true);
   }
 
   function _legendItem(color, label) {
@@ -1057,7 +1074,7 @@ window.UI = (function () {
       + label + "</div>";
   }
 
-  function _addPins(records) {
+  function _addPins(records, doFitBounds) {
     if (!_markersLayer) return;
     _markersLayer.clearLayers();
     var bounds = [];
@@ -1096,15 +1113,16 @@ window.UI = (function () {
       bounds.push([r.lat, r.lon]);
     });
 
-    /* On mobile the container height is set by JS after initMap is called,
-       so fitBounds runs before Leaflet knows the real dimensions and picks
-       a wrong center (Idaho/Montana). Skip it — initMap already called
-       setView([37.5, -119.5], 6) which is the correct California view.
-       invalidateSize() fired by resizeMap() will correct the tile layout. */
-    if (bounds.length > 0 && window.innerWidth >= 768) {
+    if (doFitBounds && bounds.length > 0 && window.innerWidth >= 768) {
       try { _map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 }); }
-      catch (e) { /* ignore edge-case fitBounds errors */ }
+      catch (e) {}
     }
+  }
+
+  /* Update map markers without re-fitting bounds */
+  function updateMapMarkers(records) {
+    if (!_map) return;
+    _addPins(records, false);
   }
 
   function resizeMap() {
@@ -1223,6 +1241,7 @@ window.UI = (function () {
     renderWaterDetail:    renderWaterDetail,
     flyTo:                flyTo,
     initMap:              initMap,
+    updateMapMarkers:     updateMapMarkers,
     resizeMap:            resizeMap,
     renderCalendar:       renderCalendar,
     renderCalendarDetail: renderCalendarDetail,

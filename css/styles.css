@@ -2150,6 +2150,100 @@ html.dark-mode .tl-dot          { border-color: #1e293b; box-shadow: 0 0 0 1.5px
 /* Fishing tips */
 html.dark-mode .tip-text { color: #e2e8f0; }
 
+/* ── Map filter controls (search input) ─────────────────────── */
+#map-search {
+  width: 100%;
+  padding: 0.55rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.93rem;
+  font-weight: 600;
+  background: var(--white);
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+#map-search:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
+}
+
+/* Compact map controls on mobile (keep in one row) */
+@media (max-width: 767px) {
+  .map-controls {
+    flex-wrap: nowrap !important;
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.45rem !important;
+    overflow-x: auto;
+  }
+  .map-controls .filter-group {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+  .map-controls .filter-group label {
+    display: none;
+  }
+  .map-controls .filter-group select,
+  #map-search {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.6rem;
+  }
+  .map-controls .filter-actions {
+    flex-shrink: 0;
+  }
+  .map-controls .btn-reset {
+    white-space: nowrap;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+  }
+}
+
+/* ── Dark mode: map search input ────────────────────────────── */
+html.dark-mode #map-search {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+html.dark-mode #map-search:focus {
+  border-color: var(--teal);
+}
+
+/* ── Dark mode scrollbars ───────────────────────────────────── */
+
+/* Firefox */
+html.dark-mode .list-col-waters,
+html.dark-mode .list-col-detail {
+  scrollbar-color: #4a5568 #1a2332;
+  scrollbar-width: thin;
+}
+
+/* Chrome / Safari / Edge */
+html.dark-mode .list-col-waters::-webkit-scrollbar,
+html.dark-mode .list-col-detail::-webkit-scrollbar {
+  width: 7px;
+}
+
+html.dark-mode .list-col-waters::-webkit-scrollbar-track,
+html.dark-mode .list-col-detail::-webkit-scrollbar-track {
+  background: #1a2332;
+  border-radius: 4px;
+}
+
+html.dark-mode .list-col-waters::-webkit-scrollbar-thumb,
+html.dark-mode .list-col-detail::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 4px;
+  border: 1px solid #1a2332;
+}
+
+html.dark-mode .list-col-waters::-webkit-scrollbar-thumb:hover,
+html.dark-mode .list-col-detail::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
 /* ── Utilities ──────────────────────────────────────────────── */
 .visually-hidden {
   position: absolute;

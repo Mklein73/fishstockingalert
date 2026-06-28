@@ -2,34 +2,39 @@
  * app.js — application coordinator
  *
  * Responsibilities:
- *  - Tab switching (List / Map / Calendar)
- *  - List view: filter state, deduplication, water selection, geolocation
- *  - Map tab: lazy initialization, flyTo from detail panel
- *  - Calendar tab: month navigation
+ *  - Tab switching (Home / Map / Calendar)
+ *  - Shared filter state: filterCounty, filterSearch, filter7days
+ *    Both Home and Map tab controls write to the same state variables.
+ *    applyFilters() syncs both sets of controls and re-renders both views.
+ *  - Water selection and detail panel
+ *  - Geolocation
+ *  - Calendar
  *  - Dark mode toggle
  */
 (function () {
 
   var activeState = window.CaliforniaState;
 
-  /* ── App state ──────────────────────────────────────────────── */
+  /* ── Shared filter state ────────────────────────────────────── */
   var allRecords        = [];
+  var filterCounty      = "";        // synced across Home + Map county selects
+  var filterSearch      = "";        // synced across list-search + map-search
   var filter7days       = false;
   var mapReady          = false;
   var calYear           = new Date().getFullYear();
   var calMonth          = new Date().getMonth();
-  var selectedWaterName = null;   // waterName of currently highlighted card
-  var currentWaters     = [];     // deduplicated list after filters
-  var geoCoords         = null;   // { lat, lon } when permission granted
-  var geoActive         = false;  // true while geo filter is applied
+  var selectedWaterName = null;
+  var currentWaters     = [];
+  var geoCoords         = null;
+  var geoActive         = false;
 
   var TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
 
-  /* ── Haversine distance (miles) ─────────────────────────────── */
+  /* ── Haversine ──────────────────────────────────────────────── */
 
   function haversine(lat1, lon1, lat2, lon2) {
-    var R    = 3958.8; // Earth radius in miles
+    var R    = 3958.8;
     var dLat = (lat2 - lat1) * Math.PI / 180;
     var dLon = (lon2 - lon1) * Math.PI / 180;
     var a    = Math.sin(dLat / 2) * Math.sin(dLat / 2)
@@ -38,19 +43,14 @@
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  /* ── Mobile map layout (JS-driven, iOS Safari compatible) ─────── */
+  /* ── Mobile map layout ──────────────────────────────────────── */
 
   var _mobileMapListenerAttached = false;
 
-  /* Use visualViewport.height when available — it tracks the actual visible
-     area in iOS Safari as the URL bar shows/hides. window.innerHeight does not. */
   function _getVH() {
     return (window.visualViewport ? window.visualViewport.height : window.innerHeight);
   }
 
-  /* Safety net: keep footer hidden whenever map tab is active on mobile.
-     Called on resize/visualViewport-resize so iOS toolbar changes can't
-     re-expose the fixed footer. */
   function _ensureFooterHidden() {
     if (window.innerWidth >= 768) return;
     var footer = document.querySelector(".site-footer");
@@ -67,29 +67,31 @@
   }
 
   function _applyMobileMapLayout() {
-    var header     = document.querySelector(".site-header");
-    var statsBar   = document.getElementById("stats-bar");
-    var tabNav     = document.getElementById("tab-nav");
-    var viewMap    = document.getElementById("view-map");
-    var leafletMap = document.getElementById("leaflet-map");
-    var footer     = document.querySelector(".site-footer");
+    var header      = document.querySelector(".site-header");
+    var statsBar    = document.getElementById("stats-bar");
+    var tabNav      = document.getElementById("tab-nav");
+    var viewMap     = document.getElementById("view-map");
+    var leafletMap  = document.getElementById("leaflet-map");
+    var footer      = document.querySelector(".site-footer");
+    var mapControls = document.getElementById("map-controls");
 
-    /* visualViewport.height reflects the true visible area in iOS Safari;
-       window.innerHeight can include space behind the dynamic URL bar. */
     var vh = _getVH();
     var chromeHeight =
-      (header   ? header.offsetHeight   : 0) +
-      (statsBar ? statsBar.offsetHeight  : 0) +
-      (tabNav   ? tabNav.offsetHeight    : 0);
+      (header      ? header.offsetHeight      : 0) +
+      (statsBar    ? statsBar.offsetHeight    : 0) +
+      (tabNav      ? tabNav.offsetHeight      : 0);
+    var mapCtrlH = mapControls ? mapControls.offsetHeight : 0;
 
     document.documentElement.style.height   = vh + "px";
     document.documentElement.style.overflow = "hidden";
     document.body.style.height              = vh + "px";
     document.body.style.overflow            = "hidden";
 
-    viewMap.style.height    = (vh - chromeHeight) + "px";
+    /* view-map fills everything below the chrome */
+    viewMap.style.height   = (vh - chromeHeight) + "px";
+    /* leaflet-map fills view-map minus the filter bar */
     leafletMap.style.width  = "100%";
-    leafletMap.style.height = "100%";
+    leafletMap.style.height = (vh - chromeHeight - mapCtrlH) + "px";
 
     if (footer) { footer.style.display = "none"; }
 
@@ -99,7 +101,6 @@
       _mobileMapListenerAttached = true;
       window.addEventListener("resize", _onMobileResize);
       window.addEventListener("orientationchange", _onMobileResize);
-      /* visualViewport fires when the iOS toolbar appears/disappears */
       if (window.visualViewport) {
         window.visualViewport.addEventListener("resize", _onMobileResize);
       }
@@ -137,8 +138,9 @@
       if (window.innerWidth < 768) { _applyMobileMapLayout(); }
       if (!mapReady) {
         mapReady = true;
-        UI.initMap(allRecords);
+        UI.initMap(getFilteredMapRecords());
       } else {
+        UI.updateMapMarkers(getFilteredMapRecords());
         UI.resizeMap();
       }
     } else {
@@ -180,7 +182,7 @@
     alert("Email alerts are coming soon! Check back shortly.");
   });
 
-  /* ── Dark mode toggle ───────────────────────────────────────── */
+  /* ── Dark mode ──────────────────────────────────────────────── */
 
   var darkBtn = document.getElementById("btn-dark-mode");
 
@@ -197,16 +199,14 @@
     updateDarkIcon();
   });
 
-  /* ── Build filtered + deduplicated water list ───────────────── */
+  /* ── Build filtered water list for the Home tab ─────────────── */
 
   function getDeduped() {
-    var county          = document.getElementById("filter-county").value;
-    var selectedSpecies = UI.getSelectedSpecies(); // null = all; Set = specific species
-    var searchEl = document.getElementById("list-search");
-    var search   = searchEl ? searchEl.value.trim().toLowerCase() : "";
-    var cutoff   = filter7days ? new Date(TODAY.getTime() - 7 * 86400000) : null;
+    var county          = filterCounty;
+    var selectedSpecies = UI.getSelectedSpecies();
+    var search          = filterSearch.toLowerCase();
+    var cutoff          = filter7days ? new Date(TODAY.getTime() - 7 * 86400000) : null;
 
-    // Apply county / species / date filters to raw records
     var filtered = allRecords.filter(function (r) {
       if (county && r.county !== county) return false;
       if (selectedSpecies !== null && selectedSpecies.size > 0 && !selectedSpecies.has(r.species)) return false;
@@ -217,17 +217,14 @@
       return true;
     });
 
-    // Deduplicate by water name (newest event per water)
     var waters = UI.buildWaterList(filtered);
 
-    // Apply water-name search against the deduped list
     if (search) {
       waters = waters.filter(function (w) {
         return (w.waterName || "").toLowerCase().includes(search);
       });
     }
 
-    // Geo filter
     if (geoActive && geoCoords) {
       waters.forEach(function (w) {
         w.distanceMiles = (w.lat && w.lon)
@@ -244,7 +241,6 @@
         return { waters: within, nearestOnly: false };
       }
 
-      // Nothing within 100 miles — show the single nearest water
       var withCoords = waters.filter(function (w) { return w.distanceMiles !== null; });
       if (withCoords.length === 0) return { waters: [], nearestOnly: false };
       withCoords.sort(function (a, b) { return a.distanceMiles - b.distanceMiles; });
@@ -254,7 +250,26 @@
     return { waters: waters, nearestOnly: false };
   }
 
-  /* ── Select a water and render the detail panel ─────────────── */
+  /* ── Build filtered records for the Map tab ─────────────────── */
+
+  function getFilteredMapRecords() {
+    var selectedSpecies = UI.getSelectedSpecies();
+    var search          = filterSearch.toLowerCase();
+    var cutoff          = filter7days ? new Date(TODAY.getTime() - 7 * 86400000) : null;
+
+    return allRecords.filter(function (r) {
+      if (filterCounty && r.county !== filterCounty) return false;
+      if (selectedSpecies !== null && selectedSpecies.size > 0 && !selectedSpecies.has(r.species)) return false;
+      if (cutoff) {
+        var d = UI.parseDateStr(r.dateStocked);
+        if (!d || d < cutoff) return false;
+      }
+      if (search && !(r.waterName || "").toLowerCase().includes(search)) return false;
+      return true;
+    });
+  }
+
+  /* ── Select a water ─────────────────────────────────────────── */
 
   function selectWater(waterName, waters) {
     selectedWaterName = waterName;
@@ -262,31 +277,48 @@
       return w.waterName === waterName;
     });
 
-    // Update selected highlight in left panel
     document.querySelectorAll(".water-card").forEach(function (card) {
       card.classList.toggle("selected", card.dataset.water === waterName);
     });
 
-    // Scroll selected card into view
     var sel = document.querySelector(".water-card.selected");
     if (sel) sel.scrollIntoView({ block: "nearest", behavior: "smooth" });
 
-    // Render the right panel
     UI.renderWaterDetail(waterObj, function (lat, lon) {
-      // "Open in full map" callback
       switchTab("map");
       setTimeout(function () { UI.flyTo(lat, lon, 13); }, 150);
     });
   }
 
-  /* ── Apply all filters and re-render the left panel ─────────── */
+  /* ── Apply all filters and sync both tabs ───────────────────── */
+
+  function applyFilters() {
+    /* Sync county dropdowns */
+    var listCountyEl = document.getElementById("filter-county");
+    var mapCountyEl  = document.getElementById("map-filter-county");
+    if (listCountyEl && listCountyEl.value !== filterCounty) listCountyEl.value = filterCounty;
+    if (mapCountyEl  && mapCountyEl.value  !== filterCounty) mapCountyEl.value  = filterCounty;
+
+    /* Sync search inputs */
+    var listSearchEl = document.getElementById("list-search");
+    var mapSearchEl  = document.getElementById("map-search");
+    if (listSearchEl && listSearchEl.value !== filterSearch) listSearchEl.value = filterSearch;
+    if (mapSearchEl  && mapSearchEl.value  !== filterSearch) mapSearchEl.value  = filterSearch;
+
+    /* Re-render Home tab list */
+    applyListFilters();
+
+    /* Re-render Map tab markers (if map has been opened) */
+    if (mapReady) {
+      UI.updateMapMarkers(getFilteredMapRecords());
+    }
+  }
 
   function applyListFilters() {
-    var result        = getDeduped();
-    var waters        = result.waters;
-    currentWaters     = waters;
+    var result    = getDeduped();
+    var waters    = result.waters;
+    currentWaters = waters;
 
-    // Update geo UI
     var noResultsBanner = document.getElementById("geo-no-results-banner");
     var geoActiveText   = document.getElementById("geo-active-text");
 
@@ -300,17 +332,14 @@
         : "📍 Waters near you · " + waters.length + " result" + (waters.length !== 1 ? "s" : "");
     }
 
-    // Render left-panel cards
     UI.renderWaterList(waters, selectedWaterName);
 
-    // Wire up card click handlers after render
     document.querySelectorAll(".water-card").forEach(function (card) {
       card.addEventListener("click", function () {
         selectWater(card.dataset.water, waters);
       });
     });
 
-    // Auto-select: keep current selection if still in list; else select first
     var stillExists = waters.some(function (w) { return w.waterName === selectedWaterName; });
     if (!stillExists) {
       if (waters.length > 0) {
@@ -322,7 +351,7 @@
     }
   }
 
-  /* ── Geolocation handlers ───────────────────────────────────── */
+  /* ── Geolocation ────────────────────────────────────────────── */
 
   var geoBanner    = document.getElementById("geo-banner");
   var geoAllowBtn  = document.getElementById("geo-allow-btn");
@@ -342,10 +371,9 @@
           geoActive = true;
           if (geoBanner)    geoBanner.style.display    = "none";
           if (geoActiveBar) geoActiveBar.style.display = "flex";
-          applyListFilters();
+          applyFilters();
         },
         function () {
-          // Permission denied or position unavailable — just hide the banner
           if (geoBanner) geoBanner.style.display = "none";
         }
       );
@@ -367,31 +395,69 @@
       if (geoBanner)    geoBanner.style.display    = "flex";
       var noRes = document.getElementById("geo-no-results-banner");
       if (noRes) noRes.style.display = "none";
-      applyListFilters();
+      applyFilters();
     });
   }
 
-  /* ── Filter event listeners ─────────────────────────────────── */
+  /* ── Filter event listeners — Home tab ──────────────────────── */
 
-  document.getElementById("filter-county").addEventListener("change", applyListFilters);
+  document.getElementById("filter-county").addEventListener("change", function () {
+    filterCounty = this.value;
+    applyFilters();
+  });
 
   var listSearch = document.getElementById("list-search");
-  if (listSearch) listSearch.addEventListener("input", applyListFilters);
+  if (listSearch) {
+    listSearch.addEventListener("input", function () {
+      filterSearch = this.value.trim();
+      applyFilters();
+    });
+  }
 
   document.getElementById("btn-7days").addEventListener("click", function () {
     filter7days = !filter7days;
-    document.getElementById("btn-7days").classList.toggle("active", filter7days);
-    applyListFilters();
+    this.classList.toggle("active", filter7days);
+    applyFilters();
   });
 
   document.getElementById("reset-btn").addEventListener("click", function () {
-    document.getElementById("filter-county").value = "";
+    filterCounty = "";
+    filterSearch = "";
+    filter7days  = false;
     UI.resetSpeciesFilter();
-    if (listSearch) listSearch.value = "";
-    filter7days = false;
     document.getElementById("btn-7days").classList.remove("active");
-    applyListFilters();
+    applyFilters();
   });
+
+  /* ── Filter event listeners — Map tab ───────────────────────── */
+
+  var mapCountyEl = document.getElementById("map-filter-county");
+  if (mapCountyEl) {
+    mapCountyEl.addEventListener("change", function () {
+      filterCounty = this.value;
+      applyFilters();
+    });
+  }
+
+  var mapSearchEl = document.getElementById("map-search");
+  if (mapSearchEl) {
+    mapSearchEl.addEventListener("input", function () {
+      filterSearch = this.value.trim();
+      applyFilters();
+    });
+  }
+
+  var mapResetBtn = document.getElementById("map-reset-btn");
+  if (mapResetBtn) {
+    mapResetBtn.addEventListener("click", function () {
+      filterCounty = "";
+      filterSearch = "";
+      filter7days  = false;
+      UI.resetSpeciesFilter();
+      document.getElementById("btn-7days").classList.remove("active");
+      applyFilters();
+    });
+  }
 
   /* ── Data loading ───────────────────────────────────────────── */
 
@@ -402,14 +468,13 @@
       allRecords  = records;
 
       UI.updateStats(records, activeState.name);
-      UI.populateFilters(records, applyListFilters);
+      UI.populateFilters(records, applyFilters);
       UI.hideSpinner();
 
       document.getElementById("tab-nav").style.display = "flex";
       switchTab("list");
       applyListFilters();
 
-      // Update footer source link to match active state
       var link = document.getElementById("source-link");
       if (link) {
         link.href        = activeState.sourceUrl;
@@ -427,10 +492,6 @@
 
   loadData();
 
-  /* Safety net: footer visibility check on every viewport change.
-     Runs on DOMContentLoaded, window resize, and visualViewport resize
-     so the iOS Safari toolbar appearing/disappearing can never re-expose
-     the fixed footer while the map tab is active. */
   document.addEventListener("DOMContentLoaded", _ensureFooterHidden);
   window.addEventListener("resize", _ensureFooterHidden);
   if (window.visualViewport) {
