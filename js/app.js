@@ -29,7 +29,7 @@
   var geoActive         = false;
 
   /* ── Supabase ──────────────────────────────────────────────── */
-  var SUPA_URL = 'https://usujeptqshjvmsgdqpe.supabase.co';
+  var SUPA_URL = 'https://usujeptqshjvvmsgdqpe.supabase.co';
   var SUPA_KEY = 'sb_publishable_xL0oywu3JPt2ALS8vu2UIQ_bq3OeMIY';
   var _supa    = null;
 
