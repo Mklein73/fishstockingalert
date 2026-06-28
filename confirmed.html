@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Confirmed — Fish Stocking Alert</title>
+  <meta name="description" content="Your email has been confirmed. You'll now receive fish stocking alerts." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+
+  <style>
+    :root {
+      --navy: #0a1628; --teal: #0ea5e9; --teal-dark: #0284c7;
+      --white: #ffffff; --bg: #f5f7fa;
+      --text: #1e293b; --text-muted: #64748b;
+      --border: #e2e8f0; --radius-pill: 999px; --radius-lg: 16px;
+    }
+    html.dark-mode {
+      --bg: #0f172a; --white: #1e293b;
+      --text: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+      display: flex; flex-direction: column;
+    }
+    .site-header {
+      background: var(--navy); height: 64px;
+      display: flex; align-items: center; padding: 0 1.5rem;
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      width: 100%; max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.6rem; }
+    .logo-icon { font-size: 1.4rem; }
+    .logo-text { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; text-decoration: none; }
+    .logo-accent { color: var(--teal); }
+    .btn-dark-mode {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%; font-size: 1.1rem; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff; transition: border-color 0.15s;
+    }
+    .btn-dark-mode:hover { border-color: var(--teal); }
+
+    .page-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      padding: 3rem 2.5rem; max-width: 480px; width: 100%;
+      text-align: center;
+    }
+    .icon { font-size: 3.5rem; margin-bottom: 1.25rem; }
+    .check {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 72px; height: 72px; border-radius: 50%;
+      background: #d1fae5; margin-bottom: 1.25rem;
+    }
+    .check svg { width: 36px; height: 36px; }
+    h1 { font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem; letter-spacing: -0.3px; }
+    p { font-size: 1rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 2rem; font-weight: 500; }
+    .btn {
+      display: inline-block; padding: 0.8rem 2rem;
+      background: var(--teal); color: #fff;
+      border-radius: var(--radius-pill); text-decoration: none;
+      font-size: 0.95rem; font-weight: 700; transition: background 0.15s;
+    }
+    .btn:hover { background: var(--teal-dark); }
+    .secondary-link {
+      display: block; margin-top: 1.25rem;
+      color: var(--text-muted); font-size: 0.875rem; font-weight: 500;
+      text-decoration: none; transition: color 0.15s;
+    }
+    .secondary-link:hover { color: var(--teal); }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <div class="card">
+      <div class="check">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 18l7 7 13-14" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>Email confirmed!</h1>
+      <p>You're all set. You'll receive a stocking alert the next time your selected water gets stocked — no spam, just the fish.</p>
+      <a href="app.html" class="btn">View stocking data</a>
+      <a href="index.html" class="secondary-link">Back to homepage</a>
+    </div>
+  </main>
+
+  <script>
+    var darkBtn = document.getElementById('btn-dark-mode');
+    function updateIcon() {
+      darkBtn.textContent = document.documentElement.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+    updateIcon();
+    darkBtn.addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark-mode');
+      localStorage.setItem('fsa-theme', isDark ? 'dark' : 'light');
+      updateIcon();
+    });
+  </script>
+</body>
+</html>
