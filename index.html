@@ -215,8 +215,8 @@
         <div class="step-card">
           <div class="step-num">2</div>
           <div class="step-icon-wrap">
-            <!-- sliders -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <!-- fish -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.46-3.44 6-7 6s-7.06-2.54-8.5-6z"/><path d="M18 12v.5"/><path d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 3.5-.08 6.65 2.27 8.5C6.14 18.06 8.86 19 12 18.59"/><path d="m12.2 5.2-1.41 1.41"/><path d="m12 13 1 1"/></svg>
           </div>
           <h3 class="step-title">Set Your Species</h3>
           <p class="step-desc">Choose trout, bass, catfish, salmon — or all of them. We'll only notify you about what you fish.</p>
@@ -303,7 +303,7 @@
   <section class="cta-section">
     <div class="cta-glow"></div>
     <div class="section-inner cta-inner">
-      <div class="cta-badge">🔔 Coming Soon</div>
+      <div class="cta-badge">🔔 Free Email Alerts</div>
       <h2 class="cta-headline">Be First. Every Single Time.</h2>
       <p class="cta-sub">
         Join anglers who will never miss a stocking again. Free email alerts, no spam, unsubscribe anytime.
@@ -312,7 +312,7 @@
         <button class="btn-cta-big" id="cta-get-alerts">Get Free Alerts</button>
         <a href="app.html" class="btn-cta-outline">Explore Data Now →</a>
       </div>
-      <p class="cta-fine">Alert signup launching soon. Data browsing is available right now — no account needed.</p>
+      <p class="cta-fine">Free &middot; No spam &middot; Unsubscribe anytime</p>
     </div>
   </section>
 
@@ -339,6 +339,48 @@
     </div>
   </footer>
 
+  <!-- ── Alert signup modal ──────────────────────────────────── -->
+  <div id="alert-modal" class="alert-modal-overlay" role="dialog" aria-modal="true" aria-label="Get stocking alerts" style="display:none">
+    <div class="alert-modal-box">
+      <button class="alert-modal-close" id="alert-modal-close" aria-label="Close">&times;</button>
+
+      <!-- Step 1: Water search -->
+      <div id="alert-step-water">
+        <div class="alert-modal-icon">&#128276;</div>
+        <h2 class="alert-modal-title">Get Stocking Alerts</h2>
+        <p class="alert-modal-sub">Enter the water you fish and we'll notify you the moment it's stocked.</p>
+        <div class="alert-error" id="alert-error-water" style="display:none"></div>
+        <div class="alert-water-search-wrap">
+          <input type="text" id="alert-water-search" class="alert-water-search" placeholder="e.g. Lake Crowley, Big Bear Lake…" autocomplete="off" />
+        </div>
+        <button class="alert-submit-btn" id="alert-water-next">Continue &#8594;</button>
+        <p class="alert-fine">Free &middot; No spam &middot; Unsubscribe anytime</p>
+      </div>
+
+      <!-- Step 2: Email input -->
+      <div id="alert-step-email" style="display:none">
+        <div class="alert-modal-icon">&#128276;</div>
+        <h2 class="alert-modal-title">Get Alert for <span id="alert-water-display" class="alert-water-name"></span></h2>
+        <p class="alert-modal-sub">Enter your email — we'll notify you the moment this water is stocked.</p>
+        <div class="alert-error" id="alert-error" style="display:none"></div>
+        <label class="alert-email-label" for="alert-email-input">Email address</label>
+        <input type="email" id="alert-email-input" class="alert-email-input" placeholder="your@email.com" autocomplete="email" />
+        <button class="alert-submit-btn" id="alert-submit-btn">Get Free Alerts</button>
+        <p class="alert-fine">No spam &middot; Unsubscribe anytime &middot; Free forever</p>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div id="alert-step-done" style="display:none">
+        <div class="alert-modal-icon">&#10003;</div>
+        <h2 class="alert-modal-title">You're In!</h2>
+        <p class="alert-done-msg" id="alert-done-msg"></p>
+        <button class="alert-close-btn" id="alert-done-close">Done</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     var darkBtn = document.getElementById('btn-dark-mode');
     function updateIcon() {
@@ -351,18 +393,218 @@
       updateIcon();
     });
 
-    function alertSoon() {
-      alert('Email alerts are coming soon! The data view is live right now — click "Explore California Data" to browse stocking records.');
-    }
-    document.getElementById('btn-get-alerts').addEventListener('click', alertSoon);
-    document.getElementById('cta-get-alerts').addEventListener('click', alertSoon);
-
     document.querySelectorAll('a[href="#how-it-works"]').forEach(function(a) {
       a.addEventListener('click', function(e) {
         e.preventDefault();
         document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
       });
     });
+  </script>
+
+  <script>
+    /* ── Alert modal (homepage standalone) ────────────────────── */
+    (function() {
+      var SUPA_URL = 'https://usujeptqshjvvmsgdqpe.supabase.co';
+      var SUPA_KEY = 'sb_publishable_xL0oywu3JPt2ALS8vu2UIQ_bq3OeMIY';
+      var _modalWater = null;
+      var _supa = null;
+
+      function _getSupa() {
+        if (!_supa && window.supabase) {
+          _supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+        }
+        return _supa;
+      }
+
+      function openAlertModal(waterName) {
+        var overlay    = document.getElementById('alert-modal');
+        var stepWater  = document.getElementById('alert-step-water');
+        var stepEmail  = document.getElementById('alert-step-email');
+        var stepDone   = document.getElementById('alert-step-done');
+        var waterDisp  = document.getElementById('alert-water-display');
+        var emailInput = document.getElementById('alert-email-input');
+        var errorEl    = document.getElementById('alert-error');
+        var waterInput = document.getElementById('alert-water-search');
+        var errorWater = document.getElementById('alert-error-water');
+        var submitBtn  = document.getElementById('alert-submit-btn');
+
+        _modalWater = waterName || null;
+
+        if (errorEl)    { errorEl.textContent = '';    errorEl.style.display = 'none'; }
+        if (errorWater) { errorWater.textContent = ''; errorWater.style.display = 'none'; }
+        if (emailInput) emailInput.value = '';
+        if (submitBtn)  { submitBtn.disabled = false; submitBtn.textContent = 'Get Free Alerts'; }
+
+        if (_modalWater) {
+          if (stepWater) stepWater.style.display = 'none';
+          if (stepEmail) stepEmail.style.display = 'block';
+          if (stepDone)  stepDone.style.display  = 'none';
+          if (waterDisp) waterDisp.textContent = _modalWater;
+          setTimeout(function() { if (emailInput) emailInput.focus(); }, 120);
+        } else {
+          if (stepWater) stepWater.style.display = 'block';
+          if (stepEmail) stepEmail.style.display = 'none';
+          if (stepDone)  stepDone.style.display  = 'none';
+          if (waterInput) waterInput.value = '';
+          setTimeout(function() { if (waterInput) waterInput.focus(); }, 120);
+        }
+
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeAlertModal() {
+        var overlay = document.getElementById('alert-modal');
+        if (overlay) overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        _modalWater = null;
+      }
+
+      function _selectWater() {
+        var waterInput = document.getElementById('alert-water-search');
+        var errorWater = document.getElementById('alert-error-water');
+        var waterVal   = waterInput ? waterInput.value.trim() : '';
+
+        if (!waterVal) {
+          if (errorWater) { errorWater.textContent = 'Please enter a water name.'; errorWater.style.display = 'block'; }
+          return;
+        }
+
+        _modalWater = waterVal;
+        var stepWater = document.getElementById('alert-step-water');
+        var stepEmail = document.getElementById('alert-step-email');
+        var waterDisp = document.getElementById('alert-water-display');
+        var errorEl   = document.getElementById('alert-error');
+
+        if (stepWater) stepWater.style.display = 'none';
+        if (stepEmail) stepEmail.style.display = 'block';
+        if (waterDisp) waterDisp.textContent = waterVal;
+        if (errorEl)   { errorEl.textContent = ''; errorEl.style.display = 'none'; }
+
+        var emailInput = document.getElementById('alert-email-input');
+        setTimeout(function() { if (emailInput) emailInput.focus(); }, 80);
+      }
+
+      async function _submitAlert() {
+        var emailEl   = document.getElementById('alert-email-input');
+        var errorEl   = document.getElementById('alert-error');
+        var submitBtn = document.getElementById('alert-submit-btn');
+        var stepEmail = document.getElementById('alert-step-email');
+        var stepDone  = document.getElementById('alert-step-done');
+        var doneMsg   = document.getElementById('alert-done-msg');
+
+        var email = emailEl ? emailEl.value.trim() : '';
+
+        if (!email || email.indexOf('@') === -1) {
+          if (errorEl) { errorEl.textContent = 'Please enter a valid email address.'; errorEl.style.display = 'block'; }
+          return;
+        }
+        if (!_modalWater) {
+          if (errorEl) { errorEl.textContent = 'Please select a water first.'; errorEl.style.display = 'block'; }
+          return;
+        }
+
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing you up…'; }
+        if (errorEl)   errorEl.style.display = 'none';
+
+        try {
+          var supa = _getSupa();
+          if (!supa) throw new Error('Could not connect. Please try again.');
+
+          var result = await supa.rpc('signup_for_alert', {
+            p_email:      email,
+            p_water_name: _modalWater,
+            p_state:      'CA'
+          });
+
+          if (result.error) throw result.error;
+          var data = result.data;
+
+          if (data && data.is_new && data.confirmation_token) {
+            try {
+              await fetch('https://fishstockingalert.com/api/confirm-email', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email:              email,
+                  confirmation_token: data.confirmation_token,
+                  water_name:         _modalWater
+                })
+              });
+            } catch (_) { /* silent — worker handles delivery */ }
+          }
+
+          if (stepEmail) stepEmail.style.display = 'none';
+          if (stepDone)  stepDone.style.display  = 'block';
+
+          if (doneMsg) {
+            if (data && data.is_new) {
+              doneMsg.innerHTML =
+                'Check <strong>' + email + '</strong> for a confirmation link. '
+                + "Once confirmed, you'll get alerts whenever <strong>"
+                + _modalWater + '</strong> is stocked.';
+            } else {
+              doneMsg.innerHTML =
+                '<strong>' + _modalWater + '</strong> has been added to your alert list. '
+                + "You'll be notified the next time it's stocked.";
+            }
+          }
+        } catch (err) {
+          if (errorEl) {
+            errorEl.textContent = 'Something went wrong. Please try again.';
+            errorEl.style.display = 'block';
+          }
+          console.error('[alert signup]', err);
+        } finally {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Get Free Alerts'; }
+        }
+      }
+
+      /* Wire events */
+      var overlay    = document.getElementById('alert-modal');
+      var closeBtn   = document.getElementById('alert-modal-close');
+      var nextBtn    = document.getElementById('alert-water-next');
+      var waterInput = document.getElementById('alert-water-search');
+      var emailInput = document.getElementById('alert-email-input');
+      var submitBtn  = document.getElementById('alert-submit-btn');
+      var doneClose  = document.getElementById('alert-done-close');
+
+      if (closeBtn)  closeBtn.addEventListener('click', closeAlertModal);
+      if (doneClose) doneClose.addEventListener('click', closeAlertModal);
+      if (nextBtn)   nextBtn.addEventListener('click', _selectWater);
+      if (submitBtn) submitBtn.addEventListener('click', _submitAlert);
+
+      if (overlay) {
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay) closeAlertModal();
+        });
+      }
+
+      if (waterInput) {
+        waterInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') _selectWater();
+          if (e.key === 'Escape') closeAlertModal();
+        });
+      }
+
+      if (emailInput) {
+        emailInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') _submitAlert();
+          if (e.key === 'Escape') closeAlertModal();
+        });
+      }
+
+      document.addEventListener('keydown', function(e) {
+        var modal = document.getElementById('alert-modal');
+        if (e.key === 'Escape' && modal && modal.style.display !== 'none') closeAlertModal();
+      });
+
+      window.openAlertModal = openAlertModal;
+
+      document.getElementById('btn-get-alerts').addEventListener('click', function() { openAlertModal(null); });
+      document.getElementById('cta-get-alerts').addEventListener('click', function() { openAlertModal(null); });
+
+    })();
   </script>
 
 </body>

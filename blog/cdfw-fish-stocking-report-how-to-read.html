@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CDFW Fish Stocking Report: How to Read It and Plan Your Trip | Fish Stocking Alert</title>
+  <meta name="description" content="What the CDFW fish stocking report actually shows, how often it updates, what each column means, and how to turn it into a real trip plan." />
+  <link rel="canonical" href="https://fishstockingalert.com/blog/cdfw-fish-stocking-report-how-to-read.html" />
+
+  <!-- Open Graph / SEO -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CDFW Fish Stocking Report: How to Read It and Plan Your Trip" />
+  <meta property="og:description" content="What the CDFW fish stocking report actually shows, how often it updates, what each column means, and how to turn it into a real trip plan." />
+  <meta property="og:url" content="https://fishstockingalert.com/blog/cdfw-fish-stocking-report-how-to-read.html" />
+  <meta property="og:site_name" content="Fish Stocking Alert" />
+
+  <!-- Inter font (matches main site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Apply saved dark mode preference before first paint (same key as main site) -->
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+
+  <style>
+    /* Brand tokens (identical to css/styles.css) */
+    :root {
+      --navy:       #0a1628;
+      --navy-mid:   #152339;
+      --teal:       #0ea5e9;
+      --teal-dark:  #0284c7;
+      --teal-light: #e0f2fe;
+      --white:      #ffffff;
+      --bg:         #f5f7fa;
+      --text:       #1e293b;
+      --text-muted: #64748b;
+      --border:     #e2e8f0;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md:  0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
+      --radius-sm:  8px;
+      --radius-md:  12px;
+      --radius-lg:  16px;
+      --radius-pill:999px;
+    }
+
+    html.dark-mode {
+      --bg:         #0f172a;
+      --white:      #1e293b;
+      --text:       #f1f5f9;
+      --text-muted: #94a3b8;
+      --border:     #334155;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.35);
+      --shadow-md:  0 4px 12px rgba(0,0,0,0.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* Site header (matches main site) */
+    .site-header {
+      background: var(--navy);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .logo-icon { font-size: 1.4rem; line-height: 1; }
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+    .logo-accent { color: var(--teal); }
+    .header-actions { display: flex; align-items: center; gap: 1.75rem; flex-shrink: 0; }
+    .btn-alerts {
+      background: var(--teal);
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1.35rem;
+      border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-alerts:hover  { background: var(--teal-dark); }
+    .btn-alerts:active { transform: scale(0.97); }
+    .btn-dark-mode {
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%;
+      font-size: 1.1rem;
+      line-height: 1;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      flex-shrink: 0;
+      color: var(--white);
+    }
+    .btn-dark-mode:hover { border-color: var(--teal); background: rgba(14,165,233,0.1); }
+
+    /* Article layout */
+    .article-wrap { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 1.25rem 0 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--teal); }
+    .article-eyebrow {
+      display: inline-block;
+      color: var(--teal-dark);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 1.5rem 0 0.75rem;
+    }
+    html.dark-mode .article-eyebrow { color: var(--teal); }
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      color: var(--text);
+      margin-bottom: 0.9rem;
+    }
+    .article-dek {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.75rem;
+    }
+    .article-meta .dot { color: var(--teal); }
+    .article-body { font-size: 1.06rem; line-height: 1.75; }
+    .article-body h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin: 2.4rem 0 0.9rem;
+      padding-left: 0.85rem;
+      border-left: 4px solid var(--teal);
+      line-height: 1.25;
+    }
+    .article-body h3 { font-size: 1.18rem; font-weight: 700; margin: 1.6rem 0 0.6rem; }
+    .article-body p { margin-bottom: 1.1rem; }
+    .article-body ul { margin: 0 0 1.1rem 1.25rem; }
+    .article-body li { margin-bottom: 0.55rem; }
+    .article-body strong { font-weight: 700; color: var(--text); }
+    .article-body a { color: var(--teal-dark); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(14,165,233,0.4); }
+    .article-body a:hover { color: var(--teal); border-bottom-color: var(--teal); }
+    html.dark-mode .article-body a { color: var(--teal); }
+    .lake-meta {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin: -0.4rem 0 0.7rem;
+    }
+
+    /* In-article CTA */
+    .cta-box {
+      background: var(--navy);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin: 2.5rem 0;
+      box-shadow: var(--shadow-md);
+    }
+    .cta-box h3 { color: var(--white); font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .cta-box p { color: #cbd5e1; font-size: 0.98rem; line-height: 1.6; margin-bottom: 1.1rem; }
+    .cta-box .cta-link {
+      display: inline-block;
+      background: var(--teal);
+      color: #ffffff;
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      transition: background 0.15s;
+    }
+    .cta-box .cta-link:hover { background: var(--teal-dark); }
+
+    /* Footer */
+    .article-footer {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+    .article-footer a { color: var(--teal-dark); text-decoration: none; }
+    html.dark-mode .article-footer a { color: var(--teal); }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.7rem; }
+      .article-body { font-size: 1.02rem; }
+      .article-body h2 { font-size: 1.3rem; }
+      .header-actions { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="../index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <div class="header-actions">
+        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="article-wrap">
+    <a href="../index.html" class="back-link">&larr; Back to home</a>
+
+    <span class="article-eyebrow">California &middot; How-To</span>
+    <h1>CDFW Fish Stocking Report: How to Read It and Plan Your Trip</h1>
+    <p class="article-dek">The CDFW stocking report is a goldmine once you know how to read it. Here is what every part means and how to turn it into fish in the net.</p>
+
+    <div class="article-meta">
+      <span>Fish Stocking Alert</span>
+      <span class="dot">&bull;</span>
+      <span>Planning</span>
+      <span class="dot">&bull;</span>
+      <span>7 min read</span>
+    </div>
+
+    <div class="article-body">
+      <p>The <a href="https://nrm.dfg.ca.gov/FishPlants/PublicPlantSearch" target="_blank" rel="noopener">CDFW fish planting schedule</a> is the single best free tool a California trout angler has, and most people never use it right. They glance at it, see their lake is not on this week's list, and give up. There is a lot more in there than that. Once you know what the report is actually telling you, and what it is deliberately not telling you, you can use it to put yourself on fresh fish instead of guessing. Here is how to read it.</p>
+
+      <h2>What the Report Actually Shows</h2>
+      <p>The CDFW Fish Planting Schedule is a live list of the waters slated to get catchable-size fish from state hatcheries. Hatchery staff update it in real time, so it reflects recent plants and upcoming ones rather than some printed calendar from the start of the year. It covers the public waters CDFW stocks, which is most of the lakes, ponds, and stocked stream sections you would think to fish for put-and-take trout.</p>
+      <p>What it does not show is the exact day and hour the truck rolls up. CDFW keeps specific dates vague on purpose, so crowds do not swarm a water the second it is planted. You get a window, usually a week, not a timestamp. That is by design, and it is fine once you plan around it.</p>
+
+      <h2>What the Columns Mean</h2>
+      <p>The public search is simple once you know the fields:</p>
+      <ul>
+        <li><strong>Date or week.</strong> When the plant happened or is scheduled. Treat scheduled dates as a window, not a promise.</li>
+        <li><strong>County.</strong> The easiest way to filter the list down to your area. Start here.</li>
+        <li><strong>Water.</strong> The name of the lake, pond, or stream section being stocked. Names can be specific, so a big reservoir and its lagoon may be listed separately.</li>
+        <li><strong>Species.</strong> Usually rainbow trout for catchable plants, though you will see other species depending on the water and time of year.</li>
+      </ul>
+      <p>You can search by county or by water name to pull up what is on the calendar near you, and you can look back at what was planted recently. That backward look is the part most people skip, and it is the most useful piece for planning.</p>
+
+      <h2>How Often It Updates</h2>
+      <p>Because hatchery staff edit it directly, the schedule changes as plans change. A plant can move or get canceled when a storm rolls in, a road washes out, or a water quality problem comes up. So a water listed for this week is a strong signal, not a lock. Check it close to when you plan to go, not a week ahead and never again.</p>
+
+      <div class="cta-box">
+        <h3>Skip the spreadsheet, see the map</h3>
+        <p>Fish Stocking Alert reads the same CDFW data and turns it into a map you can filter by species, with each water's recent plant history right there. Less digging, more fishing.</p>
+        <a href="https://fishstockingalert.com/" class="cta-link">Open the live map</a>
+      </div>
+
+      <h2>Turning the Report Into a Trip</h2>
+      <p>Here is the workflow I use. It takes about two minutes.</p>
+      <ul>
+        <li><strong>Filter to your county first.</strong> It cuts a giant statewide list down to a handful of waters you would actually drive to.</li>
+        <li><strong>Find waters listed for the current or coming week.</strong> Those are your fresh-plant candidates.</li>
+        <li><strong>Check the recent history of each one.</strong> A water that shows up on the schedule again and again gets stocked often, which means more fish and better odds. A one-off plant fishes hot for a couple of days and then thins out.</li>
+        <li><strong>Match the season and elevation.</strong> A high-country lake listed in July makes sense. A lowland lake listed in July would be unusual, since most are too warm by then. Use the calendar as a sanity check.</li>
+        <li><strong>Go soon after the plant.</strong> The bite is best in the first day or two, so line your trip up with the window rather than showing up a week late.</li>
+      </ul>
+      <p>That last point is the whole reason the report matters. A lake that got fish yesterday will beat a "better" lake that has not seen a truck in a month, every time. The schedule is how you find the fresh one.</p>
+
+      <h2>Where the Tool Falls Short</h2>
+      <p>The official report is accurate and straight from the source, and it is built for lookups, not for anglers planning a Saturday. You have to remember to check it, dig through county lists, and piece together plant history yourself by scrolling back. There is no species filter worth the name, no map, and no way to get a heads-up when your home water gets stocked.</p>
+      <p>That gap is what <a href="https://fishstockingalert.com/">Fish Stocking Alert</a> fills. Same CDFW data, pulled straight from the source, laid out as a map you can filter by species, with each water's recent stocking history visible at a glance. An email alert system is on the way, so you will be able to flag your favorite waters and get pinged the moment they are planted. Until then, learn to read the official report well, and you will already be ahead of most of the bank.</p>
+    </div>
+  </main>
+
+  <footer class="article-footer">
+    Data source: <a href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897">CDFW Open Data Portal</a>. All fish plants are subject to change depending on road, water, weather, and operational conditions.
+  </footer>
+
+  <script>
+    var darkBtn = document.getElementById("btn-dark-mode");
+    darkBtn.addEventListener("click", function () {
+      var isDark = document.documentElement.classList.toggle("dark-mode");
+      localStorage.setItem("fsa-theme", isDark ? "dark" : "light");
+    });
+    document.getElementById("btn-get-alerts").addEventListener("click", function () {
+      window.location.href = "../index.html";
+    });
+  </script>
+</body>
+</html>

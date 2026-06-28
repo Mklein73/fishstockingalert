@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PowerBait vs Lures for Stocked Trout: What Actually Works | Fish Stocking Alert</title>
+  <meta name="description" content="A practical decision guide for stocked trout: when PowerBait wins, when spinners and spoons win, plus the colors and sizes that actually produce." />
+  <link rel="canonical" href="https://fishstockingalert.com/blog/powerbait-vs-lures-stocked-trout.html" />
+
+  <!-- Open Graph / SEO -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="PowerBait vs Lures for Stocked Trout: What Actually Works" />
+  <meta property="og:description" content="A practical decision guide for stocked trout: when PowerBait wins, when spinners and spoons win, plus the colors and sizes that actually produce." />
+  <meta property="og:url" content="https://fishstockingalert.com/blog/powerbait-vs-lures-stocked-trout.html" />
+  <meta property="og:site_name" content="Fish Stocking Alert" />
+
+  <!-- Inter font (matches main site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Apply saved dark mode preference before first paint (same key as main site) -->
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+
+  <style>
+    /* Brand tokens (identical to css/styles.css) */
+    :root {
+      --navy:       #0a1628;
+      --navy-mid:   #152339;
+      --teal:       #0ea5e9;
+      --teal-dark:  #0284c7;
+      --teal-light: #e0f2fe;
+      --white:      #ffffff;
+      --bg:         #f5f7fa;
+      --text:       #1e293b;
+      --text-muted: #64748b;
+      --border:     #e2e8f0;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md:  0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
+      --radius-sm:  8px;
+      --radius-md:  12px;
+      --radius-lg:  16px;
+      --radius-pill:999px;
+    }
+
+    html.dark-mode {
+      --bg:         #0f172a;
+      --white:      #1e293b;
+      --text:       #f1f5f9;
+      --text-muted: #94a3b8;
+      --border:     #334155;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.35);
+      --shadow-md:  0 4px 12px rgba(0,0,0,0.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* Site header (matches main site) */
+    .site-header {
+      background: var(--navy);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .logo-icon { font-size: 1.4rem; line-height: 1; }
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+    .logo-accent { color: var(--teal); }
+    .header-actions { display: flex; align-items: center; gap: 1.75rem; flex-shrink: 0; }
+    .btn-alerts {
+      background: var(--teal);
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1.35rem;
+      border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-alerts:hover  { background: var(--teal-dark); }
+    .btn-alerts:active { transform: scale(0.97); }
+    .btn-dark-mode {
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%;
+      font-size: 1.1rem;
+      line-height: 1;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      flex-shrink: 0;
+      color: var(--white);
+    }
+    .btn-dark-mode:hover { border-color: var(--teal); background: rgba(14,165,233,0.1); }
+
+    /* Article layout */
+    .article-wrap { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 1.25rem 0 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--teal); }
+    .article-eyebrow {
+      display: inline-block;
+      color: var(--teal-dark);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 1.5rem 0 0.75rem;
+    }
+    html.dark-mode .article-eyebrow { color: var(--teal); }
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      color: var(--text);
+      margin-bottom: 0.9rem;
+    }
+    .article-dek {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.75rem;
+    }
+    .article-meta .dot { color: var(--teal); }
+    .article-body { font-size: 1.06rem; line-height: 1.75; }
+    .article-body h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin: 2.4rem 0 0.9rem;
+      padding-left: 0.85rem;
+      border-left: 4px solid var(--teal);
+      line-height: 1.25;
+    }
+    .article-body h3 { font-size: 1.18rem; font-weight: 700; margin: 1.6rem 0 0.6rem; }
+    .article-body p { margin-bottom: 1.1rem; }
+    .article-body ul { margin: 0 0 1.1rem 1.25rem; }
+    .article-body li { margin-bottom: 0.55rem; }
+    .article-body strong { font-weight: 700; color: var(--text); }
+    .article-body a { color: var(--teal-dark); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(14,165,233,0.4); }
+    .article-body a:hover { color: var(--teal); border-bottom-color: var(--teal); }
+    html.dark-mode .article-body a { color: var(--teal); }
+    .lake-meta {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin: -0.4rem 0 0.7rem;
+    }
+
+    /* In-article CTA */
+    .cta-box {
+      background: var(--navy);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin: 2.5rem 0;
+      box-shadow: var(--shadow-md);
+    }
+    .cta-box h3 { color: var(--white); font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .cta-box p { color: #cbd5e1; font-size: 0.98rem; line-height: 1.6; margin-bottom: 1.1rem; }
+    .cta-box .cta-link {
+      display: inline-block;
+      background: var(--teal);
+      color: #ffffff;
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      transition: background 0.15s;
+    }
+    .cta-box .cta-link:hover { background: var(--teal-dark); }
+
+    /* Footer */
+    .article-footer {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+    .article-footer a { color: var(--teal-dark); text-decoration: none; }
+    html.dark-mode .article-footer a { color: var(--teal); }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.7rem; }
+      .article-body { font-size: 1.02rem; }
+      .article-body h2 { font-size: 1.3rem; }
+      .header-actions { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="../index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <div class="header-actions">
+        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="article-wrap">
+    <a href="../index.html" class="back-link">&larr; Back to home</a>
+
+    <span class="article-eyebrow">Technique &middot; Stocked Trout</span>
+    <h1>PowerBait vs Lures for Stocked Trout: What Actually Works</h1>
+    <p class="article-dek">Not a gear review. A straight decision guide for when to soak dough bait and when to throw hardware at stocked trout.</p>
+
+    <div class="article-meta">
+      <span>Fish Stocking Alert</span>
+      <span class="dot">&bull;</span>
+      <span>Technique</span>
+      <span class="dot">&bull;</span>
+      <span>8 min read</span>
+    </div>
+
+    <div class="article-body">
+      <p>People treat PowerBait versus lures like it is a personality test, like you have to pick a team and defend it. That is backwards. Both catch stocked trout, and the right call depends entirely on the situation in front of you. The trick is knowing which one the day is asking for. So forget the team jerseys. Here is a straight decision guide for when to soak dough and when to throw hardware, with the colors and sizes that actually do the work.</p>
+
+      <h2>When PowerBait Wins</h2>
+      <p>Dough bait shines when the fish are fresh, the water is calm, and you are fishing from the bank. Hatchery trout grow up eating floating pellets, so for the first few days after a plant they are primed to sip a buoyant, scented blob sitting right in front of them. That is exactly what PowerBait is.</p>
+      <p>Reach for it when:</p>
+      <ul>
+        <li><strong>The plant is recent.</strong> The fresher the fish, the more they want easy, stationary food.</li>
+        <li><strong>You are fishing still water from shore.</strong> Lakes and ponds, no current.</li>
+        <li><strong>You want to fish two rods or sit back.</strong> It is set-and-watch fishing, great with kids or when you want to soak two lines.</li>
+        <li><strong>The fish are not chasing.</strong> When nothing is moving and lures get ignored, a bait on the bottom still gets bit.</li>
+      </ul>
+      <p>Rig it Carolina style so the bait floats up off the bottom. Slide a 1/8 to 1/4 ounce egg sinker on your main line, tie on a small swivel, then run an 18 to 36 inch leader to a size 14 to 18 treble. Pinch on a pea-sized ball, enough to float the hook. For color, three carry the day: rainbow or sherbet as your all-rounder, chartreuse for gray skies and stained water, and orange when they want an egg look. Garlic scent on any of them helps. When the bite goes quiet, change color before you change anything else.</p>
+
+      <h2>When Lures Win</h2>
+      <p>Hardware takes over the moment the fish get active, spread out, or move into current. A spinner or spoon lets you cover a lot of water fast and trigger reaction strikes, which is exactly what you want when the fish are not sitting in one tidy pile by the ramp anymore.</p>
+      <p>Reach for lures when:</p>
+      <ul>
+        <li><strong>The fish have scattered.</strong> A few days after the plant, they are cruising. Cover water to find them.</li>
+        <li><strong>You are on moving water.</strong> Streams, inlets, anywhere current is present. A bait just washes around, while a spinner swung across the flow gets crushed.</li>
+        <li><strong>The fish are active and competitive.</strong> Warmer parts of the day, surface activity, fish chasing. They will smash a moving target.</li>
+        <li><strong>You are after the bigger ones.</strong> Holdover trout that survived past plants are predators, and they hit lures far more than dough.</li>
+      </ul>
+      <p>For spinners, a 1/16 to 1/8 ounce Panther Martin, Mepps Aglia, or Rooster Tail covers nearly everything. Silver and gold blades are the staples, with brown-trout and rainbow patterns close behind. Cast past the fish, let it sink a second or two, and reel just fast enough to feel the blade thump. When you need to reach out there or get down deep, a 1/12 to 1/4 ounce Kastmaster spoon casts a mile and counts down to any depth. Steady retrieve, the odd pause, and let them tell you the speed.</p>
+
+      <div class="cta-box">
+        <h3>The bait question starts with the plant</h3>
+        <p>Fresh fish want dough. Scattered fish want hardware. Check when your water was last stocked on the live CDFW map and you will know which to tie on before you leave the house.</p>
+        <a href="https://fishstockingalert.com/" class="cta-link">Check recent plants</a>
+      </div>
+
+      <h2>The Bridge Baits</h2>
+      <p>There is a middle lane worth knowing. A nightcrawler, with or without a little air pumped in to float it, fishes on the same bottom rig as PowerBait but appeals to a fish's sense that real food is real food. Mealworms and a Mice Tail work the same way. These are great when the dough bite is soft but the fish are not active enough to chase a lure. Under a bobber, a worm set 3 to 4 feet down covers fish suspended in the upper water column, which is right where pellet-trained stockers like to hang.</p>
+
+      <h2>The Quick Decision Tree</h2>
+      <p>Strip it all down and it comes to this. For a fresh plant in still water, fishing from the bank when you just want to relax, soak PowerBait off the bottom and rotate your colors. When the fish have spread out, the water is moving, or they are active and chasing something bigger, tie on a spinner or a Kastmaster and go find them. When you are caught in between, drift a nightcrawler.</p>
+      <p>Carry both, read the situation, and switch when the day changes. The anglers who limit out are not the dough purists or the lure snobs. They are the ones who picked up on what the fish wanted that morning and gave it to them.</p>
+    </div>
+  </main>
+
+  <footer class="article-footer">
+    Data source: <a href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897">CDFW Open Data Portal</a>. All fish plants are subject to change depending on road, water, weather, and operational conditions.
+  </footer>
+
+  <script>
+    var darkBtn = document.getElementById("btn-dark-mode");
+    darkBtn.addEventListener("click", function () {
+      var isDark = document.documentElement.classList.toggle("dark-mode");
+      localStorage.setItem("fsa-theme", isDark ? "dark" : "light");
+    });
+    document.getElementById("btn-get-alerts").addEventListener("click", function () {
+      window.location.href = "../index.html";
+    });
+  </script>
+</body>
+</html>
