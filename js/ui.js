@@ -961,7 +961,11 @@ window.UI = (function () {
     if (alertBtnEl) {
       alertBtnEl.innerHTML = '<i data-lucide="bell"></i> Get Alert for ' + (waterObj.waterName || "this Water");
       alertBtnEl.onclick = function () {
-        alert("Alert signup coming soon! We will notify you when " + waterObj.waterName + " gets stocked.");
+        if (typeof window.openAlertModal === 'function') {
+          window.openAlertModal(waterObj.waterName);
+        } else {
+          alert('Alert signup coming soon! We will notify you when ' + waterObj.waterName + ' gets stocked.');
+        }
       };
     }
 
