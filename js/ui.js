@@ -1002,7 +1002,8 @@ window.UI = (function () {
       { maxZoom: 19, opacity: 1 }
     );
 
-    _streetsLayer.addTo(_map);
+    _satelliteLayer.addTo(_map);
+    _labelsLayer.addTo(_map);
 
     var tileControl = L.control({ position: "bottomright" });
     tileControl.onAdd = function () {
@@ -1011,10 +1012,10 @@ window.UI = (function () {
       L.DomEvent.disableScrollPropagation(panel);
 
       panel.innerHTML =
-        '<label class="tile-radio"><input type="radio" name="fsa-tile" value="satellite"> Satellite</label>'
-        + '<label class="tile-radio"><input type="radio" name="fsa-tile" value="streets" checked> Streets</label>'
+        '<label class="tile-radio"><input type="radio" name="fsa-tile" value="satellite" checked> Satellite</label>'
+        + '<label class="tile-radio"><input type="radio" name="fsa-tile" value="streets"> Streets</label>'
         + '<hr class="tile-divider">'
-        + '<label class="tile-check"><input type="checkbox" id="fsa-labels"> Place names</label>';
+        + '<label class="tile-check"><input type="checkbox" id="fsa-labels" checked> Place names</label>';
 
       var radios   = panel.querySelectorAll('input[name="fsa-tile"]');
       var chkLabel = panel.querySelector("#fsa-labels");
@@ -1043,7 +1044,6 @@ window.UI = (function () {
         else                  { _map.removeLayer(_labelsLayer); }
       });
 
-      chkLabel.parentElement.classList.add("tile-check-disabled");
       return panel;
     };
     tileControl.addTo(_map);
