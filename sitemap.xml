@@ -16,6 +16,34 @@
   </url>
 
   <url>
+    <loc>https://fishstockingalert.com/about.html</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://fishstockingalert.com/privacy.html</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://fishstockingalert.com/contact.html</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://fishstockingalert.com/blog/index.html</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://fishstockingalert.com/blog/california-trout-stocking-schedule-2026.html</loc>
     <lastmod>2026-06-28</lastmod>
     <changefreq>monthly</changefreq>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Fish Stocking Alert</title>
+  <meta name="description" content="Get in touch with Fish Stocking Alert. We welcome feedback, bug reports, and state data suggestions." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+
+  <style>
+    :root {
+      --navy: #0a1628; --teal: #0ea5e9; --teal-dark: #0284c7;
+      --white: #ffffff; --bg: #f5f7fa;
+      --text: #1e293b; --text-muted: #64748b;
+      --border: #e2e8f0; --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+      --radius-pill: 999px; --radius-lg: 16px;
+    }
+    html.dark-mode {
+      --bg: #0f172a; --white: #1e293b;
+      --text: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+    .site-header {
+      background: var(--navy); height: 64px;
+      display: flex; align-items: center; padding: 0 1.5rem;
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      width: 100%; max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.6rem; }
+    .logo-icon { font-size: 1.4rem; }
+    .logo-text { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; text-decoration: none; }
+    .logo-accent { color: var(--teal); }
+    .header-actions { display: flex; align-items: center; gap: 1.75rem; }
+    .btn-alerts {
+      background: var(--teal); color: #fff; border: none;
+      padding: 0.5rem 1.35rem; border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-alerts:hover { background: var(--teal-dark); }
+    .btn-dark-mode {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%; font-size: 1.1rem; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff; transition: border-color 0.15s;
+    }
+    .btn-dark-mode:hover { border-color: var(--teal); }
+
+    .page-wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-bottom: 2rem; color: var(--text-muted);
+      text-decoration: none; font-size: 0.9rem; font-weight: 600;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--teal); }
+
+    .page-eyebrow {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--teal); margin-bottom: 0.6rem;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800;
+      color: var(--text); letter-spacing: -0.5px; line-height: 1.15;
+      margin-bottom: 2rem; padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-body { font-size: 1.06rem; line-height: 1.8; color: var(--text); }
+    .page-body p { margin-bottom: 1.4rem; }
+
+    .contact-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: var(--shadow-sm);
+    }
+    .contact-card-label {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem;
+    }
+    .contact-card-email {
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--teal); text-decoration: none;
+    }
+    .contact-card-email:hover { text-decoration: underline; }
+    .contact-card-note {
+      font-size: 0.875rem; color: var(--text-muted);
+      font-weight: 500; margin-top: 0.65rem; line-height: 1.6;
+    }
+
+    .topics-list {
+      list-style: none; padding: 0; margin: 0.5rem 0 1.4rem;
+    }
+    .topics-list li {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      font-size: 1rem; margin-bottom: 0.6rem; color: var(--text);
+    }
+    .topics-list li::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+      margin-top: 0.45rem;
+    }
+
+    .page-footer {
+      max-width: 760px; margin: 0 auto; padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted); font-size: 0.82rem; line-height: 1.6;
+    }
+    .page-footer a { color: var(--teal); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <div class="header-actions">
+        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <a href="index.html" class="back-link">&larr; Back to home</a>
+    <div class="page-eyebrow">Contact</div>
+    <h1>Get in Touch</h1>
+
+    <div class="page-body">
+      <p>The best way to reach us is by email. We read everything and try to reply within a day or two.</p>
+
+      <div class="contact-card">
+        <div class="contact-card-label">Email</div>
+        <a href="mailto:contact@fishstockingalert.com" class="contact-card-email">contact@fishstockingalert.com</a>
+        <p class="contact-card-note">For general questions, feedback, and data requests. Also use this address for privacy or data deletion requests.</p>
+      </div>
+
+      <p>We especially welcome:</p>
+      <ul class="topics-list">
+        <li>Bug reports — if something looks wrong, broken, or missing, let us know</li>
+        <li>State data suggestions — which state should we add next?</li>
+        <li>Water requests — if a specific water is missing from the data, tell us</li>
+        <li>Feature feedback — what would make the site more useful for your fishing?</li>
+      </ul>
+
+      <p>This is an independent project, so responses may take a day or two during busy periods. We appreciate your patience and every message we receive.</p>
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    <a href="index.html">Fish Stocking Alert</a> &mdash;
+    <a href="about.html">About</a> &middot;
+    <a href="privacy.html">Privacy Policy</a>
+  </footer>
+
+  <script>
+    var darkBtn = document.getElementById('btn-dark-mode');
+    function updateIcon() {
+      darkBtn.textContent = document.documentElement.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+    updateIcon();
+    darkBtn.addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark-mode');
+      localStorage.setItem('fsa-theme', isDark ? 'dark' : 'light');
+      updateIcon();
+    });
+    document.getElementById('btn-get-alerts').addEventListener('click', function() {
+      alert('Email alerts are coming soon!');
+    });
+  </script>
+</body>
+</html>

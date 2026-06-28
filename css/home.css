@@ -355,15 +355,16 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  font-size: 1.4rem;
 }
 
-.feature-icon--teal   { background: rgba(14,165,233,0.12); }
-.feature-icon--blue   { background: rgba(59,130,246,0.12); }
-.feature-icon--green  { background: rgba(16,185,129,0.12); }
-.feature-icon--indigo { background: rgba(99,102,241,0.12); }
-.feature-icon--orange { background: rgba(249,115,22,0.12); }
-.feature-icon--amber  { background: rgba(245,158,11,0.12); }
+.feature-icon-wrap svg { width: 22px; height: 22px; }
+
+.feature-icon--teal   { background: rgba(14,165,233,0.12);  color: #0ea5e9; }
+.feature-icon--blue   { background: rgba(59,130,246,0.12);  color: #3b82f6; }
+.feature-icon--green  { background: rgba(16,185,129,0.12);  color: #10b981; }
+.feature-icon--indigo { background: rgba(99,102,241,0.12);  color: #6366f1; }
+.feature-icon--orange { background: rgba(249,115,22,0.12);  color: #f97316; }
+.feature-icon--amber  { background: rgba(245,158,11,0.12);  color: #f59e0b; }
 
 .feature-title {
   font-size: 1rem;
@@ -424,11 +425,19 @@
   box-shadow: 0 2px 8px rgba(14,165,233,0.35);
 }
 
-.step-icon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-  line-height: 1;
+.step-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(14,165,233,0.12);
+  color: #0ea5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.85rem;
 }
+
+.step-icon-wrap svg { width: 24px; height: 24px; }
 
 .step-title {
   font-size: 1.05rem;
@@ -601,19 +610,28 @@
 
 .psc-mock-fresh { color: #34d399; font-weight: 700; }
 
-.psc-mock-badge {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
+.psc-mock-species {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #e2e8f0;
   white-space: nowrap;
+  font-size: 0.8rem;
 }
 
-.psc-mock-badge--trout   { background: rgba(14,165,233,0.2);  color: #7dd3fc; }
-.psc-mock-badge--bass    { background: rgba(16,185,129,0.2);  color: #6ee7b7; }
-.psc-mock-badge--salmon  { background: rgba(99,102,241,0.2);  color: #a5b4fc; }
-.psc-mock-badge--catfish { background: rgba(249,115,22,0.2);  color: #fdba74; }
+.psc-species-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.psc-dot--trout   { background: #0ea5e9; }
+.psc-dot--bass    { background: #10b981; }
+.psc-dot--salmon  { background: #6366f1; }
+.psc-dot--catfish { background: #f97316; }
 
 /* ── Final CTA section ──────────────────────────────────────── */
 .cta-section {

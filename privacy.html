@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Fish Stocking Alert</title>
+  <meta name="description" content="Privacy policy for Fish Stocking Alert — what data we collect, how it is used, and your rights." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+
+  <style>
+    :root {
+      --navy: #0a1628; --teal: #0ea5e9; --teal-dark: #0284c7;
+      --white: #ffffff; --bg: #f5f7fa;
+      --text: #1e293b; --text-muted: #64748b;
+      --border: #e2e8f0; --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+      --radius-pill: 999px;
+    }
+    html.dark-mode {
+      --bg: #0f172a; --white: #1e293b;
+      --text: #f1f5f9; --text-muted: #94a3b8; --border: #334155;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+    .site-header {
+      background: var(--navy); height: 64px;
+      display: flex; align-items: center; padding: 0 1.5rem;
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      width: 100%; max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.6rem; }
+    .logo-icon { font-size: 1.4rem; }
+    .logo-text { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; text-decoration: none; }
+    .logo-accent { color: var(--teal); }
+    .header-actions { display: flex; align-items: center; gap: 1.75rem; }
+    .btn-alerts {
+      background: var(--teal); color: #fff; border: none;
+      padding: 0.5rem 1.35rem; border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-alerts:hover { background: var(--teal-dark); }
+    .btn-dark-mode {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%; font-size: 1.1rem; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff; transition: border-color 0.15s;
+    }
+    .btn-dark-mode:hover { border-color: var(--teal); }
+
+    .page-wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-bottom: 2rem; color: var(--text-muted);
+      text-decoration: none; font-size: 0.9rem; font-weight: 600;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--teal); }
+
+    .page-eyebrow {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--teal); margin-bottom: 0.6rem;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800;
+      color: var(--text); letter-spacing: -0.5px; line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .last-updated {
+      font-size: 0.85rem; color: var(--text-muted); font-weight: 500;
+      margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
+    }
+    .page-body { font-size: 1.06rem; line-height: 1.8; }
+    .page-body h2 {
+      font-size: 1.2rem; font-weight: 700; color: var(--text);
+      margin: 2.2rem 0 0.65rem;
+      padding-left: 0.75rem;
+      border-left: 3px solid var(--teal);
+    }
+    .page-body p { margin-bottom: 1.1rem; color: var(--text); }
+    .page-body ul { margin: 0 0 1.1rem 1.5rem; }
+    .page-body li { margin-bottom: 0.5rem; color: var(--text); }
+    .page-body a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .page-body a:hover { text-decoration: underline; }
+
+    .page-footer {
+      max-width: 760px; margin: 0 auto; padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted); font-size: 0.82rem; line-height: 1.6;
+    }
+    .page-footer a { color: var(--teal); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <div class="header-actions">
+        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <a href="index.html" class="back-link">&larr; Back to home</a>
+    <div class="page-eyebrow">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="last-updated">Last updated: June 28, 2026</p>
+
+    <div class="page-body">
+      <p>Fish Stocking Alert is committed to protecting your privacy. This policy explains what information we collect, how we use it, and your choices.</p>
+
+      <h2>What We Collect</h2>
+      <ul>
+        <li><strong>Email address</strong> — only when you sign up for stocking alerts (feature coming soon). We do not collect your email for any other purpose.</li>
+        <li><strong>Basic analytics</strong> — we use standard web analytics to understand how visitors use the site (pages viewed, general traffic patterns). This data is aggregated and not tied to any individual.</li>
+        <li><strong>Dark mode preference</strong> — stored locally in your browser via <code>localStorage</code>. This never leaves your device.</li>
+      </ul>
+
+      <h2>How We Use It</h2>
+      <p>Your email address, if provided, is used solely to send you fish stocking alerts for the waters you select. We will never use it for marketing unrelated to fish stocking, and we will never sell, rent, or share it with third parties.</p>
+      <p>Analytics data is used to understand which features are useful and to improve the site. It is not linked to any personally identifiable information.</p>
+
+      <h2>Cookies</h2>
+      <p>We may use cookies or similar technologies for analytics purposes. Your dark mode preference is saved to <code>localStorage</code> in your browser — this is local only and is not transmitted to our servers.</p>
+      <p>If you use a browser extension or setting to block cookies, the site will still function normally.</p>
+
+      <h2>Third Parties</h2>
+      <p>We do not sell, trade, or share your personal data with third parties. The stocking data displayed on this site is sourced from public government datasets (CDFW and other state wildlife agencies) and contains no personal information.</p>
+
+      <h2>Data Retention</h2>
+      <p>Alert email addresses will be retained only as long as you remain subscribed. You can unsubscribe at any time via the link in any alert email, which will permanently delete your address from our list.</p>
+
+      <h2>Contact &amp; Data Deletion</h2>
+      <p>To request deletion of any data we hold about you, or if you have any privacy questions, contact us at <a href="mailto:contact@fishstockingalert.com">contact@fishstockingalert.com</a>. We will respond within 5 business days.</p>
+
+      <h2>Changes to This Policy</h2>
+      <p>If we make material changes to this policy, we will update the "Last updated" date at the top. Continued use of the site after a change constitutes acceptance of the updated policy.</p>
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    <a href="index.html">Fish Stocking Alert</a> &mdash;
+    <a href="about.html">About</a> &middot;
+    <a href="contact.html">Contact</a>
+  </footer>
+
+  <script>
+    var darkBtn = document.getElementById('btn-dark-mode');
+    function updateIcon() {
+      darkBtn.textContent = document.documentElement.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+    updateIcon();
+    darkBtn.addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark-mode');
+      localStorage.setItem('fsa-theme', isDark ? 'dark' : 'light');
+      updateIcon();
+    });
+    document.getElementById('btn-get-alerts').addEventListener('click', function() {
+      alert('Email alerts are coming soon!');
+    });
+  </script>
+</body>
+</html>

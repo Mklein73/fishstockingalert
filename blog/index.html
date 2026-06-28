@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Fish Stocking Alert</title>
+  <meta name="description" content="Fishing guides, stocking tips, and state-by-state coverage from Fish Stocking Alert." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
+
+  <style>
+    :root {
+      --navy: #0a1628; --navy-mid: #152339;
+      --teal: #0ea5e9; --teal-dark: #0284c7;
+      --white: #ffffff; --bg: #f5f7fa;
+      --text: #1e293b; --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+      --radius-pill: 999px;
+    }
+    html.dark-mode {
+      --bg: #0f172a; --white: #1e293b;
+      --text: #f1f5f9; --text-muted: #94a3b8;
+      --border: #334155;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.35);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.45);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .site-header {
+      background: var(--navy);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      width: 100%; max-width: 1200px;
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .logo-icon { font-size: 1.4rem; line-height: 1; }
+    .logo-text {
+      font-size: 1.25rem; font-weight: 800;
+      color: #fff; letter-spacing: -0.3px; text-decoration: none;
+    }
+    .logo-accent { color: var(--teal); }
+    .header-actions { display: flex; align-items: center; gap: 1.75rem; flex-shrink: 0; }
+    .btn-alerts {
+      background: var(--teal); color: #fff; border: none;
+      padding: 0.5rem 1.35rem; border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-alerts:hover { background: var(--teal-dark); }
+    .btn-dark-mode {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%; font-size: 1.1rem; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color 0.15s; color: #fff;
+    }
+    .btn-dark-mode:hover { border-color: var(--teal); }
+
+    /* Page layout */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    .page-eyebrow {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--teal); margin-bottom: 0.6rem;
+    }
+    .page-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+      color: var(--text); letter-spacing: -0.5px; line-height: 1.15;
+      margin-bottom: 0.65rem;
+    }
+    .page-sub {
+      font-size: 1.05rem; color: var(--text-muted);
+      font-weight: 500; line-height: 1.65; margin-bottom: 3rem;
+    }
+
+    /* Blog grid */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 899px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 599px) { .blog-grid { grid-template-columns: 1fr; } }
+
+    /* Blog card */
+    .blog-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .blog-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(14,165,233,0.35);
+      transform: translateY(-2px);
+    }
+
+    .blog-card-tag {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--teal);
+      margin-bottom: 0.65rem;
+    }
+    .blog-card-title {
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--text); line-height: 1.35;
+      letter-spacing: -0.2px; margin-bottom: 0.65rem;
+    }
+    .blog-card-excerpt {
+      font-size: 0.875rem; color: var(--text-muted);
+      font-weight: 500; line-height: 1.65; flex: 1;
+      margin-bottom: 1.25rem;
+    }
+    .blog-card-read-more {
+      font-size: 0.875rem; font-weight: 700;
+      color: var(--teal); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      transition: color 0.12s;
+    }
+    .blog-card-read-more:hover { color: var(--teal-dark); }
+
+    /* Footer */
+    .page-footer {
+      max-width: 1100px; margin: 0 auto;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted); font-size: 0.82rem; line-height: 1.6;
+      text-align: center;
+    }
+    .page-footer a { color: var(--teal); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-icon">🐟</span>
+        <a href="../index.html" class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></a>
+      </div>
+      <div class="header-actions">
+        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <div class="page-eyebrow">Blog</div>
+    <h1 class="page-title">Fishing Guides &amp; Stocking News</h1>
+    <p class="page-sub">Tips, stocking guides, and state-by-state coverage for anglers who want every edge on the water.</p>
+
+    <div class="blog-grid">
+
+      <a href="california-trout-stocking-schedule-2026.html" class="blog-card">
+        <div class="blog-card-tag">California &middot; Stocking Guide</div>
+        <div class="blog-card-title">California Trout Stocking Schedule 2026: Complete Guide</div>
+        <p class="blog-card-excerpt">How CDFW's 2026 trout stocking program works: who stocks, how often, which regions get fish when, and how to check the schedule before you go.</p>
+        <span class="blog-card-read-more">Read More →</span>
+      </a>
+
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    <a href="../index.html">Fish Stocking Alert</a> &mdash;
+    <a href="../about.html">About</a> &middot;
+    <a href="../contact.html">Contact</a> &middot;
+    <a href="../privacy.html">Privacy Policy</a>
+  </footer>
+
+  <script>
+    var darkBtn = document.getElementById('btn-dark-mode');
+    function updateIcon() {
+      darkBtn.textContent = document.documentElement.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
+    updateIcon();
+    darkBtn.addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark-mode');
+      localStorage.setItem('fsa-theme', isDark ? 'dark' : 'light');
+      updateIcon();
+    });
+    document.getElementById('btn-get-alerts').addEventListener('click', function() {
+      alert('Email alerts are coming soon! Browse the live data at fishstockingalert.com');
+    });
+  </script>
+</body>
+</html>
