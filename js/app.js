@@ -566,7 +566,7 @@
       setTimeout(function () { if (searchInput) searchInput.focus(); }, 120);
     }
 
-    overlay.style.display = 'flex';
+    overlay.style.display = 'block';
     document.body.style.overflow = 'hidden';
   }
 
