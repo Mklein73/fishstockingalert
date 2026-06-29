@@ -158,7 +158,7 @@
     var btn = document.getElementById('alert-submit-btn');
     if (!btn) return;
     var email = ((document.getElementById('alert-email-input') || {}).value || '').trim();
-    btn.disabled = !(_modalWaterValid && email.indexOf('@') !== -1 && email.length > 5);
+    btn.disabled = !(email.indexOf('@') !== -1 && email.length > 5);
   }
 
   function _selectWater(name) {
@@ -229,10 +229,6 @@
 
     var email = emailEl ? emailEl.value.trim() : '';
 
-    if (!_modalWaterValid || !_modalWater) {
-      if (errorEl) { errorEl.textContent = 'Please select a water from the list.'; errorEl.style.display = 'block'; }
-      return;
-    }
     if (!email || email.indexOf('@') === -1) {
       if (errorEl) { errorEl.textContent = 'Please enter a valid email address.'; errorEl.style.display = 'block'; }
       return;
@@ -245,9 +241,11 @@
       var supa = _getSupa();
       if (!supa) throw new Error('Could not connect. Please try again.');
 
+      var waterName = (_modalWaterValid && _modalWater) ? _modalWater : null;
+
       var result = await supa.rpc('signup_for_alert', {
         p_email:      email,
-        p_water_name: _modalWater,
+        p_water_name: waterName,
         p_state:      'CA'
       });
 
@@ -262,7 +260,7 @@
             body:    JSON.stringify({
               email:              email,
               confirmation_token: data.confirmation_token,
-              water_name:         _modalWater
+              water_name:         waterName
             })
           });
         } catch (_) { /* Worker not deployed yet — continue */ }
@@ -272,15 +270,27 @@
       if (stepDone) stepDone.style.display = 'block';
 
       if (doneMsg) {
-        if (data && data.is_new) {
-          doneMsg.innerHTML =
-            'Check <strong>' + _esc(email) + '</strong> for a confirmation link. '
-            + "Once confirmed, you'll get alerts whenever <strong>"
-            + _esc(_modalWater) + '</strong> is stocked.';
+        if (waterName) {
+          if (data && data.is_new) {
+            doneMsg.innerHTML =
+              'Check <strong>' + _esc(email) + '</strong> for a confirmation link. '
+              + "Once confirmed, you'll get alerts whenever <strong>"
+              + _esc(waterName) + '</strong> is stocked.';
+          } else {
+            doneMsg.innerHTML =
+              '<strong>' + _esc(waterName) + '</strong> has been added to your alert list. '
+              + "You'll be notified the next time it's stocked.";
+          }
         } else {
-          doneMsg.innerHTML =
-            '<strong>' + _esc(_modalWater) + '</strong> has been added to your alert list. '
-            + "You'll be notified the next time it's stocked.";
+          if (data && data.is_new) {
+            doneMsg.innerHTML =
+              'Check <strong>' + _esc(email) + '</strong> for a confirmation link. '
+              + "Once confirmed, you'll get alerts whenever any California water is stocked.";
+          } else {
+            doneMsg.innerHTML =
+              "You're signed up for all California waters. "
+              + "You'll be notified whenever a new stocking is reported.";
+          }
         }
       }
 
