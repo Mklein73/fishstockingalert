@@ -365,13 +365,14 @@
           </svg>
         </div>
         <h2 class="alert-modal-title">Get Stocking Alerts</h2>
-        <p class="alert-modal-sub">Enter your email to get notified when any California water is stocked, or search for a specific one.</p>
+        <p class="alert-modal-sub">Get notified when California waters are stocked. Search for specific waters or leave blank for all.</p>
         <div class="alert-error" id="alert-error" style="display:none"></div>
-        <label class="alert-email-label" for="alert-water-input">Water Name</label>
+        <label class="alert-email-label" for="alert-water-input">Waters (optional)</label>
         <div class="alert-water-search-wrap">
-          <input type="text" id="alert-water-input" class="alert-water-search" placeholder="All waters (or search for a specific one)" autocomplete="off" />
+          <input type="text" id="alert-water-input" class="alert-water-search" placeholder="Search for specific waters (optional)" autocomplete="off" />
           <div id="alert-water-suggestions" class="alert-water-suggestions" style="display:none"></div>
         </div>
+        <div id="alert-tags-wrap" class="alert-tags-wrap" style="display:none"></div>
         <label class="alert-email-label" for="alert-email-input">Email Address</label>
         <input type="email" id="alert-email-input" class="alert-email-input" placeholder="your@email.com" autocomplete="email" />
         <button class="alert-submit-btn" id="alert-submit-btn" disabled>Get Free Alerts</button>

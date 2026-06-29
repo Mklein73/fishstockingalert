@@ -41,8 +41,7 @@
   }
 
   /* ── Alert modal state ──────────────────────────────────────── */
-  var _modalWater      = null;
-  var _modalWaterValid = false;
+  var _selectedWaters = []; /* string[] — water names chosen so far */
 
   var TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
@@ -490,6 +489,7 @@
     var out  = [];
     allRecords.forEach(function (r) {
       if (!r.waterName || seen[r.waterName]) return;
+      if (_selectedWaters.indexOf(r.waterName) !== -1) return; /* already a tag */
       if (r.waterName.toLowerCase().indexOf(q) !== -1) {
         seen[r.waterName] = true;
         out.push({ name: r.waterName, county: r.county || '' });
@@ -532,7 +532,7 @@
     suggestEl.querySelectorAll('.alert-suggestion-item').forEach(function (el) {
       el.addEventListener('mousedown', function (e) {
         e.preventDefault();
-        _selectWaterInModal(el.getAttribute('data-name'));
+        _addWaterToModal(el.getAttribute('data-name'));
       });
     });
   }
@@ -544,18 +544,42 @@
     btn.disabled = !(email.indexOf('@') !== -1 && email.length > 5);
   }
 
-  function _selectWaterInModal(name) {
-    _modalWater      = name;
-    _modalWaterValid = true;
+  function _renderTagsInModal() {
+    var wrap = document.getElementById('alert-tags-wrap');
+    if (!wrap) return;
+    if (_selectedWaters.length === 0) {
+      wrap.innerHTML = '';
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = 'flex';
+    var html = '';
+    _selectedWaters.forEach(function (name) {
+      html += '<span class="alert-tag">'
+            + '<span class="alert-tag-name">' + _escHtml(name) + '</span>'
+            + '<button class="alert-tag-remove" type="button" data-name="' + _escHtml(name) + '" aria-label="Remove ' + _escHtml(name) + '">×</button>'
+            + '</span>';
+    });
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.alert-tag-remove').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var n = btn.getAttribute('data-name');
+        _selectedWaters = _selectedWaters.filter(function (w) { return w !== n; });
+        _renderTagsInModal();
+      });
+    });
+  }
+
+  function _addWaterToModal(name) {
+    if (_selectedWaters.indexOf(name) !== -1) return; /* already selected */
+    _selectedWaters.push(name);
+    _renderTagsInModal();
     var waterIn   = document.getElementById('alert-water-input');
     var suggestEl = document.getElementById('alert-water-suggestions');
     var errorEl   = document.getElementById('alert-error');
-    if (waterIn)   waterIn.value = name;
+    if (waterIn)   { waterIn.value = ''; waterIn.focus(); }
     if (suggestEl) { suggestEl.innerHTML = ''; suggestEl.style.display = 'none'; }
     if (errorEl)   errorEl.style.display = 'none';
-    _updateSubmitState();
-    var emailInput = document.getElementById('alert-email-input');
-    if (emailInput) setTimeout(function () { emailInput.focus(); }, 60);
   }
 
   function openAlertModal(waterName) {
@@ -567,34 +591,35 @@
     var suggestEl  = document.getElementById('alert-water-suggestions');
     var emailInput = document.getElementById('alert-email-input');
 
-    _modalWater      = waterName || null;
-    _modalWaterValid = !!waterName;
+    _selectedWaters = waterName ? [waterName] : [];
 
-    if (stepForm)  stepForm.style.display  = 'block';
-    if (stepDone)  stepDone.style.display  = 'none';
-    if (errorEl)   { errorEl.textContent = ''; errorEl.style.display = 'none'; }
+    if (stepForm)   stepForm.style.display  = 'block';
+    if (stepDone)   stepDone.style.display  = 'none';
+    if (errorEl)    { errorEl.textContent = ''; errorEl.style.display = 'none'; }
     if (emailInput) emailInput.value = '';
-    if (waterIn)   waterIn.value = waterName || '';
-    if (suggestEl) { suggestEl.innerHTML = ''; suggestEl.style.display = 'none'; }
+    if (waterIn)    waterIn.value = '';
+    if (suggestEl)  { suggestEl.innerHTML = ''; suggestEl.style.display = 'none'; }
 
+    _renderTagsInModal();
     _updateSubmitState();
 
     overlay.style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    if (waterName) {
-      setTimeout(function () { if (emailInput) emailInput.focus(); }, 120);
-    } else {
-      setTimeout(function () { if (waterIn) waterIn.focus(); }, 120);
-    }
+    setTimeout(function () {
+      if (waterName) {
+        if (emailInput) emailInput.focus();
+      } else {
+        if (waterIn) waterIn.focus();
+      }
+    }, 120);
   }
 
   function closeAlertModal() {
     var overlay = document.getElementById('alert-modal');
     if (overlay) overlay.style.display = 'none';
     document.body.style.overflow = '';
-    _modalWater      = null;
-    _modalWaterValid = false;
+    _selectedWaters = [];
   }
 
   async function _submitAlert() {
@@ -619,28 +644,34 @@
       var supa = _getSupa();
       if (!supa) throw new Error('Could not connect. Please try again.');
 
-      var waterName = (_modalWaterValid && _modalWater) ? _modalWater : null;
+      /* One row per selected water; one null row if none selected (all waters) */
+      var watersToSign = _selectedWaters.length > 0 ? _selectedWaters : [null];
+      var firstIsNew   = false;
+      var firstToken   = null;
 
-      var result = await supa.rpc('signup_for_alert', {
-        p_email:      email,
-        p_water_name: waterName,
-        p_state:      'CA'
-      });
-
-      if (result.error) throw result.error;
-
-      var data = result.data;
+      for (var i = 0; i < watersToSign.length; i++) {
+        var result = await supa.rpc('signup_for_alert', {
+          p_email:      email,
+          p_water_name: watersToSign[i],
+          p_state:      'CA'
+        });
+        if (result.error) throw result.error;
+        if (i === 0 && result.data && result.data.is_new) {
+          firstIsNew = true;
+          firstToken = result.data.confirmation_token || null;
+        }
+      }
 
       /* Fire confirmation email — silently skip if Cloudflare Worker not live yet */
-      if (data && data.is_new && data.confirmation_token) {
+      if (firstIsNew && firstToken) {
         try {
           await fetch('https://fishstockingalert.com/api/confirm-email', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify({
               email:              email,
-              confirmation_token: data.confirmation_token,
-              water_name:         waterName
+              confirmation_token: firstToken,
+              water_name:         watersToSign[0]
             })
           });
         } catch (_) { /* Worker not deployed yet — continue */ }
@@ -650,27 +681,14 @@
       if (stepDone) stepDone.style.display = 'block';
 
       if (doneMsg) {
-        if (waterName) {
-          if (data && data.is_new) {
-            doneMsg.innerHTML =
-              'Check <strong>' + _escHtml(email) + '</strong> for a confirmation link. '
-              + "Once confirmed, you'll get alerts whenever <strong>"
-              + _escHtml(waterName) + '</strong> is stocked.';
-          } else {
-            doneMsg.innerHTML =
-              '<strong>' + _escHtml(waterName) + '</strong> has been added to your alert list. '
-              + "You'll be notified the next time it's stocked.";
-          }
+        if (_selectedWaters.length > 0) {
+          var names = _selectedWaters.map(function (n) {
+            return '<strong>' + _escHtml(n) + '</strong>';
+          }).join(', ');
+          doneMsg.innerHTML = "You're signed up! We'll email you when "
+            + names + ' ' + (_selectedWaters.length === 1 ? 'is' : 'are') + ' stocked.';
         } else {
-          if (data && data.is_new) {
-            doneMsg.innerHTML =
-              'Check <strong>' + _escHtml(email) + '</strong> for a confirmation link. '
-              + "Once confirmed, you'll get alerts whenever any California water is stocked.";
-          } else {
-            doneMsg.innerHTML =
-              "You're signed up for all California waters. "
-              + "You'll be notified whenever a new stocking is reported.";
-          }
+          doneMsg.innerHTML = "You're signed up! We'll email you when any California water is stocked.";
         }
       }
 
@@ -706,11 +724,6 @@
     if (waterIn) {
       waterIn.addEventListener('input', function () {
         var q = this.value.trim();
-        if (_modalWaterValid) {
-          _modalWater      = null;
-          _modalWaterValid = false;
-          _updateSubmitState();
-        }
         _renderWaterSuggestions(q, _filterWatersForModal(q));
       });
       waterIn.addEventListener('keydown', function (e) {

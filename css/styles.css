@@ -2398,6 +2398,62 @@ html.dark-mode .list-col-detail::-webkit-scrollbar-thumb:hover {
 
 .alert-water-search-wrap { position: relative; margin-bottom: 0.25rem; }
 
+/* Override shared margin so the tags wrap provides spacing below the search field */
+.alert-water-search { margin-bottom: 0; }
+
+/* ── Selected water tags ────────────────────────────────────── */
+.alert-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 112px;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: #475569 transparent;
+}
+.alert-tags-wrap::-webkit-scrollbar { width: 4px; }
+.alert-tags-wrap::-webkit-scrollbar-track { background: transparent; }
+.alert-tags-wrap::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
+
+.alert-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px 3px 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #38bdf8;
+  max-width: 220px;
+  line-height: 1.4;
+}
+.alert-tag-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.alert-tag-remove {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  border-radius: 50%;
+  padding: 0;
+  transition: color 0.1s, background 0.1s;
+}
+.alert-tag-remove:hover { color: #f1f5f9; background: rgba(255,255,255,0.1); }
+
 .alert-water-search,
 .alert-email-input {
   width: 100%;
