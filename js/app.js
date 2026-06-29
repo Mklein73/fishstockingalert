@@ -653,8 +653,8 @@
       var supa = _getSupa();
       if (!supa) throw new Error('Could not connect. Please try again.');
 
-      /* One row per selected water; one null row if none selected (all waters) */
-      var watersToSign = _selectedWaters.length > 0 ? _selectedWaters : [null];
+      /* One row per selected water; __ALL__ sentinel if none selected (matches any stocking) */
+      var watersToSign = _selectedWaters.length > 0 ? _selectedWaters : ['__ALL__'];
       var firstIsNew   = false;
       var firstToken   = null;
 
@@ -680,7 +680,7 @@
             body:    JSON.stringify({
               email:              email,
               confirmation_token: firstToken,
-              water_name:         watersToSign[0]
+              water_name:         watersToSign[0] === '__ALL__' ? null : watersToSign[0]
             })
           });
         } catch (_) { /* Worker not deployed yet — continue */ }
