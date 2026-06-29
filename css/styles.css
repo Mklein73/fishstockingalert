@@ -2343,13 +2343,15 @@ html.dark-mode .list-col-detail::-webkit-scrollbar-thumb:hover {
   z-index: 2000;
   width: 90%;
   max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
   background: #ffffff;
   border-radius: 12px;
   padding: 32px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: alert-modal-in 0.18s ease;
+  /* overflow: visible so the autocomplete dropdown can render below
+     the modal box without creating a modal-level scrollbar.
+     The box is position:fixed so its overflow never causes page scroll. */
+  overflow: visible;
 }
 
 @keyframes alert-modal-in {
@@ -2440,9 +2442,25 @@ html.dark-mode .list-col-detail::-webkit-scrollbar-thumb:hover {
   border-radius: 8px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.13);
   z-index: 10;
-  max-height: 210px;
+  max-height: 248px; /* ~5 items */
   overflow-y: auto;
+  /* Thin themed scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
+.alert-water-suggestions::-webkit-scrollbar { width: 4px; }
+.alert-water-suggestions::-webkit-scrollbar-track { background: transparent; }
+.alert-water-suggestions::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+.alert-water-suggestions::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+html.dark-mode .alert-water-suggestions {
+  scrollbar-color: #334155 transparent;
+}
+html.dark-mode .alert-water-suggestions::-webkit-scrollbar-thumb { background: #334155; }
+html.dark-mode .alert-water-suggestions::-webkit-scrollbar-thumb:hover { background: #475569; }
 
 .alert-suggestion-item {
   padding: 0.62rem 1rem;
