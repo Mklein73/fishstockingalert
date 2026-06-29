@@ -41,7 +41,8 @@
   }
 
   /* ── Alert modal state ──────────────────────────────────────── */
-  var _modalWater = null;
+  var _modalWater      = null;
+  var _modalWaterValid = false;
 
   var TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
@@ -478,121 +479,140 @@
      ALERT SIGNUP MODAL
      ══════════════════════════════════════════════════════════════ */
 
+  function _escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   function _filterWatersForModal(query) {
-    if (!query) return [];
-    var q = query.toLowerCase();
+    if (!query || query.length < 2) return [];
+    var q    = query.toLowerCase();
     var seen = {};
-    var results = [];
+    var out  = [];
     allRecords.forEach(function (r) {
       if (!r.waterName || seen[r.waterName]) return;
       if (r.waterName.toLowerCase().indexOf(q) !== -1) {
         seen[r.waterName] = true;
-        results.push(r.waterName);
+        out.push({ name: r.waterName, county: r.county || '' });
       }
     });
-    return results.slice(0, 8);
+    return out.slice(0, 8);
   }
 
-  function _renderWaterSuggestions(query, names) {
+  function _renderWaterSuggestions(query, results) {
     var suggestEl = document.getElementById('alert-water-suggestions');
     if (!suggestEl) return;
-    if (!query) {
-      suggestEl.innerHTML = '';
-      suggestEl.style.display = 'none';
+    if (!results || results.length === 0) {
+      if (!query || query.length < 2) {
+        suggestEl.innerHTML = '';
+        suggestEl.style.display = 'none';
+      } else {
+        suggestEl.innerHTML = '<div class="alert-suggestion-empty">No waters found.</div>';
+        suggestEl.style.display = 'block';
+      }
       return;
     }
-    if (!names || names.length === 0) {
-      suggestEl.innerHTML = '<div class="alert-suggestion-empty">No waters found — try a different name.</div>';
-      suggestEl.style.display = 'block';
-      return;
-    }
+    var ql   = query.toLowerCase();
     var html = '';
-    names.forEach(function (name) {
-      html += '<div class="alert-suggestion-item">' + name + '</div>';
+    results.forEach(function (item) {
+      var name = item.name;
+      var idx  = name.toLowerCase().indexOf(ql);
+      var highlighted = idx === -1
+        ? _escHtml(name)
+        : _escHtml(name.slice(0, idx))
+            + '<span class="alert-hl">' + _escHtml(name.slice(idx, idx + query.length)) + '</span>'
+            + _escHtml(name.slice(idx + query.length));
+      var county = item.county ? _escHtml(item.county) + ' County, CA' : 'CA';
+      html += '<div class="alert-suggestion-item" data-name="' + _escHtml(item.name) + '">'
+            + '<span class="alert-sug-name">' + highlighted + '</span>'
+            + '<span class="alert-sug-county">' + county + '</span>'
+            + '</div>';
     });
     suggestEl.innerHTML = html;
     suggestEl.style.display = 'block';
-    suggestEl.querySelectorAll('.alert-suggestion-item').forEach(function (item) {
-      item.addEventListener('click', function () {
-        _selectWaterInModal(item.textContent);
+    suggestEl.querySelectorAll('.alert-suggestion-item').forEach(function (el) {
+      el.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        _selectWaterInModal(el.getAttribute('data-name'));
       });
     });
   }
 
-  function _selectWaterInModal(waterName) {
-    _modalWater = waterName;
-    var stepWater  = document.getElementById('alert-step-water');
-    var stepEmail  = document.getElementById('alert-step-email');
-    var waterDisp  = document.getElementById('alert-water-display');
+  function _updateSubmitState() {
+    var btn = document.getElementById('alert-submit-btn');
+    if (!btn) return;
+    var email = ((document.getElementById('alert-email-input') || {}).value || '').trim();
+    btn.disabled = !(_modalWaterValid && email.indexOf('@') !== -1 && email.length > 5);
+  }
+
+  function _selectWaterInModal(name) {
+    _modalWater      = name;
+    _modalWaterValid = true;
+    var waterIn   = document.getElementById('alert-water-input');
+    var suggestEl = document.getElementById('alert-water-suggestions');
+    var errorEl   = document.getElementById('alert-error');
+    if (waterIn)   waterIn.value = name;
+    if (suggestEl) { suggestEl.innerHTML = ''; suggestEl.style.display = 'none'; }
+    if (errorEl)   errorEl.style.display = 'none';
+    _updateSubmitState();
     var emailInput = document.getElementById('alert-email-input');
-    var errorEl    = document.getElementById('alert-error');
-    if (stepWater)  stepWater.style.display  = 'none';
-    if (stepEmail)  stepEmail.style.display  = 'block';
-    if (waterDisp)  waterDisp.textContent    = waterName;
-    if (errorEl)    errorEl.style.display    = 'none';
-    setTimeout(function () { if (emailInput) emailInput.focus(); }, 80);
+    if (emailInput) setTimeout(function () { emailInput.focus(); }, 60);
   }
 
   function openAlertModal(waterName) {
-    var overlay     = document.getElementById('alert-modal');
-    var stepWater   = document.getElementById('alert-step-water');
-    var stepEmail   = document.getElementById('alert-step-email');
-    var stepDone    = document.getElementById('alert-step-done');
-    var waterDisp   = document.getElementById('alert-water-display');
-    var emailInput  = document.getElementById('alert-email-input');
-    var errorEl     = document.getElementById('alert-error');
-    var searchInput = document.getElementById('alert-water-search');
-    var suggestEl   = document.getElementById('alert-water-suggestions');
-    var submitBtn   = document.getElementById('alert-submit-btn');
+    var overlay    = document.getElementById('alert-modal');
+    var stepForm   = document.getElementById('alert-step-form');
+    var stepDone   = document.getElementById('alert-step-done');
+    var errorEl    = document.getElementById('alert-error');
+    var waterIn    = document.getElementById('alert-water-input');
+    var suggestEl  = document.getElementById('alert-water-suggestions');
+    var emailInput = document.getElementById('alert-email-input');
 
-    _modalWater = waterName || null;
+    _modalWater      = waterName || null;
+    _modalWaterValid = !!waterName;
 
+    if (stepForm)  stepForm.style.display  = 'block';
+    if (stepDone)  stepDone.style.display  = 'none';
     if (errorEl)   { errorEl.textContent = ''; errorEl.style.display = 'none'; }
     if (emailInput) emailInput.value = '';
-    if (submitBtn)  { submitBtn.disabled = false; submitBtn.textContent = 'Get Free Alerts'; }
+    if (waterIn)   waterIn.value = waterName || '';
+    if (suggestEl) { suggestEl.innerHTML = ''; suggestEl.style.display = 'none'; }
 
-    if (_modalWater) {
-      if (stepWater) stepWater.style.display = 'none';
-      if (stepEmail) stepEmail.style.display = 'block';
-      if (stepDone)  stepDone.style.display  = 'none';
-      if (waterDisp) waterDisp.textContent = _modalWater;
-      setTimeout(function () { if (emailInput) emailInput.focus(); }, 120);
-    } else {
-      if (stepWater) stepWater.style.display = 'block';
-      if (stepEmail) stepEmail.style.display = 'none';
-      if (stepDone)  stepDone.style.display  = 'none';
-      if (searchInput) searchInput.value = '';
-      if (suggestEl)   { suggestEl.innerHTML = ''; suggestEl.style.display = 'none'; }
-      setTimeout(function () { if (searchInput) searchInput.focus(); }, 120);
-    }
+    _updateSubmitState();
 
     overlay.style.display = 'block';
     document.body.style.overflow = 'hidden';
+
+    if (waterName) {
+      setTimeout(function () { if (emailInput) emailInput.focus(); }, 120);
+    } else {
+      setTimeout(function () { if (waterIn) waterIn.focus(); }, 120);
+    }
   }
 
   function closeAlertModal() {
     var overlay = document.getElementById('alert-modal');
     if (overlay) overlay.style.display = 'none';
     document.body.style.overflow = '';
-    _modalWater = null;
+    _modalWater      = null;
+    _modalWaterValid = false;
   }
 
   async function _submitAlert() {
     var emailEl   = document.getElementById('alert-email-input');
     var errorEl   = document.getElementById('alert-error');
     var submitBtn = document.getElementById('alert-submit-btn');
-    var stepEmail = document.getElementById('alert-step-email');
+    var stepForm  = document.getElementById('alert-step-form');
     var stepDone  = document.getElementById('alert-step-done');
     var doneMsg   = document.getElementById('alert-done-msg');
 
     var email = emailEl ? emailEl.value.trim() : '';
 
-    if (!email || email.indexOf('@') === -1) {
-      if (errorEl) { errorEl.textContent = 'Please enter a valid email address.'; errorEl.style.display = 'block'; }
+    if (!_modalWaterValid || !_modalWater) {
+      if (errorEl) { errorEl.textContent = 'Please select a water from the list.'; errorEl.style.display = 'block'; }
       return;
     }
-    if (!_modalWater) {
-      if (errorEl) { errorEl.textContent = 'Please select a water first.'; errorEl.style.display = 'block'; }
+    if (!email || email.indexOf('@') === -1) {
+      if (errorEl) { errorEl.textContent = 'Please enter a valid email address.'; errorEl.style.display = 'block'; }
       return;
     }
 
@@ -628,18 +648,18 @@
         } catch (_) { /* Worker not deployed yet — continue */ }
       }
 
-      if (stepEmail) stepEmail.style.display = 'none';
-      if (stepDone)  stepDone.style.display  = 'block';
+      if (stepForm) stepForm.style.display = 'none';
+      if (stepDone) stepDone.style.display = 'block';
 
       if (doneMsg) {
         if (data && data.is_new) {
           doneMsg.innerHTML =
-            'Check <strong>' + email + '</strong> for a confirmation link. '
+            'Check <strong>' + _escHtml(email) + '</strong> for a confirmation link. '
             + "Once confirmed, you'll get alerts whenever <strong>"
-            + _modalWater + '</strong> is stocked.';
+            + _escHtml(_modalWater) + '</strong> is stocked.';
         } else {
           doneMsg.innerHTML =
-            '<strong>' + _modalWater + '</strong> has been added to your alert list. '
+            '<strong>' + _escHtml(_modalWater) + '</strong> has been added to your alert list. '
             + "You'll be notified the next time it's stocked.";
         }
       }
@@ -660,7 +680,7 @@
     var overlay    = document.getElementById('alert-modal');
     var closeBtn   = document.getElementById('alert-modal-close');
     var doneClose  = document.getElementById('alert-done-close');
-    var searchIn   = document.getElementById('alert-water-search');
+    var waterIn    = document.getElementById('alert-water-input');
     var submitBtn  = document.getElementById('alert-submit-btn');
     var emailInput = document.getElementById('alert-email-input');
 
@@ -673,19 +693,31 @@
       });
     }
 
-    if (searchIn) {
-      searchIn.addEventListener('input', function () {
+    if (waterIn) {
+      waterIn.addEventListener('input', function () {
         var q = this.value.trim();
+        if (_modalWaterValid) {
+          _modalWater      = null;
+          _modalWaterValid = false;
+          _updateSubmitState();
+        }
         _renderWaterSuggestions(q, _filterWatersForModal(q));
       });
-      searchIn.addEventListener('keydown', function (e) {
+      waterIn.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') closeAlertModal();
+      });
+      waterIn.addEventListener('blur', function () {
+        setTimeout(function () {
+          var s = document.getElementById('alert-water-suggestions');
+          if (s) { s.innerHTML = ''; s.style.display = 'none'; }
+        }, 200);
       });
     }
 
     if (emailInput) {
+      emailInput.addEventListener('input', _updateSubmitState);
       emailInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter')  _submitAlert();
+        if (e.key === 'Enter' && !submitBtn.disabled) _submitAlert();
         if (e.key === 'Escape') closeAlertModal();
       });
     }

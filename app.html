@@ -243,27 +243,25 @@
     <div class="alert-modal-box">
       <button class="alert-modal-close" id="alert-modal-close" aria-label="Close">&times;</button>
 
-      <!-- Step: Water search (shown when no water pre-selected) -->
-      <div id="alert-step-water">
-        <div class="alert-modal-icon">&#128276;</div>
+      <!-- Step: Combined water + email form -->
+      <div id="alert-step-form">
+        <div class="alert-modal-icon">
+          <svg class="alert-bell-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+        </div>
         <h2 class="alert-modal-title">Get Stocking Alerts</h2>
-        <p class="alert-modal-sub">Search for a water and we'll notify you the moment it's stocked.</p>
+        <p class="alert-modal-sub">Pick a water and enter your email. We'll notify you the moment it's stocked.</p>
+        <div class="alert-error" id="alert-error" style="display:none"></div>
+        <label class="alert-email-label" for="alert-water-input">Water Name</label>
         <div class="alert-water-search-wrap">
-          <input type="text" id="alert-water-search" class="alert-water-search" placeholder="Search waters…" autocomplete="off" />
+          <input type="text" id="alert-water-input" class="alert-water-search" placeholder="Search California waters…" autocomplete="off" />
           <div id="alert-water-suggestions" class="alert-water-suggestions" style="display:none"></div>
         </div>
-        <p class="alert-fine">Type to search all California waters.</p>
-      </div>
-
-      <!-- Step: Email input -->
-      <div id="alert-step-email" style="display:none">
-        <div class="alert-modal-icon">&#128276;</div>
-        <h2 class="alert-modal-title">Get Alert for <span id="alert-water-display" class="alert-water-name"></span></h2>
-        <p class="alert-modal-sub">Enter your email and we'll notify you the moment this water is stocked.</p>
-        <div class="alert-error" id="alert-error" style="display:none"></div>
-        <label class="alert-email-label" for="alert-email-input">Email address</label>
+        <label class="alert-email-label" for="alert-email-input">Email Address</label>
         <input type="email" id="alert-email-input" class="alert-email-input" placeholder="your@email.com" autocomplete="email" />
-        <button class="alert-submit-btn" id="alert-submit-btn">Get Free Alerts</button>
+        <button class="alert-submit-btn" id="alert-submit-btn" disabled>Get Free Alerts</button>
         <p class="alert-fine">No spam &middot; Unsubscribe anytime &middot; Free forever</p>
       </div>
 
@@ -283,8 +281,8 @@
   <script src="states/california.js"></script>
   <script src="states/pennsylvania.js"></script>
   <script src="states/new-york.js"></script>
-  <script src="js/ui.js?v=4"></script>
-  <script src="js/app.js?v=4"></script>
+  <script src="js/ui.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 </body>

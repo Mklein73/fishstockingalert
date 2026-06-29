@@ -2429,6 +2429,12 @@ html.dark-mode .list-col-detail::-webkit-scrollbar-thumb:hover {
   font-style: italic;
 }
 
+.alert-sug-name   { display: block; }
+.alert-sug-county { display: block; font-size: 0.75rem; font-weight: 500; color: #94a3b8; margin-top: 1px; }
+.alert-hl         { color: #0ea5e9; }
+
+.alert-bell-icon  { display: block; margin: 0 auto; color: #0ea5e9; }
+
 .alert-error {
   padding: 0.6rem 0.9rem;
   background: #fff0f0;
@@ -2489,6 +2495,9 @@ html.dark-mode .alert-water-suggestions  { background: #1a2332; border-color: #0
 html.dark-mode .alert-suggestion-item    { color: #f1f5f9; border-color: #334155; }
 html.dark-mode .alert-suggestion-item:hover { background: rgba(14,165,233,0.12); color: #0ea5e9; }
 html.dark-mode .alert-suggestion-empty   { color: #64748b; }
+html.dark-mode .alert-sug-county         { color: #64748b; }
+html.dark-mode .alert-hl                 { color: #38bdf8; }
+html.dark-mode .alert-bell-icon          { color: #38bdf8; }
 html.dark-mode .alert-error              { background: rgba(185,28,28,0.15); border-color: rgba(252,165,165,0.4); color: #fca5a5; }
 html.dark-mode .alert-done-msg           { color: #e2e8f0; }
 html.dark-mode .alert-fine               { color: #94a3b8; }
