@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -248,6 +248,7 @@
       .header-actions { gap: 1rem; }
     }
   </style>
+  <link rel="stylesheet" href="../css/alert-modal.css">
 </head>
 <body>
 
@@ -337,8 +338,46 @@
       localStorage.setItem("fsa-theme", isDark ? "dark" : "light");
     });
     document.getElementById("btn-get-alerts").addEventListener("click", function () {
-      window.location.href = "../index.html";
+      openAlertModal(null);
     });
   </script>
+  <!-- Alert signup modal -->
+  <div id="alert-modal" class="alert-modal-overlay" role="dialog" aria-modal="true" aria-label="Get stocking alerts" style="display:none">
+    <div class="alert-modal-box">
+      <button class="alert-modal-close" id="alert-modal-close" aria-label="Close">&times;</button>
+
+      <div id="alert-step-form">
+        <div class="alert-modal-icon">
+          <svg class="alert-bell-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+        </div>
+        <h2 class="alert-modal-title">Get Stocking Alerts</h2>
+        <p class="alert-modal-sub">Pick a water and enter your email. We'll notify you the moment it's stocked.</p>
+        <div class="alert-error" id="alert-error" style="display:none"></div>
+        <label class="alert-email-label" for="alert-water-input">Water Name</label>
+        <div class="alert-water-search-wrap">
+          <input type="text" id="alert-water-input" class="alert-water-search" placeholder="Search California waters..." autocomplete="off" />
+          <div id="alert-water-suggestions" class="alert-water-suggestions" style="display:none"></div>
+        </div>
+        <label class="alert-email-label" for="alert-email-input">Email Address</label>
+        <input type="email" id="alert-email-input" class="alert-email-input" placeholder="your@email.com" autocomplete="email" />
+        <button class="alert-submit-btn" id="alert-submit-btn" disabled>Get Free Alerts</button>
+        <p class="alert-fine">No spam &middot; Unsubscribe anytime &middot; Free forever</p>
+      </div>
+
+      <div id="alert-step-done" style="display:none">
+        <div class="alert-modal-icon">&#10003;</div>
+        <h2 class="alert-modal-title">You're In!</h2>
+        <p class="alert-done-msg" id="alert-done-msg"></p>
+        <button class="alert-close-btn" id="alert-done-close">Done</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/alert-modal.js"></script>
 </body>
 </html>
