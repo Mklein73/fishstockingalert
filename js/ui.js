@@ -171,7 +171,15 @@ window.UI = (function () {
   function updateStats(records, stateName) {
     var uniqueWaters   = new Set(records.map(function (r) { return r.waterName; })).size;
     var totalStockings = records.length;
-    var uniqueSpecies  = new Set(records.map(function (r) { return r.species; }).filter(Boolean)).size;
+    var _speciesSet = new Set();
+    records.forEach(function (r) {
+      if (r.speciesList && r.speciesList.length > 0) {
+        r.speciesList.forEach(function (s) { if (s.name) _speciesSet.add(s.name); });
+      } else if (r.species) {
+        _speciesSet.add(r.species);
+      }
+    });
+    var uniqueSpecies = _speciesSet.size;
 
     var elWaters    = document.getElementById("stat-waters");
     var elStocking  = document.getElementById("stat-stockings");
