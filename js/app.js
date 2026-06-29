@@ -154,6 +154,7 @@
       if (!mapReady) {
         mapReady = true;
         UI.initMap(getFilteredMapRecords());
+        UI.resizeMap();
       } else {
         UI.updateMapMarkers(getFilteredMapRecords());
         UI.resizeMap();

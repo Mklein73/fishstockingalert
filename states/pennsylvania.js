@@ -39,6 +39,10 @@ window.PennsylvaniaState = (function () {
     if (!res.ok) throw new Error("HTTP " + res.status + " loading PA stocking data");
     var rawRecords = await res.json();
 
+    /* PA bounding box — drops the two PFBC records with corrupted longitude values */
+    var PA_LAT = [39.7, 42.3];
+    var PA_LON = [-80.6, -74.7];
+
     return rawRecords.map(function (r) {
       var lat = (r.Mid_Lat  && r.Mid_Lat  !== 0) ? r.Mid_Lat  : (r.WtrLatDD || null);
       var lon = (r.Mid_Long && r.Mid_Long !== 0) ? r.Mid_Long : (r.WtrLonDD || null);
@@ -81,6 +85,10 @@ window.PennsylvaniaState = (function () {
         totalBrood:         r.TotalBroodStocked   || 0,
         stockingYear:       r.StockingYear || 2026
       };
+    }).filter(function (rec) {
+      return rec.lat !== null && rec.lon !== null
+        && rec.lat >= PA_LAT[0] && rec.lat <= PA_LAT[1]
+        && rec.lon >= PA_LON[0] && rec.lon <= PA_LON[1];
     });
   }
 
