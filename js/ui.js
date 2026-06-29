@@ -606,12 +606,12 @@ window.UI = (function () {
     var tempColor, tempVal, tempPct;
     if (isCold) {
       if (month >= 10 || month <= 5) { tempColor = "#10b981"; tempVal = "Ideal conditions";      tempPct = 1.0; }
-      else if (month === 6 || month === 9) { tempColor = "#eab308"; tempVal = "Marginal — warming"; tempPct = 0.6; }
-      else                            { tempColor = "#ef4444"; tempVal = "Too warm — fish stressed"; tempPct = 0.3; }
+      else if (month === 6 || month === 9) { tempColor = "#eab308"; tempVal = "Marginal, warming"; tempPct = 0.6; }
+      else                            { tempColor = "#ef4444"; tempVal = "Too warm. Fish stressed"; tempPct = 0.3; }
     } else if (isWarm) {
       if (month >= 6 && month <= 9)  { tempColor = "#10b981"; tempVal = "Ideal conditions";    tempPct = 1.0; }
       else if (month === 5 || month === 10) { tempColor = "#eab308"; tempVal = "Warming to ideal"; tempPct = 0.7; }
-      else                            { tempColor = "#3b82f6"; tempVal = "Cold — slower bite";  tempPct = 0.4; }
+      else                            { tempColor = "#3b82f6"; tempVal = "Cold, slower bite";  tempPct = 0.4; }
     } else {
       tempColor = "#94a3b8"; tempVal = "Varies by species"; tempPct = 0.5;
     }

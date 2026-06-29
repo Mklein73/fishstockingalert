@@ -72,16 +72,12 @@
 }
 
 .hero-badge {
-  display: inline-block;
-  background: rgba(14,165,233,0.15);
-  border: 1px solid rgba(14,165,233,0.35);
-  color: #7dd3fc;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 0.35rem 1rem;
-  border-radius: 999px;
-  margin-bottom: 1.75rem;
+  display: block;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  margin-bottom: 1.5rem;
 }
 
 .hero-headline {

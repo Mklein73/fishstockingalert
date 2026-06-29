@@ -69,7 +69,7 @@
 
   function _ensureFooterHidden() {
     if (window.innerWidth >= 768) return;
-    var footer = document.querySelector(".site-footer");
+    var footer = document.querySelector(".data-footer");
     if (!footer) return;
     footer.style.display =
       document.getElementById("view-map").classList.contains("active") ? "none" : "";
@@ -88,7 +88,7 @@
     var tabNav      = document.getElementById("tab-nav");
     var viewMap     = document.getElementById("view-map");
     var leafletMap  = document.getElementById("leaflet-map");
-    var footer      = document.querySelector(".site-footer");
+    var footer      = document.querySelector(".data-footer");
     var mapControls = document.getElementById("map-controls");
 
     var vh = _getVH();
@@ -131,7 +131,7 @@
 
     var viewMap    = document.getElementById("view-map");
     var leafletMap = document.getElementById("leaflet-map");
-    var footer     = document.querySelector(".site-footer");
+    var footer     = document.querySelector(".data-footer");
 
     viewMap.style.height    = "";
     leafletMap.style.width  = "";
