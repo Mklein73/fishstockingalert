@@ -20,22 +20,22 @@ window.UI = (function () {
   var TIPS = {
 
     rainbowTrout: [
-      "Hatchery rainbows are most catchable in the first 24–72 hours post-stocking. Fish as close as possible to where the stocking truck entered the water — trout congregate near their release point before dispersing.",
+      "Hatchery rainbows are most catchable in the first 24–72 hours post-stocking. Fish as close as possible to where the stocking truck entered the water. Trout congregate near their release point before dispersing.",
       "PowerBait in chartreuse, rainbow, or salmon-egg colors is the go-to for stocked fish. Float it 18–24 inches off the bottom with a sliding sinker rig so it stays in the strike zone without dragging.",
       "Small in-line spinners (Panther Martin or Blue Fox, size 0–2) retrieved slow and steady are deadly on fresh plants. Let the spinner sink a beat before starting the retrieve to cover multiple depth layers.",
       "Stocked trout school tight. If you're not biting, move along the bank every 20–30 minutes until you find the school, then stay put. Look for sheltered coves and inlet channels where current slows.",
       "In summer, stocked rainbows push deep to find cooler water. Target 10–20 feet down near the thermocline. Early morning and evening are the only productive windows when surface temps exceed 65°F.",
-      "Drop down to 4 lb fluorocarbon leader material. Stocked trout in clear water become noticeably line-shy after a day or two of pressure — lighter line means a more natural presentation and more strikes.",
+      "Drop down to 4 lb fluorocarbon leader material. Stocked trout in clear water become noticeably line-shy after a day or two of pressure; lighter line means a more natural presentation and more strikes.",
       "After day 3, surviving fish that have seen heavy pressure become wary of PowerBait. Switch to natural presentations: nightcrawlers under a small float or small olive/brown jigs. Live bait outperforms scented bait on educated fish.",
-      "In cold water (below 50°F), slow everything way down. Trout metabolize slowly in cold conditions and won't chase a fast retrieve. Soak bait on the bottom and wait for the rod to load — don't twitch or reel.",
-      "Egg patterns in orange, peach, and pink — Berkley Powerbait eggs, canned corn, or real salmon eggs — mimic hatchery pellets. Fish conditioned on pellets respond immediately to round, bright objects on a bare hook under a small float.",
+      "In cold water (below 50°F), slow everything way down. Trout metabolize slowly in cold conditions and won't chase a fast retrieve. Soak bait on the bottom and wait for the rod to load. Don't twitch or reel.",
+      "Egg patterns in orange, peach, and pink (Berkley Powerbait eggs, canned corn, or real salmon eggs) mimic hatchery pellets. Fish conditioned on pellets respond immediately to round, bright objects on a bare hook under a small float.",
       "For larger stocked rainbows, work a nightcrawler on a single size-8 hook with no weight in calm, shallow sections at first light. Big fish move shallow at dawn before retreating to deeper water as sun hits the surface."
     ],
 
     trout: [
-      "Brown trout are more wary than rainbows and hold in deeper, shaded structure. Target submerged logs, undercut banks, and bridge shadows — not open water.",
+      "Brown trout are more wary than rainbows and hold in deeper, shaded structure. Target submerged logs, undercut banks, and bridge shadows, not open water.",
       "Fish after dark for larger browns. Trophy fish feed heavily at night on mice, large insects, and small baitfish. Use a 4-inch swimming lure or large streamer and work the surface aggressively in shallow flats.",
-      "Browns respond well to natural bait — nightcrawlers, minnows, and crayfish imitations. Avoid PowerBait for pressured fish; they wise up faster than rainbows to artificial scents.",
+      "Browns respond well to natural baits: nightcrawlers, minnows, and crayfish imitations. Avoid PowerBait for pressured fish; they wise up faster than rainbows to artificial scents.",
       "Small Rapala F5 or F7 in silver or black, fished parallel to the bank at dawn, is a consistent brown trout producer in reservoirs and slower rivers.",
       "In spring, fish subsurface egg imitations near tributaries. Spawn activity triggers aggressive feeding behavior even in non-spawning fish nearby.",
       "Late-season trout are more active as water cools. You can fish heavier and faster in October and November than during the summer doldrums."
@@ -44,35 +44,35 @@ window.UI = (function () {
     catfish: [
       "Catfish feed primarily by scent. Cut shad or cut carp soaked overnight develops a stronger odor trail that draws fish from far greater distances than fresh-cut bait.",
       "Most catfish are caught after dark. Set up near deep holes adjacent to shallow feeding flats, use glow sticks on your rod tips, and run multiple lines to cover water.",
-      "Find the thermocline in warm months — channel catfish stack near the cooler bottom layer. Soak bait directly on bottom with a slip-sinker rig in the deepest accessible area.",
+      "Find the thermocline in warm months; channel catfish stack near the cooler bottom layer. Soak bait directly on bottom with a slip-sinker rig in the deepest accessible area.",
       "Chicken liver in a mesh sleeve stays on the hook in current far longer than bare liver. The sleeve doubles your fishing time per bait and keeps the scent trail going.",
-      "Stink baits and dip baits on sponge hooks work well for channel cats. Load the sponge heavy — the bait needs to leach scent slowly for several minutes to build an effective trail.",
-      "Target catfish near current seams — fish hold behind structure in slower water but position to intercept food washing through faster sections. Bridge pilings, channel bends, and fallen trees are classic spots."
+      "Stink baits and dip baits on sponge hooks work well for channel cats. Load the sponge heavy; the bait needs to leach scent slowly for several minutes to build an effective trail.",
+      "Target catfish near current seams, where fish hold behind structure in slower water but position to intercept food washing through faster sections. Bridge pilings, channel bends, and fallen trees are classic spots."
     ],
 
     bass: [
       "Target the first two hours after sunrise for largemouth in shallow cover. Bass move shallow to feed in low light and retreat to deeper structure as sun penetrates the water column.",
       "Texas-rigged plastic worms (6–8 inch, purple or green pumpkin) fished painfully slow through vegetation is the most reliable largemouth technique year-round. Bass often pick up a bait sitting completely still.",
-      "Frog lures on surface mats produce explosive strikes. Don't set the hook on the boil — wait until you feel the full weight of the fish loading the rod, then set hard.",
+      "Frog lures on surface mats produce explosive strikes. Don't set the hook on the boil; wait until you feel the full weight of the fish loading the rod, then set hard.",
       "Smallmouth favor rocky structure and current. Tube jigs and finesse drop-shots in natural colors (green pumpkin, watermelon) fished along rocky points and channel edges consistently produce.",
       "Fish crayfish imitations in early spring during pre-spawn feeding. Brown and orange jig-and-pig combos work best when dragged slowly along the bottom near gravel-to-sand transitions.",
-      "Topwater baits are most effective at dawn, dusk, and when bass are visibly pushing shad to the surface. Watch for diving birds — they mark active bass schools corralling baitfish."
+      "Topwater baits are most effective at dawn, dusk, and when bass are visibly pushing shad to the surface. Watch for diving birds; they mark active bass schools corralling baitfish."
     ],
 
     salmon: [
       "Chinook salmon respond aggressively to large spinners and spoons trolled near structure. Silver with blue prism tape or green-and-chartreuse patterns produce in most California conditions.",
-      "Anchor and drift fresh roe near the bottom in salmon rivers during the fall run. Keep the bait drifting naturally through the current with no added action — salmon in clear water want an unmanipulated presentation.",
-      "Fish the tail-outs of pools at first light — salmon stage in tail-outs before pushing through riffles. Presentation accuracy matters more than lure selection; get your bait precisely in front of holding fish.",
+      "Anchor and drift fresh roe near the bottom in salmon rivers during the fall run. Keep the bait drifting naturally through the current with no added action; salmon in clear water want an unmanipulated presentation.",
+      "Fish the tail-outs of pools at first light; salmon stage in tail-outs before pushing through riffles. Presentation accuracy matters more than lure selection; get your bait precisely in front of holding fish.",
       "Salmon drop in feeding activity once they have been in freshwater for more than two weeks. Target fresh-run fish near river mouths and inlet channels where they are still in active feeding mode.",
       "Staged salmon strike out of aggression and territorial response more than hunger. Small, bright offerings placed precisely in front of a visible fish trigger reflex strikes.",
-      "Coho in reservoirs respond well to spoons trolled at 2–2.5 mph at 25–45 feet during summer. Chartreuse and orange patterns excel in stained water — go silver or chrome in clear conditions."
+      "Coho in reservoirs respond well to spoons trolled at 2–2.5 mph at 25–45 feet during summer. Chartreuse and orange patterns excel in stained water; go silver or chrome in clear conditions."
     ],
 
     general: [
       "Find the bait fish and you will find the predators. Look for diving birds, surface swirls, and color changes in the water that signal baitfish concentrations, then fish the edges of those areas.",
-      "Morning and evening bites are almost universally more productive than midday. Plan your time on the water around the transitions — especially in warm months when midday sun pushes fish deep.",
+      "Morning and evening bites are almost universally more productive than midday. Plan your time on the water around the transitions, especially in warm months when midday sun pushes fish deep.",
       "Downsize your presentation on tough days. Smaller hooks, lighter line, and smaller bait all lead to more natural presentations that spook fewer fish and trigger more strikes.",
-      "Fish structure every time. Rocks, fallen trees, docks, weed edges, and depth changes all concentrate fish. Open water holds far fewer fish — always have a reason for where your bait lands.",
+      "Fish structure every time. Rocks, fallen trees, docks, weed edges, and depth changes all concentrate fish. Open water holds far fewer fish; always have a reason for where your bait lands.",
       "Match the hatch: observe what insects or bait fish are active near the surface and match your lure or bait to what fish are already keyed on. When fish are feeding visually, presentation matters more than scent.",
       "A slip float lets you target fish suspended at a precise depth. When fish aren't responding to bottom presentations, rig a float and experiment with depth until you find where they are holding in the water column."
     ]

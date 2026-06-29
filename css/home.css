@@ -71,12 +71,10 @@
   margin: 0 auto;
 }
 
-.hero-badge {
-  display: block;
+.hero-tagline {
   color: #64748b;
   font-size: 0.82rem;
   font-weight: 500;
-  letter-spacing: 0.03em;
   margin-bottom: 1.5rem;
 }
 
