@@ -2050,7 +2050,7 @@ body {
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
   flex-shrink: 0;
-  /* emoji renders its own colour — no inherited colour needed */
+  color: #e2e8f0;
 }
 
 .btn-dark-mode:hover {
