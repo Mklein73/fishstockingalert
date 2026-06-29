@@ -124,10 +124,15 @@ window.UI = (function () {
   function speciesColor(species) {
     if (!species) return "#94a3b8";
     var t = species.toLowerCase();
-    if (t.includes("trout"))   return "#0ea5e9";
-    if (t.includes("catfish")) return "#f97316";
-    if (t.includes("bass"))    return "#10b981";
-    if (t.includes("salmon"))  return "#6366f1";
+    if (t === "rainbow trout")           return "#0ea5e9";
+    if (t === "brown trout")             return "#f59e0b";
+    if (t === "brook trout")             return "#10b981";
+    if (t.includes("golden"))            return "#eab308";
+    if (t.includes("brood"))             return "#8b5cf6";
+    if (t.includes("trout"))             return "#0ea5e9";
+    if (t.includes("catfish"))           return "#f97316";
+    if (t.includes("bass"))              return "#10b981";
+    if (t.includes("salmon"))            return "#6366f1";
     return "#94a3b8";
   }
 
@@ -597,6 +602,10 @@ window.UI = (function () {
       var fpa = Number(r.fishCount) / Number(r.acreage);
       densVal = fpa.toFixed(1) + " fish/acre";
       densPct = Math.min(1, fpa / 5);
+    } else if (r.fishPerMile) {
+      var fpm = Number(r.fishPerMile);
+      densVal = fpm.toLocaleString() + " fish/mi";
+      densPct = Math.min(1, fpm / 500);
     }
 
     var month     = new Date().getMonth() + 1;
@@ -790,7 +799,9 @@ window.UI = (function () {
 
     var html = "";
 
-    var countyLine   = (waterObj.county || "—") + ", California";
+    var _sc        = window._FSA_CONFIG;
+    var _sLabel    = (_sc && _sc.stateLabel) ? _sc.stateLabel : "California";
+    var countyLine = (waterObj.county || "—") + ", " + _sLabel;
     var typePillHtml = waterObj.waterType
       ? '<div class="detail-col-pills"><span class="water-type-pill">' + waterObj.waterType + "</span></div>"
       : "";
@@ -821,10 +832,18 @@ window.UI = (function () {
     stockingContent += _fieldRow("Date",
       dLabel + (agoTxt ? ' <span class="days-ago">(' + agoTxt + ")</span>" : "")
     );
-    stockingContent += _fieldRow("Species",
-      '<span class="species-dot" style="background:' + speciesColor(r.species) + ';"></span>'
-      + (r.species || "—")
-    );
+    if (r.speciesList && r.speciesList.length > 1) {
+      var spBreakdown = r.speciesList.map(function (s) {
+        return '<span class="species-dot" style="background:' + speciesColor(s.name) + ';"></span>'
+          + s.name + ' (' + s.count.toLocaleString() + ')';
+      }).join('<br>');
+      stockingContent += _fieldRow("Species", spBreakdown);
+    } else {
+      stockingContent += _fieldRow("Species",
+        '<span class="species-dot" style="background:' + speciesColor(r.species) + ';"></span>'
+        + (r.species || "—")
+      );
+    }
 
     var hasCountSize  = r.fishCount || r.fishSize;
     var hasAcreage    = r.acreage;
@@ -847,6 +866,21 @@ window.UI = (function () {
       }
     }
 
+    if (r.sectionLengthMiles) {
+      if (!hasCountSize && !hasAcreage) stockingContent += '<hr class="field-divider" />';
+      stockingContent += _fieldRow("Section Length", r.sectionLengthMiles.toFixed(2) + " mi");
+      if (r.fishPerMile) {
+        stockingContent += _fieldRow("Fish / Mile",
+          r.fishPerMile.toLocaleString()
+          + ' <span class="field-calc">(' + (r.fishCount || 0).toLocaleString() + " fish)</span>"
+        );
+      }
+    }
+
+    if (r.bestFishingWater) {
+      stockingContent += '<div class="best-water-badge">Best Fishing Water</div>';
+    }
+
     if (hasSourceInfo) {
       stockingContent += '<hr class="field-divider" />';
       if (r.hatchery) stockingContent += _fieldRow("Hatchery", r.hatchery);
@@ -855,30 +889,46 @@ window.UI = (function () {
 
     html += _buildCollapsible("det-stocking", "droplets", "Latest Stocking", stockingContent);
 
+    var _rc = window._FSA_CONFIG;
     var regsContent = "";
     regsContent += _fieldRow("LICENSE",
-      'Required, age 16+'
-      + ' &nbsp;<a class="field-action-link" href="https://wildlife.ca.gov/Licensing/Fishing"'
-      + ' target="_blank" rel="noopener">Buy CA License →</a>'
+      (_rc ? _rc.licenseNote : "Required, age 16+")
+      + ' &nbsp;<a class="field-action-link" href="'
+      + (_rc ? _rc.licenseUrl : "https://wildlife.ca.gov/Licensing/Fishing")
+      + '" target="_blank" rel="noopener">'
+      + (_rc ? "Buy " + _rc.stateAbbr + " License →" : "Buy CA License →")
+      + '</a>'
     );
-    regsContent += _fieldRow("SEASON",
-      (r.season || "Open year-round (most stocked waters)")
-      + ' &nbsp;<a class="field-action-link" href="https://wildlife.ca.gov/fishing"'
-      + ' target="_blank" rel="noopener">Check specific water →</a>'
-    );
-    regsContent += _fieldRow("BAG LIMIT",   r.bagLimit || "5 trout per day (combined species)");
-    regsContent += _fieldRow("SIZE LIMIT",  r.minSize  || "No minimum on stocked waters");
-    regsContent += _fieldRow("BAIT",        r.bait     || "Artificial and bait allowed (check water-specific rules)");
-    if (r.rods) regsContent += _fieldRow("RODS", r.rods);
-    regsContent +=
-      '<hr class="field-divider" />'
+    if (!_rc) {
+      regsContent += _fieldRow("SEASON",
+        (r.season || "Open year-round (most stocked waters)")
+        + ' &nbsp;<a class="field-action-link" href="https://wildlife.ca.gov/fishing"'
+        + ' target="_blank" rel="noopener">Check specific water →</a>'
+      );
+    }
+    regsContent += _fieldRow("BAG LIMIT",  r.bagLimit || (_rc ? _rc.bagLimit  : "5 trout per day (combined species)"));
+    regsContent += _fieldRow("SIZE LIMIT", r.minSize  || (_rc ? _rc.sizeLimit : "No minimum on stocked waters"));
+    if (!_rc) {
+      regsContent += _fieldRow("BAIT", r.bait || "Artificial and bait allowed (check water-specific rules)");
+      if (r.rods) regsContent += _fieldRow("RODS", r.rods);
+    }
+    if (r.regulationName) regsContent += _fieldRow("REGULATION TYPE", r.regulationName);
+    if (r.regulationLink) {
+      regsContent += '<div class="regs-link-row">'
+        + '<a class="field-action-link" href="' + r.regulationLink
+        + '" target="_blank" rel="noopener">Water-Specific Regulations →</a>'
+        + '</div>';
+    }
+    regsContent += '<hr class="field-divider" />'
       + '<div class="regs-link-row">'
-      +   '<a class="field-action-link" href="https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=209090&inline="'
-      +   ' target="_blank" rel="noopener">Full CA Regulations (PDF) →</a>'
-      +   '<a class="field-action-link" href="https://wildlife.ca.gov/enforcement"'
-      +   ' target="_blank" rel="noopener">Report a Violation →</a>'
+      + '<a class="field-action-link" href="'
+      + (_rc ? _rc.regsUrl : "https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=209090&inline=")
+      + '" target="_blank" rel="noopener">'
+      + (_rc ? "Full " + _rc.stateAbbr + " Fishing Regulations →" : "Full CA Regulations (PDF) →")
+      + '</a>'
+      + (!_rc ? '<a class="field-action-link" href="https://wildlife.ca.gov/enforcement" target="_blank" rel="noopener">Report a Violation →</a>' : '')
       + '</div>'
-      + '<p class="regs-disclaimer">Default statewide rules shown. Always verify at wildlife.ca.gov before fishing.</p>';
+      + '<p class="regs-disclaimer">Statewide defaults shown. Always verify current regulations before fishing.</p>';
     html += _buildCollapsible("det-regs", "shield", "Regulations", regsContent);
 
     var waterDetailsContent = "";
@@ -983,7 +1033,10 @@ window.UI = (function () {
      ══════════════════════════════════════════════════════════════ */
 
   function initMap(records) {
-    _map = L.map("leaflet-map").setView([37.5, -119.5], 6);
+    var _mc     = window._FSA_CONFIG;
+    var _center = (_mc && _mc.mapCenter) ? _mc.mapCenter : [37.5, -119.5];
+    var _mzoom  = (_mc && _mc.mapZoom)   ? _mc.mapZoom   : 6;
+    _map = L.map("leaflet-map").setView(_center, _mzoom);
 
     var _streetsLayer = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1056,14 +1109,17 @@ window.UI = (function () {
 
     var legend = L.control({ position: "bottomleft" });
     legend.onAdd = function () {
-      var div = L.DomUtil.create("div", "map-legend");
-      div.innerHTML =
-        '<div class="legend-title">Species</div>'
-        + _legendItem("#0ea5e9", "Trout")
-        + _legendItem("#10b981", "Bass")
-        + _legendItem("#f97316", "Catfish")
-        + _legendItem("#6366f1", "Salmon")
-        + _legendItem("#94a3b8", "Other");
+      var div   = L.DomUtil.create("div", "map-legend");
+      var _lc   = window._FSA_CONFIG;
+      var items = (_lc && _lc.legendItems) ? _lc.legendItems : [
+        { color: "#0ea5e9", label: "Trout"   },
+        { color: "#10b981", label: "Bass"     },
+        { color: "#f97316", label: "Catfish"  },
+        { color: "#6366f1", label: "Salmon"   },
+        { color: "#94a3b8", label: "Other"    }
+      ];
+      div.innerHTML = '<div class="legend-title">Species</div>'
+        + items.map(function (it) { return _legendItem(it.color, it.label); }).join('');
       return div;
     };
     legend.addTo(_map);

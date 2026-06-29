@@ -13,7 +13,7 @@
  */
 (function () {
 
-  var activeState = window.CaliforniaState;
+  var activeState = window._FSA_STATE || window.CaliforniaState;
 
   /* ── Shared filter state ────────────────────────────────────── */
   var allRecords        = [];
@@ -431,18 +431,22 @@
     });
   }
 
-  document.getElementById("btn-7days").addEventListener("click", function () {
-    filter7days = !filter7days;
-    this.classList.toggle("active", filter7days);
-    applyFilters();
-  });
+  var btn7days = document.getElementById("btn-7days");
+  if (btn7days) {
+    btn7days.addEventListener("click", function () {
+      filter7days = !filter7days;
+      this.classList.toggle("active", filter7days);
+      applyFilters();
+    });
+  }
 
   document.getElementById("reset-btn").addEventListener("click", function () {
     filterCounty = "";
     filterSearch = "";
     filter7days  = false;
     UI.resetSpeciesFilter();
-    document.getElementById("btn-7days").classList.remove("active");
+    var b7 = document.getElementById("btn-7days");
+    if (b7) b7.classList.remove("active");
     applyFilters();
   });
 
@@ -471,7 +475,8 @@
       filterSearch = "";
       filter7days  = false;
       UI.resetSpeciesFilter();
-      document.getElementById("btn-7days").classList.remove("active");
+      var b7m = document.getElementById("btn-7days");
+      if (b7m) b7m.classList.remove("active");
       applyFilters();
     });
   }
@@ -523,7 +528,8 @@
         : _escHtml(name.slice(0, idx))
             + '<span class="alert-hl">' + _escHtml(name.slice(idx, idx + query.length)) + '</span>'
             + _escHtml(name.slice(idx + query.length));
-      var county = item.county ? _escHtml(item.county) + ' County, CA' : 'CA';
+      var _stAbbr = (window._FSA_CONFIG && window._FSA_CONFIG.stateAbbr) || 'CA';
+      var county = item.county ? _escHtml(item.county) + ' County, ' + _stAbbr : _stAbbr;
       html += '<div class="alert-suggestion-item" data-name="' + _escHtml(item.name) + '">'
             + '<span class="alert-sug-name">' + highlighted + '</span>'
             + '<span class="alert-sug-county">' + county + '</span>'
@@ -655,7 +661,7 @@
         var result = await supa.rpc('signup_for_alert', {
           p_email:      email,
           p_water_name: watersToSign[i],
-          p_state:      'CA'
+          p_state:      (window._FSA_CONFIG && window._FSA_CONFIG.stateAbbr) || 'CA'
         });
         if (result.error) throw result.error;
         if (i === 0 && result.data && result.data.is_new) {
@@ -690,7 +696,7 @@
           doneMsg.innerHTML = "You're signed up! We'll email you when "
             + names + ' ' + (_selectedWaters.length === 1 ? 'is' : 'are') + ' stocked.';
         } else {
-          doneMsg.innerHTML = "You're signed up! We'll email you when any California water is stocked.";
+          doneMsg.innerHTML = "You're signed up! We'll email you when any " + activeState.name + " water is stocked.";
         }
       }
 
