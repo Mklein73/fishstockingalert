@@ -1296,6 +1296,10 @@ body {
 }
 html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.10); }
 
+/* Scheduled stockings list — past rows are muted, upcoming rows are normal */
+.field-row--past { opacity: 0.45; }
+.sched-past-label { text-decoration: line-through; text-decoration-color: #94a3b8; }
+
 /* "Buy License →" and "Verify regulations →" inline action links */
 .field-action-link {
   font-size: 0.75rem;

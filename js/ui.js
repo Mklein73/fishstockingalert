@@ -83,6 +83,7 @@ window.UI = (function () {
 
   var TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
+  var _todayISO = TODAY.toISOString().slice(0, 10);
 
   function parseDateStr(raw) {
     if (!raw) return null;
@@ -107,6 +108,14 @@ window.UI = (function () {
     else if (n  <  0) agoText = "upcoming";
     else              agoText = n + " days ago";
     return label + " (" + agoText + ")";
+  }
+
+  /* Format a scheduled-date entry: exact "Apr 8, 2026" or "Week of Apr 13, 2026" */
+  function _formatScheduledDate(entry) {
+    var d = parseDateStr(entry.date);
+    if (!d) return entry.date || "";
+    var label = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    return entry.dateIsApproximate ? "Week of " + label : label;
   }
 
   /* ── Species helpers ────────────────────────────────────────── */
@@ -575,27 +584,51 @@ window.UI = (function () {
 
     var d0           = parseDateStr(r.dateStocked);
     var days         = d0 ? daysAgo(d0) : null;
-    var freshnessVal = days === null ? "No data"
-                     : days === 0   ? "Today"
-                     : days < 0     ? "In " + Math.abs(days) + " days"
-                     :                days + " days ago";
-    var freshnessPct = (days === null) ? 0
-                     : days < 0       ? 1
-                     :                  Math.max(0, 1 - days / 30);
+    var freshnessVal, freshnessPct, freqVal, freqPct;
 
-    var freqVal = all.length <= 1 ? "First stocking" : "No data";
-    var freqPct = 0;
-    if (all.length >= 2) {
-      var sorted = all.slice().sort(function (a, b) {
-        return (a.dateStocked || "") > (b.dateStocked || "") ? 1 : -1;
-      });
-      var oldest = parseDateStr(sorted[0].dateStocked);
-      var newest = parseDateStr(sorted[sorted.length - 1].dateStocked);
-      if (oldest && newest) {
-        var spanDays = Math.abs(daysAgo(oldest) - daysAgo(newest));
-        var avgGap   = spanDays / (all.length - 1);
-        freqVal = "Every " + Math.round(avgGap) + " days avg";
-        freqPct = Math.max(0, 1 - avgGap / 90);
+    if (r.scheduledDates && r.scheduledDates.length > 0) {
+      /* PA path: derive freshness from most recent past scheduled stocking */
+      var pastSched = r.scheduledDates.filter(function (s) { return s.date < _todayISO; });
+      if (pastSched.length === 0) {
+        freshnessVal = "Scheduled, not yet stocked";
+        freshnessPct = 0.04;
+      } else {
+        var recentSched = pastSched[pastSched.length - 1];
+        var dSched = parseDateStr(recentSched.date);
+        var daysSched = dSched ? daysAgo(dSched) : null;
+        freshnessVal = daysSched === null ? "No data"
+                     : daysSched === 0   ? "Today"
+                     :                     daysSched + " days ago";
+        freshnessPct = daysSched === null ? 0 : Math.max(0, 1 - daysSched / 30);
+      }
+      /* Frequency = total scheduled events for this section */
+      var schedCount = r.scheduledDates.length;
+      freqVal = schedCount + " stocking event" + (schedCount !== 1 ? "s" : "");
+      freqPct = Math.min(1, schedCount / 5);
+    } else {
+      /* Default path (CA and states without scheduledDates) */
+      freshnessVal = days === null ? "No data"
+                   : days === 0   ? "Today"
+                   : days < 0     ? "In " + Math.abs(days) + " days"
+                   :                days + " days ago";
+      freshnessPct = (days === null) ? 0
+                   : days < 0       ? 1
+                   :                  Math.max(0, 1 - days / 30);
+
+      freqVal = all.length <= 1 ? "First stocking" : "No data";
+      freqPct = 0;
+      if (all.length >= 2) {
+        var sorted = all.slice().sort(function (a, b) {
+          return (a.dateStocked || "") > (b.dateStocked || "") ? 1 : -1;
+        });
+        var oldest = parseDateStr(sorted[0].dateStocked);
+        var newest = parseDateStr(sorted[sorted.length - 1].dateStocked);
+        if (oldest && newest) {
+          var spanDays = Math.abs(daysAgo(oldest) - daysAgo(newest));
+          var avgGap   = spanDays / (all.length - 1);
+          freqVal = "Every " + Math.round(avgGap) + " days avg";
+          freqPct = Math.max(0, 1 - avgGap / 90);
+        }
       }
     }
 
@@ -800,10 +833,16 @@ window.UI = (function () {
 
     var r       = waterObj.latestRecord;
     var all     = waterObj.allEvents;
-    var ap      = announcePeriod(r.dateStocked);
-    var apColor = ap === "Upcoming" ? "#0ea5e9"
-                : ap === "Current"  ? "#10b981"
-                :                     "#94a3b8";
+    /* For sections with a full schedule, status is Upcoming if any date is today or later */
+    var ap, apColor;
+    if (r.scheduledDates && r.scheduledDates.length > 0) {
+      var hasUpcoming = r.scheduledDates.some(function (s) { return s.date >= _todayISO; });
+      ap      = hasUpcoming ? "Upcoming" : "Past";
+      apColor = hasUpcoming ? "#0ea5e9" : "#94a3b8";
+    } else {
+      ap      = announcePeriod(r.dateStocked);
+      apColor = ap === "Upcoming" ? "#0ea5e9" : ap === "Current" ? "#10b981" : "#94a3b8";
+    }
 
     var html = "";
 
@@ -828,14 +867,20 @@ window.UI = (function () {
          +  '<button class="detail-alert-btn" id="detail-alert-btn"><i data-lucide="bell"></i> Get Alert</button>';
 
     var stockingContent = "";
-    var d0     = parseDateStr(r.dateStocked);
-    var dLabel = d0 ? d0.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—";
-    var n0     = d0 ? daysAgo(d0) : null;
-    var agoTxt = n0 === null ? ""
-               : n0 === 0   ? "today"
-               : n0 === 1   ? "1 day ago"
-               : n0  <  0   ? "upcoming"
-               :               n0 + " days ago";
+    var d0 = parseDateStr(r.dateStocked);
+    var dLabel, agoTxt;
+    if (d0) {
+      var baseLabel = d0.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+      dLabel = r.dateIsApproximate ? "Week of " + baseLabel : baseLabel;
+      var n0 = daysAgo(d0);
+      agoTxt = n0 === 0 ? "today"
+             : n0 === 1 ? "1 day ago"
+             : n0  <  0 ? "upcoming"
+             :             n0 + " days ago";
+    } else {
+      dLabel = "No date on file";
+      agoTxt = "";
+    }
 
     stockingContent += _fieldRow("Date",
       dLabel + (agoTxt ? ' <span class="days-ago">(' + agoTxt + ")</span>" : "")
@@ -896,6 +941,29 @@ window.UI = (function () {
     }
 
     html += _buildCollapsible("det-stocking", "droplets", "Latest Stocking", stockingContent);
+
+    /* Scheduled Stockings block — only rendered when the record has schedule data */
+    if (r.scheduledDates && r.scheduledDates.length > 0) {
+      var schedContent = '<div class="sched-list">';
+      r.scheduledDates.forEach(function (sd) {
+        var isPast   = sd.date < _todayISO;
+        var dateLabel = _formatScheduledDate(sd);
+        var spColor   = speciesColor(sd.species);
+        schedContent +=
+          '<div class="field-row' + (isPast ? ' field-row--past' : '') + '">'
+          + '<span class="field-label">'
+          +   (isPast ? '<span class="sched-past-label">' + dateLabel + '</span>'
+                      : '<strong>' + dateLabel + '</strong>')
+          + '</span>'
+          + '<span class="field-value">'
+          +   '<span class="species-dot" style="background:' + spColor + ';"></span>'
+          +   (sd.species || "Trout")
+          + '</span>'
+          + '</div>';
+      });
+      schedContent += '</div>';
+      html += _buildCollapsible("det-schedule", "calendar", "Scheduled Stockings (" + r.scheduledDates.length + ")", schedContent);
+    }
 
     var _rc = window._FSA_CONFIG;
     var regsContent = "";
@@ -1213,10 +1281,25 @@ window.UI = (function () {
 
     var dayMap = {};
     records.forEach(function (r) {
-      if (!r.dateStocked) return;
-      var key = String(r.dateStocked).slice(0, 10);
-      if (!dayMap[key]) dayMap[key] = [];
-      dayMap[key].push(r);
+      if (r.scheduledDates && r.scheduledDates.length > 0) {
+        /* PA path: place each scheduled event on its own date */
+        r.scheduledDates.forEach(function (sd) {
+          if (!sd.date) return;
+          var key = sd.date.slice(0, 10);
+          if (!dayMap[key]) dayMap[key] = [];
+          dayMap[key].push({
+            waterName:         r.waterName,
+            county:            r.county,
+            species:           sd.species || r.species,
+            dateIsApproximate: !!sd.dateIsApproximate
+          });
+        });
+      } else if (r.dateStocked) {
+        /* Default path for states without scheduledDates */
+        var key = String(r.dateStocked).slice(0, 10);
+        if (!dayMap[key]) dayMap[key] = [];
+        dayMap[key].push(r);
+      }
     });
 
     var firstDay  = new Date(year, month, 1);
@@ -1243,6 +1326,14 @@ window.UI = (function () {
       var dayRecords = dayMap[dateStr] || [];
       if (dayRecords.length > 0) {
         cell.classList.add("has-data");
+        /* Mark cells where all events are approximate with a tilde superscript */
+        var allApprox = dayRecords.every(function (dr) { return dr.dateIsApproximate; });
+        if (allApprox) {
+          var approxMark = document.createElement("span");
+          approxMark.textContent = "~";
+          approxMark.style.cssText = "font-size:0.6em;opacity:0.7;margin-left:1px;vertical-align:super;";
+          cell.appendChild(approxMark);
+        }
         (function (ds, dr, el) {
           el.addEventListener("click", function () {
             document.querySelectorAll(".cal-day.selected")
@@ -1274,18 +1365,20 @@ window.UI = (function () {
 
     var html =
       '<div class="cal-detail-heading">'
-      + heading + " &mdash; "
+      + heading + ": "
       + "<strong>" + dayRecords.length + "</strong> stocking"
       + (dayRecords.length !== 1 ? "s" : "")
       + "</div>";
 
     dayRecords.forEach(function (r) {
+      var approxNote = r.dateIsApproximate
+        ? ' <span style="font-size:0.75em;color:#94a3b8;">(week of)</span>' : "";
       html +=
         '<div class="cal-detail-item">'
-        + '<div class="cal-detail-water">' + (r.waterName || "—") + "</div>"
+        + '<div class="cal-detail-water">' + (r.waterName || "Unknown") + approxNote + "</div>"
         + '<div class="cal-detail-meta">'
         +   (r.county || "") + (r.county && r.species ? " &bull; " : "")
-        +   '<span class="badge ' + badgeClass(r.species) + '">' + (r.species || "—") + "</span>"
+        +   '<span class="badge ' + badgeClass(r.species) + '">' + (r.species || "Unknown") + "</span>"
         + "</div>"
         + "</div>";
     });
