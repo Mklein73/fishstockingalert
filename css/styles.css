@@ -1817,6 +1817,40 @@ body {
 .data-footer-copy a { color: #475569; text-decoration: none; }
 .data-footer-copy a:hover { color: #94a3b8; text-decoration: underline; }
 
+/* ── Data view: full-viewport flex layout (desktop) ─────────────
+   Replaces the old calc(100vh - 210px) approach.
+   The active tab panel fills exactly the space between chrome and
+   footer — no page-level scroll, no gaps, no overlaps.
+────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  body.data-view {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Active view panel + loading spinner stretch to fill remaining space */
+  body.data-view .view-panel.active,
+  body.data-view .spinner-wrap {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Footer never shrinks */
+  body.data-view .data-footer { flex-shrink: 0; }
+
+  /* Remove the old fixed-height calc — flex sizes these now */
+  body.data-view #view-list.active { height: auto; }
+  body.data-view #view-map.active  { height: auto; }
+
+  /* Calendar scrolls internally; remove old fixed-footer clearance */
+  body.data-view #view-calendar.active {
+    overflow-y: auto;
+    padding-bottom: 0;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE — medium desktop (≤ 1199px)
    ══════════════════════════════════════════════════════════════ */
