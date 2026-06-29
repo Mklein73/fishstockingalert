@@ -392,7 +392,7 @@ html.dark-mode .state-live-dot { background: #34d399; }
 
 .steps-row {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0;
 }
 
