@@ -457,7 +457,7 @@ body {
 /* Satellite map at the top of the preview card */
 .preview-map-wrap {
   position: relative;
-  height: 400px;
+  height: 350px;
   background: #0f172a;
   flex-shrink: 0;
 }
