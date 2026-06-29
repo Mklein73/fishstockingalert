@@ -222,11 +222,20 @@
   </div>
 
   <!-- ── Footer ───────────────────────────────────────────────── -->
-  <footer class="site-footer">
-    Data source: <a id="source-link"
-      href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897"
-      target="_blank" rel="noopener">CDFW Open Data Portal</a>
-    &mdash; All fish plants are subject to change depending on road, water, weather, and operational conditions.
+  <footer class="data-footer">
+    <div class="data-footer-inner">
+      <div class="data-footer-links">
+        <a href="index.html">Home</a>
+        <a href="blog/index.html">Blog</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="about.html">About</a>
+      </div>
+      <div class="data-footer-copy">
+        &copy; 2026 Fish Stocking Alert &middot;
+        Data sourced from <a href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897" target="_blank" rel="noopener">CDFW Open Data Portal</a>. All fish plants are subject to change depending on road, water, weather, and operational conditions.
+      </div>
+    </div>
   </footer>
 
   <!-- ── Alert signup modal ──────────────────────────────────── -->
@@ -250,7 +259,7 @@
       <div id="alert-step-email" style="display:none">
         <div class="alert-modal-icon">&#128276;</div>
         <h2 class="alert-modal-title">Get Alert for <span id="alert-water-display" class="alert-water-name"></span></h2>
-        <p class="alert-modal-sub">Enter your email — we'll notify you the moment this water is stocked.</p>
+        <p class="alert-modal-sub">Enter your email and we'll notify you the moment this water is stocked.</p>
         <div class="alert-error" id="alert-error" style="display:none"></div>
         <label class="alert-email-label" for="alert-email-input">Email address</label>
         <input type="email" id="alert-email-input" class="alert-email-input" placeholder="your@email.com" autocomplete="email" />

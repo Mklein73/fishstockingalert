@@ -96,12 +96,17 @@
     .page-body a { color: var(--teal); font-weight: 600; text-decoration: none; }
     .page-body a:hover { text-decoration: underline; }
 
-    .page-footer {
-      max-width: 760px; margin: 0 auto; padding: 1.5rem;
-      border-top: 1px solid var(--border);
-      color: var(--text-muted); font-size: 0.82rem; line-height: 1.6;
-    }
-    .page-footer a { color: var(--teal); text-decoration: none; }
+    .home-footer { background: #060e1a; padding: 2.5rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; }
+    .footer-brand { display: flex; align-items: center; gap: 0.5rem; }
+    .footer-logo-icon { font-size: 1.2rem; }
+    .footer-logo-text { font-size: 1rem; font-weight: 600; color: #94a3b8; }
+    .footer-logo-text strong { color: #0ea5e9; font-weight: 800; }
+    .footer-links { display: flex; align-items: center; gap: 1.75rem; flex-wrap: wrap; justify-content: center; }
+    .footer-links a { font-size: 0.85rem; font-weight: 600; color: #64748b; text-decoration: none; transition: color 0.12s; }
+    .footer-links a:hover { color: #0ea5e9; }
+    .footer-copy { font-size: 0.78rem; font-weight: 500; color: #334155; line-height: 1.6; }
+    html.dark-mode .home-footer { background: #020609; }
   </style>
 </head>
 <body>
@@ -130,9 +135,9 @@
 
       <h2>What We Collect</h2>
       <ul>
-        <li><strong>Email address</strong> — only when you sign up for stocking alerts (feature coming soon). We do not collect your email for any other purpose.</li>
-        <li><strong>Basic analytics</strong> — we use standard web analytics to understand how visitors use the site (pages viewed, general traffic patterns). This data is aggregated and not tied to any individual.</li>
-        <li><strong>Dark mode preference</strong> — stored locally in your browser via <code>localStorage</code>. This never leaves your device.</li>
+        <li><strong>Email address</strong>: only when you sign up for stocking alerts. We do not collect your email for any other purpose.</li>
+        <li><strong>Basic analytics</strong>: we use standard web analytics to understand how visitors use the site (pages viewed, general traffic patterns). This data is aggregated and not tied to any individual.</li>
+        <li><strong>Dark mode preference</strong>: stored locally in your browser via <code>localStorage</code>. This never leaves your device.</li>
       </ul>
 
       <h2>How We Use It</h2>
@@ -140,7 +145,7 @@
       <p>Analytics data is used to understand which features are useful and to improve the site. It is not linked to any personally identifiable information.</p>
 
       <h2>Cookies</h2>
-      <p>We may use cookies or similar technologies for analytics purposes. Your dark mode preference is saved to <code>localStorage</code> in your browser — this is local only and is not transmitted to our servers.</p>
+      <p>We may use cookies or similar technologies for analytics purposes. Your dark mode preference is saved to <code>localStorage</code> in your browser. This is local only and is not transmitted to our servers.</p>
       <p>If you use a browser extension or setting to block cookies, the site will still function normally.</p>
 
       <h2>Third Parties</h2>
@@ -157,10 +162,23 @@
     </div>
   </main>
 
-  <footer class="page-footer">
-    <a href="index.html">Fish Stocking Alert</a> &mdash;
-    <a href="about.html">About</a> &middot;
-    <a href="contact.html">Contact</a>
+  <footer class="home-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo-icon">🐟</span>
+        <span class="footer-logo-text">Fish Stocking <strong>Alert</strong></span>
+      </div>
+      <div class="footer-links">
+        <a href="app.html">Data View</a>
+        <a href="blog/index.html">Blog</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="about.html">About</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Fish Stocking Alert. Data sourced from state fish &amp; wildlife agencies. All stocking schedules subject to change.
+      </div>
+    </div>
   </footer>
 
   <script>

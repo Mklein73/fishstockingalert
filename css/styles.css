@@ -1779,6 +1779,43 @@ body {
 
 .site-footer a:hover { text-decoration: underline; }
 
+/* ── Data view compact footer ───────────────────────────────── */
+.data-footer {
+  background: #060e1a;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+}
+
+.data-footer-inner { max-width: 1200px; margin: 0 auto; }
+
+.data-footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.data-footer-links a {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.12s;
+}
+
+.data-footer-links a:hover { color: #0ea5e9; }
+
+.data-footer-copy {
+  font-size: 0.72rem;
+  color: #334155;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.data-footer-copy a { color: #475569; text-decoration: underline; }
+
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE — medium desktop (≤ 1199px)
    ══════════════════════════════════════════════════════════════ */
