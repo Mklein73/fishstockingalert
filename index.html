@@ -46,18 +46,18 @@
         We notify you the instant fish hit the water so you can be first to the bank.
       </p>
       <div class="hero-cta-row">
-        <a href="app.html" class="btn-hero-primary">Explore California Data →</a>
+        <a href="#states-section" class="btn-hero-primary">Find Your State</a>
         <a href="#how-it-works" class="btn-hero-secondary">How It Works</a>
       </div>
       <div class="hero-stats-row">
         <div class="hero-stat">
-          <strong>800+</strong>
+          <strong id="stat-waters">950+</strong>
           <span>Waters Tracked</span>
         </div>
         <div class="hero-stat-divider"></div>
         <div class="hero-stat">
-          <strong>Real-Time</strong>
-          <span>Data Updates</span>
+          <strong id="stat-stockings">4,600+</strong>
+          <span>Stockings &middot; Past 12 Months</span>
         </div>
         <div class="hero-stat-divider"></div>
         <div class="hero-stat">
@@ -66,7 +66,7 @@
         </div>
         <div class="hero-stat-divider"></div>
         <div class="hero-stat">
-          <strong>5+</strong>
+          <strong id="stat-species">7</strong>
           <span>Species Tracked</span>
         </div>
       </div>
@@ -76,7 +76,7 @@
   <!-- ══════════════════════════════════════════════════════════ -->
   <!--  STATE CARDS                                               -->
   <!-- ══════════════════════════════════════════════════════════ -->
-  <section class="states-section">
+  <section class="states-section" id="states-section">
     <div class="section-inner">
       <div class="section-eyebrow">Coverage</div>
       <h2 class="section-title">Select Your State</h2>
@@ -108,7 +108,6 @@
           </div>
           <div class="state-card-name">New York</div>
           <div class="state-card-desc">DEC stocking data integration in development. Full trout and salmon coverage planned.</div>
-          <div class="state-card-notify">Get notified when NY launches →</div>
         </div>
 
       </div>
@@ -376,15 +375,119 @@
       updateIcon();
     });
 
-    document.querySelectorAll('a[href="#how-it-works"]').forEach(function(a) {
-      a.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
-      });
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      var targetId = a.getAttribute('href').slice(1);
+      var target = document.getElementById(targetId);
+      if (target) {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
     });
 
     document.getElementById('btn-get-alerts').addEventListener('click', function() { openAlertModal(null); });
     document.getElementById('cta-get-alerts').addEventListener('click', function() { openAlertModal(null); });
+  </script>
+
+  <script>
+  /* ── Hero stat bar: live cross-state counts ────────────────────────────────
+     Add a future state by appending one entry to STAT_SOURCES.
+     Each entry must return { waters: Set, species: Set, stockings12m: Number }.
+  ─────────────────────────────────────────────────────────────────────────── */
+  var STAT_SOURCES = [
+    {
+      name: 'CA',
+      load: function(todayISO, windowISO) {
+        var BASE = 'https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds2897_fmu/FeatureServer/0/query';
+        var PAGE = 1000;
+
+        function fetchPage(offset) {
+          return fetch(BASE + '?where=1%3D1&outFields=WaterName,FishType,WeekOfPlantStart'
+            + '&resultOffset=' + offset + '&resultRecordCount=' + PAGE + '&f=json')
+            .then(function(r) { if (!r.ok) throw new Error('CA ' + r.status); return r.json(); })
+            .then(function(d) { return (d.features || []).map(function(f) { return f.attributes; }); });
+        }
+
+        return fetchPage(0).then(function(page0) {
+          if (page0.length < PAGE) return page0;
+          return fetch(BASE + '?where=1%3D1&returnCountOnly=true&f=json')
+            .then(function(r) { return r.json(); })
+            .then(function(cd) {
+              var total = cd.count || 0;
+              var extras = [];
+              for (var off = PAGE; off < total; off += PAGE) extras.push(fetchPage(off));
+              return Promise.all(extras).then(function(pages) {
+                return pages.reduce(function(acc, p) { return acc.concat(p); }, page0);
+              });
+            });
+        }).then(function(recs) {
+          var waters = new Set(), species = new Set(), stockings12m = 0;
+          recs.forEach(function(r) {
+            if (r.WaterName) waters.add(r.WaterName);
+            if (r.FishType)  species.add(r.FishType);
+            if (r.WeekOfPlantStart && r.WeekOfPlantStart >= windowISO && r.WeekOfPlantStart <= todayISO) stockings12m++;
+          });
+          return { waters: waters, species: species, stockings12m: stockings12m };
+        });
+      }
+    },
+    {
+      name: 'PA',
+      load: function(todayISO, windowISO) {
+        return Promise.all([
+          fetch('data/pa-stocking-2026.json').then(function(r) { return r.json(); }),
+          fetch('data/pa-schedule-2026.json').then(function(r) { return r.json(); })
+        ]).then(function(pair) {
+          var alloc = pair[0], sched = pair[1];
+          var waters = new Set(), species = new Set(), stockings12m = 0;
+          alloc.forEach(function(r) {
+            if (r.WtrName) waters.add(r.WtrName);
+            if ((r.TotalRainbowStocked || 0) > 0) species.add('Rainbow Trout');
+            if ((r.TotalBrownStocked   || 0) > 0) species.add('Brown Trout');
+            if ((r.TotalBrookStocked   || 0) > 0) species.add('Brook Trout');
+            if ((r.TotalGoldenStocked  || 0) > 0) species.add('Golden Rainbow Trout');
+            if ((r.TotalBroodStocked   || 0) > 0) species.add('Brood Trout');
+          });
+          sched.forEach(function(s) {
+            if (s.date && s.date >= windowISO && s.date <= todayISO) stockings12m++;
+          });
+          return { waters: waters, species: species, stockings12m: stockings12m };
+        });
+      }
+    }
+    /* Add future states here — one object per state, same { waters, species, stockings12m } shape */
+  ];
+
+  function _fmtStat(n) {
+    if (n < 50) return String(n);
+    var step = n >= 1000 ? 100 : 50;
+    return (Math.floor(n / step) * step).toLocaleString('en-US') + '+';
+  }
+
+  (function loadHeroStats() {
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var todayISO  = today.toISOString().slice(0, 10);
+    var win = new Date(today);
+    win.setDate(win.getDate() - 365);
+    var windowISO = win.toISOString().slice(0, 10);
+
+    Promise.allSettled(STAT_SOURCES.map(function(src) {
+      return src.load(todayISO, windowISO);
+    })).then(function(results) {
+      var allWaters = new Set(), allSpecies = new Set(), totalStockings = 0;
+      results.forEach(function(r) {
+        if (r.status !== 'fulfilled') return;
+        r.value.waters.forEach(function(w) { allWaters.add(w); });
+        r.value.species.forEach(function(s) { allSpecies.add(s); });
+        totalStockings += r.value.stockings12m;
+      });
+      if (allWaters.size > 0)    document.getElementById('stat-waters').textContent    = _fmtStat(allWaters.size);
+      if (totalStockings > 0)    document.getElementById('stat-stockings').textContent = _fmtStat(totalStockings);
+      if (allSpecies.size > 0)   document.getElementById('stat-species').textContent   = _fmtStat(allSpecies.size);
+    });
+  }());
   </script>
 
   <!-- old two-step modal removed — see js/alert-modal.js
