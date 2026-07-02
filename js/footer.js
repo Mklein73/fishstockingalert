@@ -1,3 +1,16 @@
+/* GA4 -- load once per page; guard against double-init if footer.js runs twice */
+if (!window.__fsa_ga4) {
+  window.__fsa_ga4 = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', 'G-TH0QWK197Z');
+  var gaScript = document.createElement('script');
+  gaScript.async = true;
+  gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-TH0QWK197Z';
+  document.head.appendChild(gaScript);
+}
+
 (function () {
   var el = document.getElementById('site-footer');
   if (!el) return;
