@@ -223,7 +223,7 @@
   function getDeduped() {
     var county          = filterCounty;
     var selectedSpecies = UI.getSelectedSpecies();
-    var search          = filterSearch.toLowerCase();
+    var search          = filterSearch.trim().toLowerCase();
     var cutoff          = filter7days ? new Date(TODAY.getTime() - 7 * 86400000) : null;
 
     var filtered = allRecords.filter(function (r) {
@@ -274,7 +274,7 @@
 
   function getFilteredMapRecords() {
     var selectedSpecies = UI.getSelectedSpecies();
-    var search          = filterSearch.toLowerCase();
+    var search          = filterSearch.trim().toLowerCase();
     var cutoff          = filter7days ? new Date(TODAY.getTime() - 7 * 86400000) : null;
 
     return allRecords.filter(function (r) {
@@ -430,7 +430,7 @@
   var listSearch = document.getElementById("list-search");
   if (listSearch) {
     listSearch.addEventListener("input", function () {
-      filterSearch = this.value.trim();
+      filterSearch = this.value;
       applyFilters();
     });
   }
@@ -478,7 +478,7 @@
   var mapSearchEl = document.getElementById("map-search");
   if (mapSearchEl) {
     mapSearchEl.addEventListener("input", function () {
-      filterSearch = this.value.trim();
+      filterSearch = this.value;
       applyFilters();
     });
   }

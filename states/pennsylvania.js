@@ -150,6 +150,16 @@ window.PennsylvaniaState = (function () {
       var lat = (r.Mid_Lat  && r.Mid_Lat  !== 0) ? r.Mid_Lat  : (r.WtrLatDD || null);
       var lon = (r.Mid_Long && r.Mid_Long !== 0) ? r.Mid_Long : (r.WtrLonDD || null);
 
+      /* Coordinates that fall outside the PA bounding box are corrupted.
+         Nullify them so the record still appears in the list and calendar
+         but is skipped by map rendering (which requires non-null lat/lon). */
+      if (lat !== null && lon !== null) {
+        if (lat < PA_LAT[0] || lat > PA_LAT[1] || lon < PA_LON[0] || lon > PA_LON[1]) {
+          lat = null;
+          lon = null;
+        }
+      }
+
       var totalFish = (r.TotalAdultStocked_minusBrood || 0) + (r.TotalBroodStocked || 0);
       var lengthMi  = (r.Length_MI_ && r.Length_MI_ > 0) ? r.Length_MI_ : null;
       var fpm       = (totalFish > 0 && lengthMi > 0) ? totalFish / lengthMi : null;
@@ -204,10 +214,6 @@ window.PennsylvaniaState = (function () {
         totalBrood:         r.TotalBroodStocked   || 0,
         stockingYear:       r.StockingYear || 2026
       };
-    }).filter(function (rec) {
-      return rec.lat !== null && rec.lon !== null
-        && rec.lat >= PA_LAT[0] && rec.lat <= PA_LAT[1]
-        && rec.lon >= PA_LON[0] && rec.lon <= PA_LON[1];
     }).concat(lakeRecords);
   }
 
