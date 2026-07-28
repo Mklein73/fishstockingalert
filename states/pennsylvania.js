@@ -61,14 +61,18 @@ window.PennsylvaniaState = (function () {
     var schedRecords = await results[1].json();
 
     /* Build stream join map: "WtrName|SecNum" -> sorted [{date, dateIsApproximate, species}] */
-    var schedMap = {};
+    var schedMap  = {};
+    var schedSeen = {}; /* tracks "key|date|species" to collapse county-duplicate schedule entries */
     /* Build lake map: "waterName|county" -> sorted [{date, dateIsApproximate, species}] */
-    var lakeMap  = {};
+    var lakeMap   = {};
 
     schedRecords.forEach(function (s) {
       if (s.secNum > 0) {
         /* Stream: join to allocation record by name + section */
-        var key = (s.waterName || "") + "|" + s.secNum;
+        var key    = (s.waterName || "") + "|" + s.secNum;
+        var dupKey = key + "|" + s.date + "|" + (s.species || "");
+        if (schedSeen[dupKey]) return;
+        schedSeen[dupKey] = true;
         if (!schedMap[key]) schedMap[key] = [];
         schedMap[key].push({
           date:              s.date,
@@ -160,7 +164,7 @@ window.PennsylvaniaState = (function () {
         }
       }
 
-      var totalFish = (r.TotalAdultStocked_minusBrood || 0) + (r.TotalBroodStocked || 0);
+      var totalFish = r.TotalAdultStocked_minusBrood || 0;
       var lengthMi  = (r.Length_MI_ && r.Length_MI_ > 0) ? r.Length_MI_ : null;
       var fpm       = (totalFish > 0 && lengthMi > 0) ? totalFish / lengthMi : null;
 

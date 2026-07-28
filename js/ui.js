@@ -996,6 +996,7 @@ window.UI = (function () {
     /* Scheduled Stockings block; only rendered when the record has schedule data */
     if (r.scheduledDates && r.scheduledDates.length > 0) {
       var schedContent = '<div class="sched-list">';
+      var secNote = (r.type === "stream" && r.secNum && r.secNum > 0) ? ' (Section ' + r.secNum + ')' : '';
       r.scheduledDates.forEach(function (sd) {
         var isPast   = sd.date < _todayISO;
         var dateLabel = _formatScheduledDate(sd);
@@ -1008,7 +1009,7 @@ window.UI = (function () {
           + '</span>'
           + '<span class="field-value">'
           +   '<span class="species-dot" style="background:' + spColor + ';"></span>'
-          +   (sd.species || "Trout")
+          +   (sd.species || "Trout") + secNote
           + '</span>'
           + '</div>';
       });
