@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/styles.css" />
   <script>if(localStorage.getItem('fsa-theme')==='dark'){document.documentElement.classList.add('dark-mode');}</script>
 
-  <!-- PA-specific config — read by app.js and ui.js -->
+  <!-- PA-specific config: read by app.js and ui.js -->
   <script>
     window._FSA_CONFIG = {
       stateAbbr:   "PA",
@@ -61,17 +61,17 @@
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-number" id="stat-waters">—</span>
+      <span class="stat-number" id="stat-waters"></span>
       <span class="stat-label">Waters Stocked</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-number" id="stat-stockings">—</span>
+      <span class="stat-number" id="stat-stockings"></span>
       <span class="stat-label">Stocking Sections</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-number" id="stat-species">—</span>
+      <span class="stat-number" id="stat-species"></span>
       <span class="stat-label">Species</span>
     </div>
   </div>
@@ -119,6 +119,14 @@
           </button>
           <div class="species-ms-panel" id="filter-species-panel"></div>
         </div>
+      </div>
+      <div class="filter-group">
+        <label for="filter-water-type">Type</label>
+        <select id="filter-water-type">
+          <option value="">All Waters</option>
+          <option value="stream">Streams</option>
+          <option value="lake">Lakes</option>
+        </select>
       </div>
       <div class="filter-actions">
         <button class="btn-reset" id="reset-btn">Reset</button>
@@ -237,7 +245,7 @@
           <div class="cal-days" id="calendar-grid"></div>
         </div>
         <div class="cal-detail" id="calendar-detail">
-          <p class="cal-detail-hint">PFBC pre-season allocation data does not include individual stocking dates. Check <a href="https://www.fishandboat.com/Fish/FishingResources/Pages/Trout-Stocking.aspx" target="_blank" rel="noopener">fishandboat.com</a> for real-time stocking reports.</p>
+          <p class="cal-detail-hint">Dates are from the PFBC stocking schedule. Click a highlighted date to see scheduled stockings for that day.</p>
         </div>
       </div>
     </div>

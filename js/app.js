@@ -1,5 +1,5 @@
 /**
- * app.js — application coordinator
+ * app.js: application coordinator
  *
  * Responsibilities:
  *  - Tab switching (Home / Map / Calendar)
@@ -20,6 +20,7 @@
   var filterCounty      = "";        // synced across Home + Map county selects
   var filterSearch      = "";        // synced across list-search + map-search
   var filter7days       = false;
+  var filterWaterType   = "";        // "" = all, "stream", or "lake" (PA only)
   var mapReady          = false;
   var calYear           = new Date().getFullYear();
   var calMonth          = new Date().getMonth();
@@ -41,7 +42,7 @@
   }
 
   /* ── Alert modal state ──────────────────────────────────────── */
-  var _selectedWaters = []; /* string[] — water names chosen so far */
+  var _selectedWaters = []; /* string[]: water names chosen so far */
 
   var TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
@@ -227,6 +228,7 @@
 
     var filtered = allRecords.filter(function (r) {
       if (county && r.county !== county) return false;
+      if (filterWaterType && r.type && r.type !== filterWaterType) return false;
       if (selectedSpecies !== null && selectedSpecies.size > 0 && !selectedSpecies.has(r.species)) return false;
       if (cutoff) {
         var d = UI.parseDateStr(r.dateStocked);
@@ -277,6 +279,7 @@
 
     return allRecords.filter(function (r) {
       if (filterCounty && r.county !== filterCounty) return false;
+      if (filterWaterType && r.type && r.type !== filterWaterType) return false;
       if (selectedSpecies !== null && selectedSpecies.size > 0 && !selectedSpecies.has(r.species)) return false;
       if (cutoff) {
         var d = UI.parseDateStr(r.dateStocked);
@@ -417,7 +420,7 @@
     });
   }
 
-  /* ── Filter event listeners — Home tab ──────────────────────── */
+  /* Filter event listeners, Home tab */
 
   document.getElementById("filter-county").addEventListener("change", function () {
     filterCounty = this.value;
@@ -442,16 +445,27 @@
   }
 
   document.getElementById("reset-btn").addEventListener("click", function () {
-    filterCounty = "";
-    filterSearch = "";
-    filter7days  = false;
+    filterCounty    = "";
+    filterSearch    = "";
+    filter7days     = false;
+    filterWaterType = "";
+    var ftEl = document.getElementById("filter-water-type");
+    if (ftEl) ftEl.value = "";
     UI.resetSpeciesFilter();
     var b7 = document.getElementById("btn-7days");
     if (b7) b7.classList.remove("active");
     applyFilters();
   });
 
-  /* ── Filter event listeners — Map tab ───────────────────────── */
+  var filterWaterTypeEl = document.getElementById("filter-water-type");
+  if (filterWaterTypeEl) {
+    filterWaterTypeEl.addEventListener("change", function () {
+      filterWaterType = this.value;
+      applyFilters();
+    });
+  }
+
+  /* Filter event listeners, Map tab */
 
   var mapCountyEl = document.getElementById("map-filter-county");
   if (mapCountyEl) {
@@ -671,7 +685,7 @@
         }
       }
 
-      /* Fire confirmation email — silently skip if Cloudflare Worker not live yet */
+      /* Fire confirmation email; silently skip if Cloudflare Worker not live yet */
       if (firstIsNew && firstToken) {
         try {
           await fetch('https://fishstockingalert.com/api/confirm-email', {
@@ -683,7 +697,7 @@
               water_name:         watersToSign[0] === '__ALL__' ? null : watersToSign[0]
             })
           });
-        } catch (_) { /* Worker not deployed yet — continue */ }
+        } catch (_) { /* Worker not deployed yet; continue */ }
       }
 
       if (stepForm) stepForm.style.display = 'none';
@@ -788,7 +802,7 @@
       UI.hideSpinner();
       UI.showError(
         "Could not load data for " + activeState.name + ": "
-        + err.message + " — Please try refreshing the page."
+        + err.message + ". Please try refreshing the page."
       );
     }
   }

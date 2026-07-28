@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Fish Stocking Alert — styles.css
+   Fish Stocking Alert: styles.css
    Palette: navy #0a1628 | teal #0ea5e9 | green #10b981
    Font: Inter (loaded via Google Fonts in index.html)
    ══════════════════════════════════════════════════════════════ */
@@ -126,7 +126,7 @@ body {
   z-index: 999;
 }
 
-/* State identifier — first item in stats bar, same rhythm as .stat */
+/* State identifier: first item in stats bar, same rhythm as .stat */
 .stat-state-id {
   display: flex;
   flex-direction: column;
@@ -813,6 +813,15 @@ body {
   margin-top: 0.15rem;
 }
 
+/* Plain-text lake type label inside water card name */
+.water-card-type-label {
+  font-size: 0.68em;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
 .water-list-empty {
   padding: 2.5rem 1rem;
   text-align: center;
@@ -873,7 +882,7 @@ body {
   margin-right: 5px;
 }
 
-/* Alert button — solid teal fill */
+/* Alert button: solid teal fill */
 .detail-alert-btn {
   display: inline-flex;
   align-items: center;
@@ -1064,7 +1073,7 @@ body {
   text-align: right;
 }
 
-/* Metric bar dot — border set here so dark mode can override it */
+/* Metric bar dot: border set here so dark mode can override it */
 .mc-bar-dot { border: 2px solid #fff; }
 
 /* ── Species multi-select dropdown ──────────────────────────── */
@@ -1165,6 +1174,14 @@ body {
 
 .field-row--empty .field-label { color: #cbd5e1; }
 .field-row--empty .field-value { color: #cbd5e1; }
+
+/* Lake counts notice in detail panel stocking section */
+.lake-counts-notice {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin: 6px 0 2px;
+}
 
 /* Alert button Lucide bell icon sizing */
 .detail-alert-btn i[data-lucide] {
@@ -1296,7 +1313,7 @@ body {
 }
 html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.10); }
 
-/* Scheduled stockings list — past rows are muted, upcoming rows are normal */
+/* Scheduled stockings list: past rows are muted, upcoming rows are normal */
 .field-row--past { opacity: 0.45; }
 .sched-past-label { text-decoration: line-through; text-decoration-color: #94a3b8; }
 
@@ -1337,7 +1354,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
   line-height: 1.65;
 }
 
-/* ── Stocking history — timeline layout ─────────────────────── */
+/* ── Stocking history: timeline layout ─────────────────────── */
 
 .timeline-wrap { padding: 0.15rem 0; }
 
@@ -1445,7 +1462,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* Tile selector panel — bottom-right corner of map */
+/* Tile selector panel: bottom-right corner of map */
 .map-tile-panel {
   background: var(--white);
   border-radius: var(--radius-md);
@@ -1498,7 +1515,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
   pointer-events: none;
 }
 
-/* Pin hover tooltip — dark card with full stocking detail */
+/* Pin hover tooltip: dark card with full stocking detail */
 .map-pin-tooltip {
   background: rgba(10, 22, 40, 0.92);
   border: none;
@@ -1842,7 +1859,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
 /* ── Data view: full-viewport flex layout (desktop) ─────────────
    Replaces the old calc(100vh - 210px) approach.
    The active tab panel fills exactly the space between chrome and
-   footer — no page-level scroll, no gaps, no overlaps.
+   footer: no page-level scroll, no gaps, no overlaps.
 ────────────────────────────────────────────────────────────────── */
 @media (min-width: 768px) {
   body.data-view {
@@ -1862,7 +1879,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
   /* Footer never shrinks */
   body.data-view .data-footer { flex-shrink: 0; }
 
-  /* Remove the old fixed-height calc — flex sizes these now */
+  /* Remove the old fixed-height calc: flex sizes these now */
   body.data-view #view-list.active { height: auto; }
   body.data-view #view-map.active  { height: auto; }
 
@@ -1874,7 +1891,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RESPONSIVE — medium desktop (≤ 1199px)
+   RESPONSIVE: medium desktop (≤ 1199px)
    ══════════════════════════════════════════════════════════════ */
 @media (max-width: 1699px) {
   .list-col-waters  { width: 380px; }
@@ -1895,7 +1912,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RESPONSIVE — tablet / small laptop (≤ 899px)
+   RESPONSIVE: tablet / small laptop (≤ 899px)
    Columns 1, 2, 3 stack vertically.
    Column 1 collapses to a horizontal pill bar.
    ══════════════════════════════════════════════════════════════ */
@@ -2005,7 +2022,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
   .stat-number { font-size: 1.3rem; }
   .stat-label  { font-size: 0.62rem; }
 
-  /* Tabs — full width */
+  /* Tabs: full width */
   .tab-nav  { padding: 0; }
   .tab-btn  { flex: 1; justify-content: center; padding: 0.75rem 0.5rem; font-size: 0.82rem; }
   .tab-icon { display: none; }
@@ -2047,7 +2064,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
   .list-col-detail { padding: 1rem; overflow-y: visible; }
   .detail-col-name { font-size: 1.2rem; }
 
-  /* Calendar — stack detail below grid on mobile */
+  /* Calendar: stack detail below grid on mobile */
   .calendar-outer { padding: 0.85rem; }
   .calendar-body  { flex-direction: column; }
   .cal-detail     { width: 100%; min-height: auto; }
@@ -2082,7 +2099,7 @@ html.dark-mode .best-water-badge { color: #fbbf24; background: rgba(234,179,8,0.
 }
 
 /* ══════════════════════════════════════════════════════════════
-   DARK MODE  — applied via html.dark-mode class
+   DARK MODE : applied via html.dark-mode class
    Overrides CSS variables so every component updates automatically.
    ══════════════════════════════════════════════════════════════ */
 
@@ -2115,7 +2132,7 @@ html.dark-mode .filter-group input:focus {
 }
 
 /* Elements that use --navy or --white as TEXT colour need explicit overrides
-   because --navy stays dark in dark mode (intentionally — it's the header colour)
+   because --navy stays dark in dark mode (intentionally: it's the header colour)
    and --white gets flipped to a dark surface colour for backgrounds. */
 
 /* Stats bar numbers + state identifier */
@@ -2130,7 +2147,7 @@ html.dark-mode .moon-widget-phase { color: #e2e8f0; }
 /* Header logo text (uses var(--white) which becomes a dark surface in dark mode) */
 html.dark-mode .logo-text { color: #f1f5f9; }
 
-/* Table header text — thead uses color: var(--white) which is now dark */
+/* Table header text: thead uses color: var(--white) which is now dark */
 html.dark-mode thead th { color: #f1f5f9; }
 
 /* Card water name */
@@ -2200,8 +2217,10 @@ html.dark-mode .list-count         { background: #0f172a; }
 html.dark-mode .water-card         { background: #1a2332; border-bottom-color: #334155; }
 html.dark-mode .water-card:hover   { background: #1e3044; }
 html.dark-mode .water-card.selected { background: rgba(14,165,233,0.15); }
-html.dark-mode .water-card-name    { color: #e2e8f0; }
-html.dark-mode .water-card-status  { color: #64748b; }
+html.dark-mode .water-card-name        { color: #e2e8f0; }
+html.dark-mode .water-card-status      { color: #64748b; }
+html.dark-mode .water-card-type-label  { color: #475569; }
+html.dark-mode .lake-counts-notice     { color: #64748b; }
 html.dark-mode .geo-no-results-banner { background: #422006; color: #fed7aa; border-color: #92400e; }
 html.dark-mode .water-type-pill    { background: #0f172a; color: #64748b; }
 html.dark-mode .status-text        { /* color already inline */ }
@@ -2355,7 +2374,7 @@ html.dark-mode .list-col-detail::-webkit-scrollbar-thumb:hover {
   -webkit-backdrop-filter: blur(4px);
 }
 
-/* Centered dialog box — independently fixed so it can't be
+/* Centered dialog box: independently fixed so it can't be
    crushed by any ancestor layout or overflow constraint */
 .alert-modal-box {
   position: fixed;

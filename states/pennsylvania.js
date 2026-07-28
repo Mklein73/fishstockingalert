@@ -7,13 +7,17 @@
  * fetchData() returns an array of normalized records identical in shape to
  * other state adapters so app.js and ui.js work unchanged.
  *
- * Each stream section record carries:
- *   scheduledDates  [{date, dateIsApproximate, species}] — all PFBC-scheduled events
- *   dateStocked     ISO string — next upcoming date, or most recent past date if none upcoming
- *   dateIsApproximate  boolean — true when dateStocked came from a "WeekOf" schedule entry
+ * Stream section records (secNum > 0) carry:
+ *   scheduledDates  [{date, dateIsApproximate, species}]: all PFBC-scheduled events
+ *   dateStocked     ISO string: next upcoming date, or most recent past date if none upcoming
+ *   dateIsApproximate  boolean: true when dateStocked came from a "WeekOf" schedule entry
+ *   type            "stream"
  *
- * Lakes (secNum=0 in the schedule) are excluded from the join and carry
- * empty scheduledDates. dateStocked remains null for them.
+ * Lake records (secNum=0 in the schedule) are collected into one record per
+ * named water, with all scheduled dates. PFBC does not publish stocking counts
+ * for lakes; fishCount, sectionLengthMiles, and fishPerMile are always null.
+ *   type            "lake"
+ *   lat / lon       null: PFBC schedule data carries no lake coordinates
  *
  * Re-run scripts/fetch-pa-schedule.py at the start of each stocking season
  * to refresh the schedule file without touching this adapter.
@@ -23,7 +27,7 @@ window.PennsylvaniaState = (function () {
   var DATA_URL     = "data/pa-stocking-2026.json";
   var SCHEDULE_URL = "data/pa-schedule-2026.json";
 
-  /* PA bounding box — drops the two PFBC records with corrupted longitude values */
+  /* PA bounding box; drops the two PFBC records with corrupted longitude values */
   var PA_LAT = [39.7, 42.3];
   var PA_LON = [-80.6, -74.7];
 
@@ -56,20 +60,90 @@ window.PennsylvaniaState = (function () {
     var rawRecords  = await results[0].json();
     var schedRecords = await results[1].json();
 
-    /* Build join map: "WtrName|SecNum" -> sorted [{date, dateIsApproximate, species}] */
+    /* Build stream join map: "WtrName|SecNum" -> sorted [{date, dateIsApproximate, species}] */
     var schedMap = {};
+    /* Build lake map: "waterName|county" -> sorted [{date, dateIsApproximate, species}] */
+    var lakeMap  = {};
+
     schedRecords.forEach(function (s) {
-      if (!s.secNum || s.secNum <= 0) return;   /* streams only; skip lake secNum=0 */
-      var key = (s.waterName || "") + "|" + s.secNum;
-      if (!schedMap[key]) schedMap[key] = [];
-      schedMap[key].push({
-        date:              s.date,
-        dateIsApproximate: !!s.dateIsApproximate,
-        species:           s.species || null
-      });
+      if (s.secNum > 0) {
+        /* Stream: join to allocation record by name + section */
+        var key = (s.waterName || "") + "|" + s.secNum;
+        if (!schedMap[key]) schedMap[key] = [];
+        schedMap[key].push({
+          date:              s.date,
+          dateIsApproximate: !!s.dateIsApproximate,
+          species:           s.species || null
+        });
+      } else if (s.secNum === 0) {
+        /* Lake: no allocation record; collect by water name + county */
+        var lkey = (s.waterName || "") + "|" + (s.county || "");
+        if (!lakeMap[lkey]) {
+          lakeMap[lkey] = {
+            waterName: s.waterName || "",
+            county:    s.county    || "",
+            dates:     []
+          };
+        }
+        lakeMap[lkey].dates.push({
+          date:              s.date,
+          dateIsApproximate: !!s.dateIsApproximate,
+          species:           s.species || null
+        });
+      }
     });
+
     Object.keys(schedMap).forEach(function (k) {
       schedMap[k].sort(function (a, b) { return a.date > b.date ? 1 : a.date < b.date ? -1 : 0; });
+    });
+    Object.keys(lakeMap).forEach(function (k) {
+      lakeMap[k].dates.sort(function (a, b) { return a.date > b.date ? 1 : a.date < b.date ? -1 : 0; });
+    });
+
+    /* Build lake records, one per named water */
+    var lakeRecords = Object.keys(lakeMap).map(function (k) {
+      var lake     = lakeMap[k];
+      var upcoming = lake.dates.filter(function (d) { return d.date >= todayISO; });
+      var past     = lake.dates.filter(function (d) { return d.date <  todayISO; });
+      var primary  = upcoming.length > 0 ? upcoming[0]
+                   : past.length    > 0 ? past[past.length - 1]
+                   : null;
+
+      /* Primary species: most common across all scheduled dates */
+      var spCount = {};
+      lake.dates.forEach(function (d) {
+        if (d.species) spCount[d.species] = (spCount[d.species] || 0) + 1;
+      });
+      var primarySpecies = Object.keys(spCount).sort(function (a, b) {
+        return spCount[b] - spCount[a];
+      })[0] || "Trout";
+
+      return {
+        waterName:          lake.waterName,
+        county:             lake.county,
+        type:               "lake",
+        species:            primarySpecies,
+        dateStocked:        primary ? primary.date              : null,
+        dateIsApproximate:  primary ? primary.dateIsApproximate : false,
+        lat:                null,
+        lon:                null,
+        fishCount:          null,
+        sectionLengthMiles: null,
+        fishPerMile:        null,
+        bestFishingWater:   false,
+        specialRegulations: false,
+        regulationName:     null,
+        regulationLink:     null,
+        description:        null,
+        speciesList:        [],
+        scheduledDates:     lake.dates,
+        totalRainbow:       0,
+        totalBrown:         0,
+        totalBrook:         0,
+        totalGolden:        0,
+        totalBrood:         0,
+        stockingYear:       2026
+      };
     });
 
     return rawRecords.map(function (r) {
@@ -103,6 +177,7 @@ window.PennsylvaniaState = (function () {
 
       return {
         /* Standard fields shared across all state adapters */
+        type:             "stream",
         waterName:        r.WtrName || "",
         county:           r.County  || "",
         species:          _primarySpecies(r),
@@ -133,7 +208,7 @@ window.PennsylvaniaState = (function () {
       return rec.lat !== null && rec.lon !== null
         && rec.lat >= PA_LAT[0] && rec.lat <= PA_LAT[1]
         && rec.lon >= PA_LON[0] && rec.lon <= PA_LON[1];
-    });
+    }).concat(lakeRecords);
   }
 
   return {

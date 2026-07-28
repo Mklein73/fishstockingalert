@@ -1,5 +1,5 @@
 /**
- * ui.js — everything that draws on screen
+ * ui.js: everything that draws on screen
  *
  * Receives normalized records { waterName, county, species, dateStocked, lat, lon }
  * and renders the list view, map tab, and calendar tab.
@@ -97,7 +97,7 @@ window.UI = (function () {
 
   function formatDateSimple(raw) {
     var d = parseDateStr(raw);
-    if (!d) return "—";
+    if (!d) return "";
     var label = d.toLocaleDateString("en-US", {
       year: "numeric", month: "short", day: "numeric"
     });
@@ -247,7 +247,7 @@ window.UI = (function () {
 
   /**
    * Build a species multi-select panel.
-   * ids: { panel, btn, label, allCb } — element IDs for this instance.
+   * ids: { panel, btn, label, allCb }: element IDs for this instance.
    */
   function _buildSpeciesMultiSelect(speciesList, onChange, ids) {
     ids = ids || {};
@@ -432,11 +432,16 @@ window.UI = (function () {
 
       div.style.setProperty('--wc-border-color', speciesColor(w.latestRecord ? w.latestRecord.species : null));
 
+      var isLake     = !!(w.latestRecord && w.latestRecord.type === "lake");
+      var typeLblHtml = isLake
+        ? ' <span class="water-card-type-label">lake</span>'
+        : "";
+
       div.innerHTML =
         '<div class="water-card-body">'
-        +   '<div class="water-card-name" title="' + (w.waterName || "—") + '">' + (w.waterName || "—") + "</div>"
+        +   '<div class="water-card-name" title="' + (w.waterName || "") + '">' + (w.waterName || "") + typeLblHtml + "</div>"
         +   '<div class="water-card-meta">'
-        +     "<span>" + (w.county || "—") + "</span>"
+        +     "<span>" + (w.county || "") + "</span>"
         +     distHtml
         +   "</div>"
         +   (statusTxt ? '<div class="water-card-status">' + statusTxt + "</div>" : "")
@@ -551,9 +556,9 @@ window.UI = (function () {
         + '</div>';
     }
     var valueHtml = note
-      ? '<div style="text-align:right"><span class="mc-value">' + (valueText || '—') + '</span>'
+      ? '<div style="text-align:right"><span class="mc-value">' + (valueText || '') + '</span>'
           + '<span class="mc-note">' + note + '</span></div>'
-      : '<span class="mc-value">' + (valueText || '—') + '</span>';
+      : '<span class="mc-value">' + (valueText || '') + '</span>';
     return '<div class="metric-card">'
       + '<div class="mc-header">'
       +   '<span class="mc-label">' + label + '</span>'
@@ -569,7 +574,7 @@ window.UI = (function () {
         return '<div class="metric-card">'
           + '<div class="mc-header">'
           +   '<span class="mc-label">' + label + '</span>'
-          +   '<span class="mc-value" style="color:#94a3b8">—</span>'
+          +   '<span class="mc-value" style="color:#94a3b8"></span>'
           + '</div>'
           + '<div class="mc-bar-wrap"><div class="mc-bar-track mc-bar-track--empty" style="position:absolute;inset:0;border-radius:7px;background:#f1f5f9"></div></div>'
           + '</div>';
@@ -674,10 +679,14 @@ window.UI = (function () {
                       : pressureScore >= 0.33 ? "Moderate"
                       :                         "Light";
 
+    var isLakeRecord = !!(r && r.type === "lake");
+
     return _buildMetricCard("#0ea5e9", "STOCKING FRESHNESS", freshnessVal, freshnessPct)
          + _buildMetricCard("#3b82f6", "STOCKING FREQUENCY", freqVal,      freqPct)
-         + _buildMetricCard("#f97316", "PLANT SIZE",          sizeVal,      sizePct)
-         + _buildMetricCard("#10b981", "FISH DENSITY",        densVal,      densPct)
+         + (isLakeRecord ? ""
+             : _buildMetricCard("#f97316", "PLANT SIZE",   sizeVal, sizePct))
+         + (isLakeRecord ? ""
+             : _buildMetricCard("#10b981", "FISH DENSITY", densVal, densPct))
          + _buildMetricCard(tempColor, "TEMP SUITABILITY",    tempVal,      tempPct)
          + _buildMetricCard("#8b5cf6", "ANGLER PRESSURE",     pressureVal,  pressurePct,
              "Based on recency and frequency");
@@ -848,7 +857,7 @@ window.UI = (function () {
 
     var _sc        = window._FSA_CONFIG;
     var _sLabel    = (_sc && _sc.stateLabel) ? _sc.stateLabel : "California";
-    var countyLine = (waterObj.county || "—") + ", " + _sLabel;
+    var countyLine = (waterObj.county || "") + ", " + _sLabel;
     var typePillHtml = waterObj.waterType
       ? '<div class="detail-col-pills"><span class="water-type-pill">' + waterObj.waterType + "</span></div>"
       : "";
@@ -856,7 +865,7 @@ window.UI = (function () {
       ? '<div class="detail-col-distance">📍 ' + Math.round(waterObj.distanceMiles) + " mi from you</div>"
       : "";
 
-    html += '<div class="detail-col-name">' + (waterObj.waterName || "—") + "</div>"
+    html += '<div class="detail-col-name">' + (waterObj.waterName || "") + "</div>"
          +  '<div class="detail-col-county">' + countyLine + "</div>"
          +  '<div class="detail-col-status-row">'
          +    '<span class="status-dot" style="background:' + apColor + ';"></span>'
@@ -894,12 +903,16 @@ window.UI = (function () {
     } else {
       stockingContent += _fieldRow("Species",
         '<span class="species-dot" style="background:' + speciesColor(r.species) + ';"></span>'
-        + (r.species || "—")
+        + (r.species || "")
       );
     }
 
-    var hasCountSize  = r.fishCount || r.fishSize;
-    var hasAcreage    = r.acreage;
+    if (r.type === "lake") {
+      stockingContent += '<p class="lake-counts-notice">PFBC does not publish stocking counts for lakes. Dates and species are scheduled, counts are not reported.</p>';
+    }
+
+    var hasCountSize  = r.type !== "lake" && (r.fishCount || r.fishSize);
+    var hasAcreage    = r.type !== "lake" && r.acreage;
     var hasSourceInfo = r.hatchery || r.method;
 
     if (hasCountSize) {
@@ -919,7 +932,7 @@ window.UI = (function () {
       }
     }
 
-    if (r.sectionLengthMiles) {
+    if (r.type !== "lake" && r.sectionLengthMiles) {
       if (!hasCountSize && !hasAcreage) stockingContent += '<hr class="field-divider" />';
       stockingContent += _fieldRow("Section Length", r.sectionLengthMiles.toFixed(2) + " mi");
       if (r.fishPerMile) {
@@ -930,7 +943,7 @@ window.UI = (function () {
       }
     }
 
-    if (r.bestFishingWater) {
+    if (r.type !== "lake" && r.bestFishingWater) {
       stockingContent += '<div class="best-water-badge">Best Fishing Water</div>';
     }
 
@@ -942,7 +955,7 @@ window.UI = (function () {
 
     html += _buildCollapsible("det-stocking", "droplets", "Latest Stocking", stockingContent);
 
-    /* Scheduled Stockings block — only rendered when the record has schedule data */
+    /* Scheduled Stockings block; only rendered when the record has schedule data */
     if (r.scheduledDates && r.scheduledDates.length > 0) {
       var schedContent = '<div class="sched-list">';
       r.scheduledDates.forEach(function (sd) {
@@ -1012,7 +1025,7 @@ window.UI = (function () {
       if (val) return _fieldRow(label, val);
       return '<div class="field-row field-row--empty">'
         + '<span class="field-label">' + label + '</span>'
-        + '<span class="field-value">—</span>'
+        + '<span class="field-value"></span>'
         + '</div>';
     };
     waterDetailsContent += _wdField("WATER TYPE",   waterObj.waterType);
@@ -1041,7 +1054,7 @@ window.UI = (function () {
         var evtDate  = parseDateStr(evt.dateStocked);
         var evtLabel = evtDate
           ? evtDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-          : "—";
+          : "";
         var evtColor    = speciesColor(evt.species);
         var isLast      = (idx === all.length - 1);
         var showSpecies = (evt.species || "") !== latestSpecies;
@@ -1059,7 +1072,7 @@ window.UI = (function () {
 
         if (showSpecies) {
           histContent += '<span class="species-dot" style="background:' + evtColor + ';"></span>'
-            + '<span>' + (evt.species || "—") + "</span>";
+            + '<span>' + (evt.species || "") + "</span>";
         }
 
         if (evt.fishSize)  histContent += '<span class="history-extra">' + evt.fishSize  + " in</span>";
@@ -1200,7 +1213,7 @@ window.UI = (function () {
     };
     legend.addTo(_map);
 
-    /* Initial plot — fit bounds only on first load */
+    /* Initial plot; fit bounds only on first load */
     _addPins(records, true);
   }
 
@@ -1225,8 +1238,8 @@ window.UI = (function () {
 
       var tooltipHtml =
         '<div class="tip-name">' + (r.waterName || "Unknown water") + "</div>"
-        + '<div class="tip-row"><span class="tip-label">County</span>'  + (r.county  || "—") + "</div>"
-        + '<div class="tip-row"><span class="tip-label">Species</span>' + (r.species || "—") + "</div>"
+        + '<div class="tip-row"><span class="tip-label">County</span>'  + (r.county  || "") + "</div>"
+        + '<div class="tip-row"><span class="tip-label">Species</span>' + (r.species || "") + "</div>"
         + '<div class="tip-row"><span class="tip-label">Date</span>'    + formatDateSimple(r.dateStocked) + "</div>";
 
       marker.bindTooltip(tooltipHtml, {
