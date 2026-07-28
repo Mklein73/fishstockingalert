@@ -391,6 +391,16 @@ window.UI = (function () {
         allEvents:     events
       };
     }).sort(function (a, b) {
+      var aMin = null, bMin = null;
+      a.allEvents.forEach(function (e) {
+        if (e.dateStocked && e.dateStocked >= _todayISO && (!aMin || e.dateStocked < aMin)) aMin = e.dateStocked;
+      });
+      b.allEvents.forEach(function (e) {
+        if (e.dateStocked && e.dateStocked >= _todayISO && (!bMin || e.dateStocked < bMin)) bMin = e.dateStocked;
+      });
+      if (aMin && bMin) return aMin < bMin ? -1 : aMin > bMin ? 1 : 0;
+      if (aMin)         return -1;
+      if (bMin)         return 1;
       var da = a.latestRecord.dateStocked || "";
       var db = b.latestRecord.dateStocked || "";
       return db > da ? 1 : db < da ? -1 : 0;
@@ -741,24 +751,40 @@ window.UI = (function () {
 
     var moonEl  = document.getElementById("moon-widget");
     var stripEl = document.getElementById("metric-strip");
-    var openBtn = document.getElementById("preview-open-btn");
 
     if (moonEl)  moonEl.innerHTML  = _buildMoonWidget(waterObj || null);
     if (stripEl) stripEl.innerHTML = _buildMetricCards(waterObj || null);
 
-    if (openBtn) {
-      var hasCoords = !!(waterObj && waterObj.lat && waterObj.lon);
-      openBtn.style.display = hasCoords ? "block" : "none";
-      if (hasCoords && typeof onOpenFullMap === "function") {
-        openBtn.onclick = function () { onOpenFullMap(waterObj.lat, waterObj.lon); };
-      }
-    }
-
     var mapWrap = document.querySelector('.preview-map-wrap');
+
     if (waterObj && waterObj.type === 'lake') {
-      if (mapWrap) mapWrap.style.display = 'none';
+      if (mapWrap) {
+        mapWrap.style.height = '120px';
+        mapWrap.innerHTML =
+          '<p style="margin:0;display:flex;align-items:center;justify-content:center;' +
+          'height:100%;color:#94a3b8;font-size:0.875rem;font-weight:500;text-align:center;padding:1rem">' +
+          'Map location is not available for lakes.</p>';
+      }
     } else {
-      if (mapWrap) mapWrap.style.display = '';
+      if (mapWrap) {
+        mapWrap.style.height = '';
+        if (!document.getElementById('preview-map')) {
+          mapWrap.innerHTML =
+            '<div id="preview-map"></div>' +
+            '<button class="preview-open-btn" id="preview-open-btn" style="display:none">' +
+            'Open in full map →</button>';
+        }
+      }
+
+      var openBtn = document.getElementById('preview-open-btn');
+      if (openBtn) {
+        var hasCoords = !!(waterObj && waterObj.lat && waterObj.lon);
+        openBtn.style.display = hasCoords ? "block" : "none";
+        if (hasCoords && typeof onOpenFullMap === "function") {
+          openBtn.onclick = function () { onOpenFullMap(waterObj.lat, waterObj.lon); };
+        }
+      }
+
       var mapEl = document.getElementById('preview-map');
       if (waterObj && waterObj.lat && waterObj.lon) {
         if (mapEl) mapEl.innerHTML = '';
