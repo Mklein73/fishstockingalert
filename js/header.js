@@ -16,7 +16,8 @@
     '.header-blog-link:hover{color:#0ea5e9}' +
     '.header-tagline{font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.38);letter-spacing:0.01em;margin-left:0.5rem;white-space:nowrap}' +
     '@media(max-width:700px){.header-tagline{display:none}}' +
-    '@media(max-width:480px){.btn-alerts{padding:0.45rem 0.9rem;font-size:0.82rem}}';
+    '@media(max-width:480px){.btn-alerts{padding:0.45rem 0.9rem;font-size:0.82rem}}' +
+    '.btn-dark-mode{color:#e2e8f0}';
   document.head.appendChild(s);
 
   var MOON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>';
