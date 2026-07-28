@@ -20,11 +20,11 @@ window.UI = (function () {
   var TIPS = {
 
     rainbowTrout: [
-      "Hatchery rainbows are most catchable in the first 24–72 hours post-stocking. Fish as close as possible to where the stocking truck entered the water. Trout congregate near their release point before dispersing.",
-      "PowerBait in chartreuse, rainbow, or salmon-egg colors is the go-to for stocked fish. Float it 18–24 inches off the bottom with a sliding sinker rig so it stays in the strike zone without dragging.",
-      "Small in-line spinners (Panther Martin or Blue Fox, size 0–2) retrieved slow and steady are deadly on fresh plants. Let the spinner sink a beat before starting the retrieve to cover multiple depth layers.",
-      "Stocked trout school tight. If you're not biting, move along the bank every 20–30 minutes until you find the school, then stay put. Look for sheltered coves and inlet channels where current slows.",
-      "In summer, stocked rainbows push deep to find cooler water. Target 10–20 feet down near the thermocline. Early morning and evening are the only productive windows when surface temps exceed 65°F.",
+      "Hatchery rainbows are most catchable in the first 24 to 72 hours post-stocking. Fish as close as possible to where the stocking truck entered the water. Trout congregate near their release point before dispersing.",
+      "PowerBait in chartreuse, rainbow, or salmon-egg colors is the go-to for stocked fish. Float it 18 to 24 inches off the bottom with a sliding sinker rig so it stays in the strike zone without dragging.",
+      "Small in-line spinners (Panther Martin or Blue Fox, size 0 to 2) retrieved slow and steady are deadly on fresh plants. Let the spinner sink a beat before starting the retrieve to cover multiple depth layers.",
+      "Stocked trout school tight. If you're not biting, move along the bank every 20 to 30 minutes until you find the school, then stay put. Look for sheltered coves and inlet channels where current slows.",
+      "In summer, stocked rainbows push deep to find cooler water. Target 10 to 20 feet down near the thermocline. Early morning and evening are the only productive windows when surface temps exceed 65°F.",
       "Drop down to 4 lb fluorocarbon leader material. Stocked trout in clear water become noticeably line-shy after a day or two of pressure; lighter line means a more natural presentation and more strikes.",
       "After day 3, surviving fish that have seen heavy pressure become wary of PowerBait. Switch to natural presentations: nightcrawlers under a small float or small olive/brown jigs. Live bait outperforms scented bait on educated fish.",
       "In cold water (below 50°F), slow everything way down. Trout metabolize slowly in cold conditions and won't chase a fast retrieve. Soak bait on the bottom and wait for the rod to load. Don't twitch or reel.",
@@ -52,7 +52,7 @@ window.UI = (function () {
 
     bass: [
       "Target the first two hours after sunrise for largemouth in shallow cover. Bass move shallow to feed in low light and retreat to deeper structure as sun penetrates the water column.",
-      "Texas-rigged plastic worms (6–8 inch, purple or green pumpkin) fished painfully slow through vegetation is the most reliable largemouth technique year-round. Bass often pick up a bait sitting completely still.",
+      "Texas-rigged plastic worms (6 to 8 inch, purple or green pumpkin) fished painfully slow through vegetation is the most reliable largemouth technique year-round. Bass often pick up a bait sitting completely still.",
       "Frog lures on surface mats produce explosive strikes. Don't set the hook on the boil; wait until you feel the full weight of the fish loading the rod, then set hard.",
       "Smallmouth favor rocky structure and current. Tube jigs and finesse drop-shots in natural colors (green pumpkin, watermelon) fished along rocky points and channel edges consistently produce.",
       "Fish crayfish imitations in early spring during pre-spawn feeding. Brown and orange jig-and-pig combos work best when dragged slowly along the bottom near gravel-to-sand transitions.",
@@ -65,7 +65,7 @@ window.UI = (function () {
       "Fish the tail-outs of pools at first light; salmon stage in tail-outs before pushing through riffles. Presentation accuracy matters more than lure selection; get your bait precisely in front of holding fish.",
       "Salmon drop in feeding activity once they have been in freshwater for more than two weeks. Target fresh-run fish near river mouths and inlet channels where they are still in active feeding mode.",
       "Staged salmon strike out of aggression and territorial response more than hunger. Small, bright offerings placed precisely in front of a visible fish trigger reflex strikes.",
-      "Coho in reservoirs respond well to spoons trolled at 2–2.5 mph at 25–45 feet during summer. Chartreuse and orange patterns excel in stained water; go silver or chrome in clear conditions."
+      "Coho in reservoirs respond well to spoons trolled at 2 to 2.5 mph at 25 to 45 feet during summer. Chartreuse and orange patterns excel in stained water; go silver or chrome in clear conditions."
     ],
 
     general: [
@@ -981,12 +981,12 @@ window.UI = (function () {
     var _rc = window._FSA_CONFIG;
     var regsContent = "";
     regsContent += _fieldRow("LICENSE",
-      (_rc ? _rc.licenseNote : "Required, age 16+")
+      "Required"
       + ' &nbsp;<a class="field-action-link" href="'
       + (_rc ? _rc.licenseUrl : "https://wildlife.ca.gov/Licensing/Fishing")
       + '" target="_blank" rel="noopener">'
-      + (_rc ? "Buy " + _rc.stateAbbr + " License →" : "Buy CA License →")
-      + '</a>'
+      + (_rc ? "Buy " + _rc.stateAbbr + " License" : "Buy CA License")
+      + "</a>"
     );
     if (!_rc) {
       regsContent += _fieldRow("SEASON",
@@ -994,10 +994,6 @@ window.UI = (function () {
         + ' &nbsp;<a class="field-action-link" href="https://wildlife.ca.gov/fishing"'
         + ' target="_blank" rel="noopener">Check specific water →</a>'
       );
-    }
-    regsContent += _fieldRow("BAG LIMIT",  r.bagLimit || (_rc ? _rc.bagLimit  : "5 trout per day (combined species)"));
-    regsContent += _fieldRow("SIZE LIMIT", r.minSize  || (_rc ? _rc.sizeLimit : "No minimum on stocked waters"));
-    if (!_rc) {
       regsContent += _fieldRow("BAIT", r.bait || "Artificial and bait allowed (check water-specific rules)");
       if (r.rods) regsContent += _fieldRow("RODS", r.rods);
     }
@@ -1017,7 +1013,7 @@ window.UI = (function () {
       + '</a>'
       + (!_rc ? '<a class="field-action-link" href="https://wildlife.ca.gov/enforcement" target="_blank" rel="noopener">Report a Violation →</a>' : '')
       + '</div>'
-      + '<p class="regs-disclaimer">Statewide defaults shown. Always verify current regulations before fishing.</p>';
+      + '<p class="regs-disclaimer">Bag limits, size limits, and season dates vary by water and change seasonally. Always verify current regulations before fishing.</p>';
     html += _buildCollapsible("det-regs", "shield", "Regulations", regsContent);
 
     var waterDetailsContent = "";
@@ -1304,7 +1300,8 @@ window.UI = (function () {
             waterName:         r.waterName,
             county:            r.county,
             species:           sd.species || r.species,
-            dateIsApproximate: !!sd.dateIsApproximate
+            dateIsApproximate: !!sd.dateIsApproximate,
+            secNum:            r.secNum || 0
           });
         });
       } else if (r.dateStocked) {
@@ -1386,12 +1383,14 @@ window.UI = (function () {
     dayRecords.forEach(function (r) {
       var approxNote = r.dateIsApproximate
         ? ' <span style="font-size:0.75em;color:#94a3b8;">(week of)</span>' : "";
+      var secNote = (r.secNum && r.secNum > 0) ? " (Section " + r.secNum + ")" : "";
       html +=
         '<div class="cal-detail-item">'
-        + '<div class="cal-detail-water">' + (r.waterName || "Unknown") + approxNote + "</div>"
+        + '<div class="cal-detail-water">' + (r.waterName || "Unknown") + secNote + approxNote + "</div>"
         + '<div class="cal-detail-meta">'
         +   (r.county || "") + (r.county && r.species ? " &bull; " : "")
-        +   '<span class="badge ' + badgeClass(r.species) + '">' + (r.species || "Unknown") + "</span>"
+        +   '<span class="species-dot" style="background:' + speciesColor(r.species) + ';"></span>'
+        +   (r.species || "Unknown")
         + "</div>"
         + "</div>";
     });

@@ -190,6 +190,7 @@ window.PennsylvaniaState = (function () {
         type:             "stream",
         waterName:        r.WtrName || "",
         county:           r.County  || "",
+        secNum:           r.SecNum  || 0,
         species:          _primarySpecies(r),
         dateStocked:      dateStocked,
         dateIsApproximate: dateIsApproximate,
