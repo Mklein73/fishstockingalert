@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fish Stocking Alert — Real-Time Stocking Alerts for Anglers</title>
+  <title>Fish Stocking Alert: Real-Time Stocking Alerts for Anglers</title>
   <meta name="description" content="Get notified the moment fish are stocked at your favorite waters. Real-time stocking alerts for California, Pennsylvania, New York, and more." />
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3840764573381429" crossorigin="anonymous"></script>
@@ -17,19 +17,8 @@
 </head>
 <body class="home-body">
 
-  <!-- ── Site header ─────────────────────────────────────────── -->
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="header-logo">
-        <span class="logo-icon">🐟</span>
-        <span class="logo-text">Fish Stocking <span class="logo-accent">Alert</span></span>
-      </div>
-      <div class="header-actions">
-        <button class="btn-alerts" id="btn-get-alerts">Get Alerts</button>
-        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg></button>
-      </div>
-    </div>
-  </header>
+  <div id="site-header"></div>
+  <script src="js/header.js"></script>
 
   <!-- ══════════════════════════════════════════════════════════ -->
   <!--  HERO                                                      -->
@@ -212,11 +201,11 @@
         <div class="step-card">
           <div class="step-num">2</div>
           <div class="step-icon-wrap">
-            <!-- fish -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.46-3.44 6-7 6s-7.06-2.54-8.5-6z"/><path d="M18 12v.5"/><path d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 3.5-.08 6.65 2.27 8.5C6.14 18.06 8.86 19 12 18.59"/><path d="m12.2 5.2-1.41 1.41"/><path d="m12 13 1 1"/></svg>
+            <!-- map pin -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
-          <h3 class="step-title">Set Your Species</h3>
-          <p class="step-desc">Choose trout, bass, catfish, salmon, or all of them. We'll only notify you about what you fish.</p>
+          <h3 class="step-title">Select Your Waters</h3>
+          <p class="step-desc">Search for specific lakes or streams you fish, or skip the search to get alerts for all stocked waters in your state.</p>
         </div>
 
         <div class="step-connector">
@@ -362,19 +351,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/alert-modal.js"></script>
   <script>
-    var darkBtn = document.getElementById('btn-dark-mode');
-    var MOON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>';
-    var SUN_SVG  = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
-    function updateIcon() {
-      darkBtn.innerHTML = document.documentElement.classList.contains('dark-mode') ? SUN_SVG : MOON_SVG;
-    }
-    updateIcon();
-    darkBtn.addEventListener('click', function() {
-      var isDark = document.documentElement.classList.toggle('dark-mode');
-      localStorage.setItem('fsa-theme', isDark ? 'dark' : 'light');
-      updateIcon();
-    });
-
     document.querySelectorAll('a[href^="#"]').forEach(function(a) {
       var targetId = a.getAttribute('href').slice(1);
       var target = document.getElementById(targetId);
@@ -386,7 +362,6 @@
       }
     });
 
-    document.getElementById('btn-get-alerts').addEventListener('click', function() { openAlertModal(null); });
     document.getElementById('cta-get-alerts').addEventListener('click', function() { openAlertModal(null); });
   </script>
 
@@ -456,7 +431,7 @@
         });
       }
     }
-    /* Add future states here — one object per state, same { waters, species, stockings12m } shape */
+    /* Add future states here, one object per state, same { waters, species, stockings12m } shape */
   ];
 
   function _fmtStat(n) {
@@ -490,7 +465,7 @@
   }());
   </script>
 
-  <!-- old two-step modal removed — see js/alert-modal.js
+  <!-- old two-step modal removed; see js/alert-modal.js
   (function() {
       var SUPA_URL = 'https://usujeptqshjvvmsgdqpe.supabase.co';
       var SUPA_KEY = 'sb_publishable_xL0oywu3JPt2ALS8vu2UIQ_bq3OeMIY';
@@ -619,7 +594,7 @@
                   water_name:         _modalWater
                 })
               });
-            } catch (_) { /* silent — worker handles delivery */ }
+            } catch (_) { /* silent; worker handles delivery */ }
           }
 
           if (stepEmail) stepEmail.style.display = 'none';

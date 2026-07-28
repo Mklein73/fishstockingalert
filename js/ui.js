@@ -581,7 +581,7 @@ window.UI = (function () {
       };
       return emptyCard('STOCKING FRESHNESS') + emptyCard('STOCKING FREQUENCY')
            + emptyCard('PLANT SIZE')         + emptyCard('FISH DENSITY')
-           + emptyCard('TEMP SUITABILITY')   + emptyCard('ANGLER PRESSURE');
+           + emptyCard('SEASONAL CONDITIONS') + emptyCard('ANGLER PRESSURE');
     }
 
     var r   = waterObj.latestRecord;
@@ -687,7 +687,8 @@ window.UI = (function () {
              : _buildMetricCard("#f97316", "PLANT SIZE",   sizeVal, sizePct))
          + (isLakeRecord ? ""
              : _buildMetricCard("#10b981", "FISH DENSITY", densVal, densPct))
-         + _buildMetricCard(tempColor, "TEMP SUITABILITY",    tempVal,      tempPct)
+         + _buildMetricCard(tempColor, "SEASONAL CONDITIONS", tempVal,      tempPct,
+             "Statewide seasonal estimate. Not specific to this water.")
          + _buildMetricCard("#8b5cf6", "ANGLER PRESSURE",     pressureVal,  pressurePct,
              "Based on recency and frequency");
   }
@@ -752,8 +753,17 @@ window.UI = (function () {
       }
     }
 
+    var mapEl = document.getElementById('preview-map');
     if (waterObj && waterObj.lat && waterObj.lon) {
+      if (mapEl) mapEl.innerHTML = '';
       setTimeout(function () { _initPreviewMap(waterObj.lat, waterObj.lon); }, 60);
+    } else if (waterObj && waterObj.type === 'lake') {
+      if (mapEl) mapEl.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748b;font-size:0.875rem;font-weight:500;text-align:center;padding:1rem">' +
+        'Map location is not available for lakes.' +
+        '</div>';
+    } else if (mapEl) {
+      mapEl.innerHTML = '';
     }
   }
 

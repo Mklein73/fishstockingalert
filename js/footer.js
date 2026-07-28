@@ -1,5 +1,5 @@
 /* GA4 -- load once per page; guard against double-init if footer.js runs twice */
-if (!window.__fsa_ga4) {
+if (!window.__fsa_ga4 && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
   window.__fsa_ga4 = true;
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
@@ -31,7 +31,7 @@ if (!window.__fsa_ga4) {
     '.footer-kofi svg{flex-shrink:0}';
   document.head.appendChild(s);
 
-  /* Ko-fi support button — muted, no competing with Get Alerts */
+  /* Ko-fi support button, muted, no competing with Get Alerts */
   var kofi =
     '<div class="footer-kofi-wrap">' +
     '<a href="https://ko-fi.com/mklein1973" target="_blank" rel="noopener" class="footer-kofi">' +
@@ -67,7 +67,7 @@ if (!window.__fsa_ga4) {
       '</footer>';
 
   } else {
-    /* data-footer variant — app.html (ca) and pennsylvania.html (pa) */
+    /* data-footer variant: app.html (ca) and pennsylvania.html (pa) */
     var copyHtml = copyKey === 'ca'
       ? '© 2026 Fish Stocking Alert · Data sourced from <a href="https://data-cdfw.opendata.arcgis.com/datasets/CDFW::planting-location-cdfw-ds2897" target="_blank" rel="noopener">CDFW Open Data Portal</a>. All fish plants are subject to change depending on road, water, weather, and operational conditions.'
       : '© 2026 Fish Stocking Alert · Data sourced from the <a href="https://fbweb.pa.gov/arcgis/rest/services/PFBC_Map_Services/" target="_blank" rel="noopener">PA Fish &amp; Boat Commission ArcGIS Portal</a>. Pre-season stocking allocations for 2026. Individual stocking schedules subject to change.';
